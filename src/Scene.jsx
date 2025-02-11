@@ -72,7 +72,7 @@ export default function Scene() {
         ))}
 
         {/* Modèle en mouvement */}
-        <MovingModel position={[0, 0, 0]} trees={trees} onPadEnter={() => setShowForm(true)} />
+        <MovingModel position={[0, 0, 0]} trees={trees} onPadEnter={() => setShowForm(true)} isWalking={false} />
 
         {/* 🚀 Passer cameraRef à Ship */}
         <Ship position={[3, 1, -2]} isFlying={isFlying} cameraRef={cameraRef} />

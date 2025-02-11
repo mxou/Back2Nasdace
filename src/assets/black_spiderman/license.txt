@@ -1,0 +1,8 @@
+Model Information:
+* title:	Spider man
+* source:	https://sketchfab.com/3d-models/spider-man-ba4758e3b44e4b53b4d3ce24b58fc2da
+* author:	Carl_the_Car (https://sketchfab.com/Carl_the_Car)
+
+Model License:
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

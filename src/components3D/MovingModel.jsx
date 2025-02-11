@@ -1,15 +1,16 @@
 import "./../App.css";
 import React, { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { OrbitControls, useGLTF, useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 
 export default function MovingModel({ position, trees, onPadEnter }) {
   const ref = useRef();
-  const { scene } = useGLTF("./../src/assets/oiiacat/scene.gltf"); // Charge le modèle
+  const { scene, animations } = useGLTF("./../src/assets/black_spiderman/scene.gltf"); // Charge le modèle
   const [keys, setKeys] = useState({});
   const [isMoving, setIsMoving] = useState(false);
   const [collisionPlaying, setCollisionPlaying] = useState(false);
+  const { actions } = useAnimations(animations, ref); // 🔹 Récupère les animations
 
   // Sons
   const collisionSound = useRef(new Audio("./../src/assets/audio/mcoof.mp3")).current;
@@ -92,11 +93,12 @@ export default function MovingModel({ position, trees, onPadEnter }) {
 
     // Gestion du son de mouvement
     if (moving && !isMoving) {
-      if (rs6Sound.paused) {
-        rs6Sound.play();
-      }
+      actions["Idle"]?.stop();
+      actions["Bully Walking"]?.play();
       setIsMoving(true);
-    } else if (!moving) {
+    } else if (!moving && isMoving) {
+      actions["Bully Walking"]?.stop();
+      actions["Idle"]?.play();
       setIsMoving(false);
     }
 
