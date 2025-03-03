@@ -1,8 +1,0 @@
-Model Information:
-* title:	Jump Pad | Bumper Pad | Bounce Pad
-* source:	https://sketchfab.com/3d-models/jump-pad-bumper-pad-bounce-pad-8900ba36b56f4e458cb2af6313c205db
-* author:	Maxime66410 (https://sketchfab.com/Maxime66410)
-
-Model License:
-* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
-* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

@@ -12,6 +12,8 @@
   "dependencies": {
     "@react-three/drei": "^9.121.4",
     "@react-three/fiber": "^8.17.14",
+    "@react-three/rapier": "^1.5.0",
+    "ecctrl": "^1.0.92",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "three": "^0.173.0"

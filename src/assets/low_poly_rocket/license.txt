@@ -1,8 +1,0 @@
-Model Information:
-* title:	Low Poly Rocket
-* source:	https://sketchfab.com/3d-models/low-poly-rocket-89e69040a4874e789bd8d07f8b94d29a
-* author:	ThatBrianDude (https://sketchfab.com/ThatBrianDude)
-
-Model License:
-* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
-* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works

@@ -93,12 +93,12 @@ export default function MovingModel({ position, trees, onPadEnter }) {
 
     // Gestion du son de mouvement
     if (moving && !isMoving) {
-      actions["Idle"]?.stop();
-      actions["Bully Walking"]?.play();
+      actions["Idle"]?.fadeOut(0.2); // Rend l'animation "Idle" fluide
+      actions["Bully Walking"]?.reset().fadeIn(0.2).play(); // Active en douceur "Bully Walking"
       setIsMoving(true);
     } else if (!moving && isMoving) {
-      actions["Bully Walking"]?.stop();
-      actions["Idle"]?.play();
+      actions["Bully Walking"]?.fadeOut(0.2); // Stoppe la marche en douceur
+      actions["Idle"]?.reset().fadeIn(0.2).play(); // Revient doucement à "Idle"
       setIsMoving(false);
     }
 
@@ -118,5 +118,5 @@ export default function MovingModel({ position, trees, onPadEnter }) {
     }
   });
 
-  return <primitive ref={ref} object={scene} position={position} scale={[0.9, 0.9, 0.9]} />;
+  return <primitive ref={ref} object={scene} position={position} scale={[0.5, 0.5, 0.5]} />;
 }
