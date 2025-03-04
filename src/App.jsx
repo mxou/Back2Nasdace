@@ -4,11 +4,11 @@ import { Canvas } from "@react-three/fiber";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { Gltf, Environment, Fisheye, KeyboardControls } from "@react-three/drei";
 import Controller from "ecctrl";
-import Tree from "./Tree.jsx";
-import Ship from "./Ship.jsx";
+import Tree from "./components3D/Tree.jsx";
+import Rocket from "./components3D/Rocket.jsx";
+import Ship from "./components3D/Ship.jsx";
 
 function App() {
-  const [count, setCount] = useState(0);
   const keyboardMap = [
     { name: "forward", keys: ["ArrowUp", "KeyW"] },
     { name: "backward", keys: ["ArrowDown", "KeyS"] },
@@ -35,8 +35,8 @@ function App() {
           <Gltf castShadow receiveShadow scale={3} src="src/assets/modeles/jardin.gltf" />
 
           {/* <Tree castShadow receiveShadow position={[1, 1, 1]} /> */}
-          {/* <Ship position={[-7, 1.3, 2]} scale={[0.6, 0.6, 0.6]}></Ship> */}
         </RigidBody>
+        <Ship position={[19, 0.6, 2]} scale={[0.6, 0.6, 0.6]} />
       </Physics>
     </Canvas>
   );
