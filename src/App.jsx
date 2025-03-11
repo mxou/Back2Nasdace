@@ -10,10 +10,14 @@ function App() {
 
   useEffect(() => {
     const storedPlayer = localStorage.getItem("playerData");
+
     if (storedPlayer) {
       setPlayerData(JSON.parse(storedPlayer));
+      const timer = setTimeout(() => setLoading(false), 4000);
+      return () => clearTimeout(timer);
+    } else {
+      setLoading(false); // Pas de délai si aucun joueur n'est trouvé
     }
-    setLoading(false);
   }, []);
 
   const handlePlayerSubmit = (data) => {

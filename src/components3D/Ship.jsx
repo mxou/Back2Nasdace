@@ -1,11 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import { Physics, RigidBody } from "@react-three/rapier";
-import * as THREE from "three";
+import React, { useRef, useState } from "react";
+import { useFrame } from "@react-three/fiber";
+import { RigidBody } from "@react-three/rapier";
+import { Model } from "../components/Model";
 
-export default function Ship({ position, scale = [5, 5, 5] }) {
-  const { scene } = useGLTF("./src/assets/modeles/ship.glb");
+export default function Ship({ position = [0, 1, 0], scale = [5, 5, 5] }) {
   const shipRef = useRef();
   const [isFlying, setIsFlying] = useState(false);
 
@@ -17,8 +15,8 @@ export default function Ship({ position, scale = [5, 5, 5] }) {
   });
 
   return (
-    <RigidBody colliders="hull" gravityScale={1} restitution={0.5} type="dynamic" mass={5} friction={1}>
-      <primitive object={scene} position={position} scale={scale} ref={shipRef} onClick={() => setIsFlying(!isFlying)} />;
+    <RigidBody ref={shipRef} colliders="hull" gravityScale={1} restitution={0.5} type="dynamic" mass={5} friction={1} onClick={() => setIsFlying(!isFlying)}>
+      <Model scale={scale} />
     </RigidBody>
   );
 }

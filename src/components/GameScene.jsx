@@ -7,6 +7,7 @@ import Amogus from "../components3D/Amogus.jsx";
 import Ship from "../components3D/Ship.jsx";
 import Popup from "./Popup.jsx";
 import ClearStorageButton from "./ClearStorageButton.jsx";
+import Crosshair from "./Crosshair.jsx";
 
 export default function GameScene({ playerData }) {
   const playerRef = useRef();
@@ -42,12 +43,11 @@ export default function GameScene({ playerData }) {
             <Gltf castShadow receiveShadow scale={23} src="src/assets/modeles/Nature.glb" />
             <Amogus position={[10, -1.2, 11]} scale={[0.8, 0.8, 0.8]} playerRef={playerRef} />
           </RigidBody>
-          <Ship position={[15, 1, 17]} scale={[0.5, 0.5, 0.5]} />
+          <Ship position={[0, 1, 0]} />
         </Physics>
       </Canvas>
-
       <ClearStorageButton />
-
+      <Crosshair />
       {showPopup && <Popup message={`Bienvenue ${playerData.name} dans Back2NasdaceCity !`} />}
     </>
   );

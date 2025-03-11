@@ -45,7 +45,7 @@ export default function PlayerForm({ onSubmit }) {
           </div>
 
           <button type="submit" style={styles.button}>
-            <span>Lancer la mission</span>
+            <span>Lancer le voyage</span>
           </button>
         </form>
       </div>
