@@ -13,7 +13,7 @@ function App() {
 
     if (storedPlayer) {
       setPlayerData(JSON.parse(storedPlayer));
-      const timer = setTimeout(() => setLoading(false), 4000);
+      const timer = setTimeout(() => setLoading(false), 1000);
       return () => clearTimeout(timer);
     } else {
       setLoading(false); // Pas de délai si aucun joueur n'est trouvé

@@ -2,16 +2,18 @@ import React, { useState } from "react";
 
 export default function PlayerForm({ onSubmit }) {
   const [player, setPlayer] = useState({ name: "", age: "", taille: "" });
+  const [colorsShip, setColorsShip] = useState({ colorShip: "", colorLight: "", colorGlass: "" });
 
   const handleChange = (e) => {
     setPlayer({ ...player, [e.target.name]: e.target.value });
+    setColorsShip({ ...colorsShip, [e.target.name]: e.target.value });
     // Récupère l'état actuel de player (...player), target les inputs avec les propriétés names (genre name="age", name="name") et replace avec les nouvelles values
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     if (player.name && player.age && player.taille) {
-      onSubmit(player);
+      onSubmit(player, colorsShip);
     } else {
       alert("Veuillez remplir tous les champs !");
     }
@@ -42,6 +44,19 @@ export default function PlayerForm({ onSubmit }) {
               required
               style={styles.input}
             />
+          </div>
+
+          <div style={styles.inputGroup}>
+            <input
+              type="color"
+              name="colorShip"
+              placeholder="Couleur du corps du vaisseau"
+              value={colorsShip.colorShip}
+              onChange={handleChange}
+              style={styles.input}
+            />
+            <input type="color" name="colorLight" placeholder="Couleur des lights" value={colorsShip.colorLight} onChange={handleChange} style={styles.input} />
+            <input type="color" name="colorGlass" placeholder="Couleur du verre" value={colorsShip.colorGlass} onChange={handleChange} style={styles.input} />
           </div>
 
           <button type="submit" style={styles.button}>

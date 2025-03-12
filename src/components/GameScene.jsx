@@ -40,10 +40,10 @@ export default function GameScene({ playerData }) {
             </Controller>
           </KeyboardControls>
           <RigidBody type="fixed" colliders="trimesh">
-            <Gltf castShadow receiveShadow scale={23} src="src/assets/modeles/Nature.glb" />
+            <Gltf position={[10, 0, 5]} castShadow receiveShadow scale={125} src="src/assets/modeles/Island.glb" />
             <Amogus position={[10, -1.2, 11]} scale={[0.8, 0.8, 0.8]} playerRef={playerRef} />
           </RigidBody>
-          <Ship position={[0, 1, 0]} />
+          <Ship position={[10, 1, -8]} scale={6} colors={playerData} />
         </Physics>
       </Canvas>
       <ClearStorageButton />
