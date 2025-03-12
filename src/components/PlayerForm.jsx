@@ -46,17 +46,19 @@ export default function PlayerForm({ onSubmit }) {
             />
           </div>
 
-          <div style={styles.inputGroup}>
-            <input
-              type="color"
-              name="colorShip"
-              placeholder="Couleur du corps du vaisseau"
-              value={colorsShip.colorShip}
-              onChange={handleChange}
-              style={styles.input}
-            />
-            <input type="color" name="colorLight" placeholder="Couleur des lights" value={colorsShip.colorLight} onChange={handleChange} style={styles.input} />
-            <input type="color" name="colorGlass" placeholder="Couleur du verre" value={colorsShip.colorGlass} onChange={handleChange} style={styles.input} />
+          <div style={styles.inputGroupColors}>
+            <div>
+              <label htmlFor="colorShip">Couleur du vaisseau</label>
+              <input type="color" name="colorShip" value={colorsShip.colorShip} onChange={handleChange} style={styles.input} />
+            </div>
+            <div>
+              <label htmlFor="colorLight">Couleur des lights</label>
+              <input type="color" name="colorLight" value={colorsShip.colorLight} onChange={handleChange} style={styles.input} />
+            </div>
+            <div>
+              <label htmlFor="colorGlass">Couleur du verre</label>
+              <input type="color" name="colorGlass" placeholder="" value={colorsShip.colorGlass} onChange={handleChange} style={styles.input} />
+            </div>
           </div>
 
           <button type="submit" style={styles.button}>
@@ -129,6 +131,13 @@ const styles = {
     position: "relative",
     width: "100%",
     marginBottom: "10px",
+  },
+  inputGroupColors: {
+    position: "relative",
+    width: "100%",
+    marginBottom: "10px",
+    display: "flex",
+    flexDirection: "row",
   },
 
   input: {
