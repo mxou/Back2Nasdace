@@ -27,6 +27,7 @@ const styles = {
     borderBottom: "2px solid #fff",
     textAlign: "center",
     fontFamily: "Arial, sans-serif",
+    zIndex: 1000,
   },
   fuelContainer: {
     width: "80%",

@@ -4,8 +4,8 @@ import "./App.css";
 import PlayerForm from "./components/PlayerForm";
 import GameScene from "./components/GameScene";
 import Loader from "./components/Loader";
-import YourDevPage from "./pages/EndingScene"; // Votre page de développement
-import EndingScene from "./pages/EndingScene";
+import EndingScene from "./scenes/EndingScene";
+import ExplosionScene from "./scenes/ExplosionScene";
 
 function App() {
   const [playerData, setPlayerData] = useState(null);
@@ -54,6 +54,11 @@ function App() {
         <Route
           path="/dev/ending-scene"
           element={<EndingScene playerData={playerData} />}
+        />
+
+        <Route
+          path="/dev/explosion-scene"
+          element={<ExplosionScene playerData={playerData} />}
         />
 
         {/* Redirection si route inconnue */}
