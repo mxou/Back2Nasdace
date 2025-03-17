@@ -4,9 +4,9 @@ import "./App.css";
 import PlayerForm from "./components/PlayerForm";
 import GameScene from "./components/GameScene";
 import Loader from "./components/Loader";
-import YourDevPage from "./pages/EndingScene"; // Votre page de développement
+import MiddleScene from "./pages/MiddleScene";
 import EndingScene from "./pages/EndingScene";
-
+import GameOver from "./pages/GameOver";
 function App() {
   const [playerData, setPlayerData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -58,6 +58,10 @@ function App() {
         <Route
           path="/dev/MiddleScene"
           element={<MiddleScene playerData={playerData} />}
+        />
+        <Route
+          path="/GameOver"
+          element={<GameOver playerData={playerData} />}
         />
         {/* Redirection si route inconnue */}
         <Route path="*" element={<Navigate to="/" replace />} />
