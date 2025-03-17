@@ -9,10 +9,15 @@ import Popup from "./Popup.jsx";
 import ClearStorageButton from "./ClearStorageButton.jsx";
 import Crosshair from "./Crosshair.jsx";
 import Nasdace from "../components3D/Nasdace.jsx";
+import Quiz from "./Quiz.jsx";
+import NewScene from "../components3D/NewScene.jsx";
 
 export default function GameScene({ playerData }) {
   const playerRef = useRef();
   const [showPopup, setShowPopup] = useState(false);
+  const [showQuiz, setShowQuiz] = useState(false); // Afficher ou non le quiz
+  const [quizResult, setQuizResult] = useState(null); // Résultat du quiz
+  const [sceneChanged, setSceneChanged] = useState(false); // Suivi de l'état de la scène
 
   const keyboardMap = [
     { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -23,10 +28,27 @@ export default function GameScene({ playerData }) {
     { name: "run", keys: ["Shift"] },
   ];
 
+  const handleQuizStart = () => {
+    setShowQuiz(true); // Afficher le quiz
+  };
+
+  const handleQuizAnswer = (result) => {
+    setQuizResult(result); // Log du résultat
+    if (result === "Réussi") {
+      // Si l'utilisateur a réussi, on change de scène
+      setSceneChanged(true);
+    }
+    setShowQuiz(false); // Fermer le quiz après la réponse
+  };
+
   useEffect(() => {
     const timer = setTimeout(() => setShowPopup(true), 1000);
     return () => clearTimeout(timer);
   }, []);
+
+  if (sceneChanged) {
+    return <NewScene playerData={playerData} />;
+  }
 
   return (
     <>
@@ -42,7 +64,7 @@ export default function GameScene({ playerData }) {
           </KeyboardControls>
           <RigidBody type="fixed" colliders="trimesh">
             <Gltf position={[10, 0, 5]} castShadow receiveShadow scale={125} src="src/assets/modeles/Island.glb" />
-            <Amogus position={[10, -1.2, 11]} scale={[0.8, 0.8, 0.8]} playerRef={playerRef} />
+            <Amogus position={[1, -2.48, -14]} scale={[0.8, 0.8, 0.8]} playerRef={playerRef} onQuizStart={handleQuizStart} />
             <Nasdace position={[4, -4, 4]} scale={1} rotation={[0, 180, 0]} playerData={playerData} />
           </RigidBody>
           <Ship position={[10, 1, -8]} scale={6} colors={playerData} />
@@ -51,6 +73,28 @@ export default function GameScene({ playerData }) {
       <ClearStorageButton />
       <Crosshair />
       {showPopup && <Popup message={`Bienvenue ${playerData.name} dans Back2NasdaceCity !`} />}
+      {showQuiz && <Quiz onAnswer={handleQuizAnswer} onClose={() => setShowQuiz(false)} />}
+      {quizResult && (
+        <div style={styles.quizResult}>
+          <p>{quizResult}</p>
+        </div>
+      )}
     </>
   );
 }
+
+const styles = {
+  quizResult: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    padding: "20px",
+    borderRadius: "8px",
+    color: "white",
+    fontSize: "20px",
+    fontFamily: "Arial, sans-serif",
+    zIndex: 20,
+  },
+};

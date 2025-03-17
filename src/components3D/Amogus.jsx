@@ -3,7 +3,7 @@ import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { Html } from "@react-three/drei";
 
-export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShowForm }) {
+export default function Amogus({ position, scale = [5, 5, 5], playerRef, onQuizStart }) {
   const { scene } = useGLTF("src/assets/modeles/amogus.glb");
   const [isNear, setIsNear] = useState(false);
 
@@ -15,7 +15,7 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShow
       const playerPosition = playerRef.current.translation(); // Position du joueur
       const distance = Math.sqrt((playerPosition.x - position[0]) ** 2 + (playerPosition.z - position[2]) ** 2);
 
-      setIsNear(distance < 3);
+      setIsNear(distance < 5); // Proximité de 5 unités
     };
 
     const interval = setInterval(checkProximity, 500);
@@ -26,13 +26,13 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShow
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === "e" && isNear) {
-        setShowForm(true);
+        onQuizStart(); // Déclenche le quiz lorsqu'on appuie sur "E"
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isNear, setShowForm]);
+  }, [isNear, onQuizStart]);
 
   return (
     <RigidBody type="fixed" colliders="hull">
@@ -40,7 +40,7 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShow
 
       {/* Affichage du message si le joueur est proche */}
       {isNear && (
-        <Html position={[10, 1, 11]} center>
+        <Html position={[1, 1, -14]} center>
           <div style={styles.interactionText}>Press E to interact</div>
         </Html>
       )}
