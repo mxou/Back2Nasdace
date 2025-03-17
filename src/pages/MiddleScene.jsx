@@ -10,7 +10,7 @@ export default function MiddleScene() {
         fontSize: "24px",
       }}
     >
-      <h1>Bienvenue dans la Zone Test</h1>
+      <h1>Bienvenue dans la Zone Tests</h1>
       <p>Ici, tu peux tester tes fonctionnalités.</p>
     </div>
   );
