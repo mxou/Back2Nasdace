@@ -52,7 +52,7 @@ function App() {
 
         {/* Votre route de développement */}
         <Route
-          path="/dev/your-part"
+          path="/dev/ending-scene"
           element={<EndingScene playerData={playerData} />}
         />
         <Route
