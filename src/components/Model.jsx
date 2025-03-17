@@ -1,8 +1,14 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
 
-export function Model({ colorShip = "#ff0000", colorLight = "#00ff00", colorGlass = "#0000ff", colorBoost = "#ffff00", ...props }) {
-  const { nodes, materials } = useGLTF("./src/assets/modeles/ship.glb");
+export function Model({
+  colorShip = "#ff0000",
+  colorLight = "#00ff00",
+  colorGlass = "#0000ff",
+  colorBoost = "#ffff00",
+  ...props
+}) {
+  const { nodes, materials } = useGLTF("/src/assets/modeles/ship.glb");
 
   // Appliquer les couleurs dynamiquement
   materials.shipmetal.color.set(colorShip);
@@ -12,11 +18,43 @@ export function Model({ colorShip = "#ff0000", colorLight = "#00ff00", colorGlas
 
   return (
     <group {...props} dispose={null}>
-      <mesh castShadow receiveShadow geometry={nodes.ship.geometry} material={materials.shipmetal} scale={[0.857, 0.091, 0.857]} />
-      <mesh castShadow receiveShadow geometry={nodes.sidelight.geometry} material={materials.light} scale={[0.842, 0.0897, 0.842]} />
-      <mesh castShadow receiveShadow geometry={nodes.Sphere.geometry} material={materials.light} position={[0.711, 0.1, 0]} scale={0.0254} />
-      <mesh castShadow receiveShadow geometry={nodes.Sphere001.geometry} material={materials.glasse} position={[0, 0.1, 0]} scale={[0.455, 0.271, 0.455]} />
-      <mesh castShadow receiveShadow geometry={nodes.boost.geometry} material={materials["Material.002"]} scale={[0.857, 0.091, 0.857]} />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.ship.geometry}
+        material={materials.shipmetal}
+        scale={[0.857, 0.091, 0.857]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.sidelight.geometry}
+        material={materials.light}
+        scale={[0.842, 0.0897, 0.842]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Sphere.geometry}
+        material={materials.light}
+        position={[0.711, 0.1, 0]}
+        scale={0.0254}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.Sphere001.geometry}
+        material={materials.glasse}
+        position={[0, 0.1, 0]}
+        scale={[0.455, 0.271, 0.455]}
+      />
+      <mesh
+        castShadow
+        receiveShadow
+        geometry={nodes.boost.geometry}
+        material={materials["Material.002"]}
+        scale={[0.857, 0.091, 0.857]}
+      />
       <mesh
         castShadow
         receiveShadow
