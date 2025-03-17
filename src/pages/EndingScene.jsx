@@ -6,16 +6,15 @@ import Ship from "../components3D/Ship";
 import ATH from "../components/ATH";
 import { useState } from "react";
 import Dialogues from "../components/Dialogues";
-import dialogData from "../assets/dialogues/dialog.json";
+import dialogIa from "../assets/dialogues/ia-folle.json";
 
 export default function EndingScene({ playerData }) {
-  console.log(playerData);
   const [showDialog, setShowDialog] = useState(true);
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <ATH showChrono={false} />
       {showDialog && (
-        <Dialogues dialogFile={dialogData} onEnd={() => setShowDialog(false)} />
+        <Dialogues dialogFile={dialogIa} onEnd={() => setShowDialog(false)} />
       )}
       <Canvas shadows camera={{ position: [0, 5, 10], fov: 45 }}>
         {/* Fond étoilé */}

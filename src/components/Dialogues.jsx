@@ -1,16 +1,20 @@
 import { useState } from "react";
-import nasdacePic from "/src/assets/images/nasdace.jpg";
 
 export default function Dialogues({ dialogFile, onEnd }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const images = import.meta.glob("/src/assets/images/*.jpg", { eager: true });
 
   const handleNext = () => {
     if (currentIndex < dialogFile.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      if (onEnd) onEnd(); // Permet d’exécuter une action à la fin du dialogue
+      if (onEnd) onEnd(); // Exécuter une action à la fin du dialogue
     }
   };
+
+  // Récupérer le chemin de l'image en fonction du nom de l'intervenant
+  const currentDialog = dialogFile[currentIndex];
+  const imagePath = images[`/src/assets/images/${currentDialog.name}.jpg`];
 
   return (
     <div
@@ -26,21 +30,29 @@ export default function Dialogues({ dialogFile, onEnd }) {
         display: "flex",
         alignItems: "center",
         cursor: "pointer",
-        zIndex: 1000, // Force le dialogue au premier plan
-        pointerEvents: "auto", // Permet les clics
+        zIndex: 1000,
+        pointerEvents: "auto",
+        width: "40vw",
+        height: "100px",
       }}
       onClick={handleNext}
     >
       <div style={{ marginRight: "10px" }}>
-        <img
-          src={nasdacePic}
-          alt=""
-          style={{ width: "80px", borderRadius: "50%" }}
-        />
+        {imagePath && (
+          <img
+            src={imagePath.default}
+            alt={currentDialog.name}
+            style={{
+              width: "80px",
+              height: "80px",
+              borderRadius: "50%",
+            }}
+          />
+        )}
       </div>
-      <div>
-        <h2>{dialogFile[currentIndex].name}</h2>
-        <p>{dialogFile[currentIndex].text}</p>
+      <div style={{ textAlign: "left", height: "100%" }}>
+        <h2 style={{ marginBottom: "5px" }}>{currentDialog.name}</h2>
+        <p>{currentDialog.text}</p>
       </div>
     </div>
   );
