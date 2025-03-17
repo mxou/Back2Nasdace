@@ -2,7 +2,11 @@ import React, { useState } from "react";
 
 export default function PlayerForm({ onSubmit }) {
   const [player, setPlayer] = useState({ name: "", age: "", taille: "" });
-  const [colorsShip, setColorsShip] = useState({ colorShip: "", colorLight: "", colorGlass: "" });
+  const [colorsShip, setColorsShip] = useState({
+    colorShip: "",
+    colorLight: "",
+    colorGlass: "",
+  });
 
   const handleChange = (e) => {
     setPlayer({ ...player, [e.target.name]: e.target.value });
@@ -23,15 +27,33 @@ export default function PlayerForm({ onSubmit }) {
     <div style={styles.formContainer}>
       <div style={styles.formContent}>
         <h2 style={styles.title}>Bienvenue dans Back2NasdaceCity</h2>
-        <p style={styles.subtitle}>Avant de commencer, entrez vos informations :</p>
+        <p style={styles.subtitle}>
+          Avant de commencer, entrez vos informations :
+        </p>
 
         <form onSubmit={handleSubmit} style={styles.form}>
           <div style={styles.inputGroup}>
-            <input type="text" name="name" placeholder="Nom du voyageur" value={player.name} onChange={handleChange} required style={styles.input} />
+            <input
+              type="text"
+              name="name"
+              placeholder="Nom du voyageur"
+              value={player.name}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
           </div>
 
           <div style={styles.inputGroup}>
-            <input type="number" name="age" placeholder="Âge terrestre" value={player.age} onChange={handleChange} required style={styles.input} />
+            <input
+              type="number"
+              name="age"
+              placeholder="Âge terrestre"
+              value={player.age}
+              onChange={handleChange}
+              required
+              style={styles.input}
+            />
           </div>
 
           <div style={styles.inputGroup}>
@@ -49,15 +71,34 @@ export default function PlayerForm({ onSubmit }) {
           <div style={styles.inputGroupColors}>
             <div>
               <label htmlFor="colorShip">Couleur du vaisseau</label>
-              <input type="color" name="colorShip" value={colorsShip.colorShip} onChange={handleChange} style={styles.input} />
+              <input
+                type="color"
+                name="colorShip"
+                value={colorsShip.colorShip}
+                onChange={handleChange}
+                style={styles.input}
+              />
             </div>
             <div>
               <label htmlFor="colorLight">Couleur des lights</label>
-              <input type="color" name="colorLight" value={colorsShip.colorLight} onChange={handleChange} style={styles.input} />
+              <input
+                type="color"
+                name="colorLight"
+                value={colorsShip.colorLight}
+                onChange={handleChange}
+                style={styles.input}
+              />
             </div>
             <div>
               <label htmlFor="colorGlass">Couleur du verre</label>
-              <input type="color" name="colorGlass" placeholder="" value={colorsShip.colorGlass} onChange={handleChange} style={styles.input} />
+              <input
+                type="color"
+                name="colorGlass"
+                placeholder=""
+                value={colorsShip.colorGlass}
+                onChange={handleChange}
+                style={styles.input}
+              />
             </div>
           </div>
 
@@ -95,7 +136,8 @@ const styles = {
     maxWidth: "480px",
     backdropFilter: "blur(10px)",
     border: "1px solid rgba(64, 194, 255, 0.3)",
-    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(64, 194, 255, 0.4), inset 0 0 15px rgba(64, 194, 255, 0.2)",
+    boxShadow:
+      "0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(64, 194, 255, 0.4), inset 0 0 15px rgba(64, 194, 255, 0.2)",
     position: "relative",
     animation: "pulse 4s ease-in-out infinite",
     transform: "translateY(0px)",
@@ -154,7 +196,8 @@ const styles = {
     outline: "none",
     "&:focus": {
       borderColor: "#0ff",
-      boxShadow: "0 0 10px rgba(64, 194, 255, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.5)",
+      boxShadow:
+        "0 0 10px rgba(64, 194, 255, 0.5), inset 0 2px 10px rgba(0, 0, 0, 0.5)",
     },
     "&::placeholder": {
       color: "rgba(135, 206, 250, 0.5)",

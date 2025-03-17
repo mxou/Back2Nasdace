@@ -55,7 +55,10 @@ function App() {
           path="/dev/your-part"
           element={<EndingScene playerData={playerData} />}
         />
-
+        <Route
+          path="/dev/MiddleScene"
+          element={<MiddleScene playerData={playerData} />}
+        />
         {/* Redirection si route inconnue */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
