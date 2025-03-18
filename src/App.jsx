@@ -1,8 +1,11 @@
+// App.jsx
 import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import PlayerForm from "./components/PlayerForm";
 import GameScene from "./components/GameScene";
 import Loader from "./components/Loader";
+import Takeoff from "./Takeoff";
 
 function App() {
   const [playerData, setPlayerData] = useState(null);
@@ -27,7 +30,17 @@ function App() {
 
   if (loading) return <Loader />;
 
-  return <>{playerData ? <GameScene playerData={playerData} /> : <PlayerForm onSubmit={handlePlayerSubmit} />}</>;
+  return (
+    <Router>
+      <Routes>
+        {/* Route vers le formulaire de joueur */}
+        <Route path="/" element={playerData ? <GameScene playerData={playerData} /> : <PlayerForm onSubmit={handlePlayerSubmit} />} />
+
+        {/* Exemple de route vers Takeoff */}
+        <Route path="/Takeoff" element={<Takeoff playerData={playerData} />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

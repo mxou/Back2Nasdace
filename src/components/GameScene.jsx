@@ -3,6 +3,7 @@ import { Canvas, useThree } from "@react-three/fiber";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { Gltf, Environment, KeyboardControls } from "@react-three/drei";
 import Controller from "ecctrl";
+import { useNavigate } from "react-router-dom";
 import Amogus from "../components3D/Amogus.jsx";
 import Ship from "../components3D/Ship.jsx";
 import Popup from "./Popup.jsx";
@@ -18,6 +19,7 @@ export default function GameScene({ playerData }) {
   const [showQuiz, setShowQuiz] = useState(false); // Afficher ou non le quiz
   const [quizResult, setQuizResult] = useState(null); // Résultat du quiz
   const [sceneChanged, setSceneChanged] = useState(false); // Suivi de l'état de la scène
+  const navigate = useNavigate();
 
   const keyboardMap = [
     { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -36,7 +38,8 @@ export default function GameScene({ playerData }) {
     setQuizResult(result); // Log du résultat
     if (result === "Réussi") {
       // Si l'utilisateur a réussi, on change de scène
-      setSceneChanged(true);
+      // setSceneChanged(true);
+      navigate("/Takeoff");
     }
     setShowQuiz(false); // Fermer le quiz après la réponse
   };
