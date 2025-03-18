@@ -73,7 +73,7 @@ export default function GameScene({ playerData }) {
             <Amogus position={[1, -2.48, -14]} scale={[0.8, 0.8, 0.8]} playerRef={playerRef} onQuizStart={handleQuizStart} />
             <Nasdace position={[4, -4, 4]} scale={1} rotation={[0, 180, 0]} playerData={playerData} />
           </RigidBody>
-          <Ship position={[10, 1, -8]} scale={6} colors={playerData} />
+          <Ship position={[10, -1.8, -8]} scale={6} colors={playerData} />
         </Physics>
       </Canvas>
       <ClearStorageButton />

@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import "./styles/Quiz.css";
 
 const Quiz = ({ onAnswer, onClose }) => {
   // Question du quiz et ses options
-  const question = "Quelle est la capitale de la France ?";
-  const options = ["Paris", "Londres", "Berlin", "Madrid"];
-  const correctAnswer = "Paris";
+  const question =
+    "Pour entrer dans le vaisseau, tu devras répondre a une question. Combien de temps faut il en moyenne pour faire le trajet Terre - Mars dans de bonne conditions ?";
+  const options = ["2-5 mois", "6-9 mois", "2 heures si on prend l'autoroute A6", "1 an et 6 mois"];
+  //
+  const correctAnswer = "6-9 mois";
 
   const [selectedAnswer, setSelectedAnswer] = useState(null);
 
@@ -18,51 +21,22 @@ const Quiz = ({ onAnswer, onClose }) => {
   };
 
   return (
-    <div style={styles.quizContainer}>
-      <h2>{question}</h2>
-      {options.map((option, index) => (
-        <button key={index} onClick={() => handleAnswer(option)} style={styles.option}>
-          {option}
+    <div className="quiz-container">
+      <div className="quiz-content">
+        <h2 className="quiz-question">{question}</h2>
+        <div className="quiz-options-grid">
+          {options.map((option, index) => (
+            <button key={index} onClick={() => handleAnswer(option)} className={`quiz-option ${selectedAnswer === option ? "selected" : ""}`}>
+              {option}
+            </button>
+          ))}
+        </div>
+        <button onClick={onClose} className="quiz-close-button">
+          Fermer
         </button>
-      ))}
-      <button onClick={onClose} style={styles.closeButton}>
-        Fermer
-      </button>
+      </div>
     </div>
   );
-};
-
-const styles = {
-  quizContainer: {
-    position: "absolute",
-    top: "20%",
-    left: "50%",
-    transform: "translateX(-50%)",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    padding: "20px",
-    borderRadius: "8px",
-    color: "white",
-    fontFamily: "Arial, sans-serif",
-    zIndex: 10,
-  },
-  option: {
-    backgroundColor: "#3d3d3d",
-    border: "none",
-    color: "white",
-    padding: "10px 20px",
-    margin: "5px",
-    cursor: "pointer",
-    borderRadius: "5px",
-  },
-  closeButton: {
-    marginTop: "10px",
-    padding: "10px 20px",
-    backgroundColor: "#ff4f4f",
-    border: "none",
-    color: "white",
-    borderRadius: "5px",
-    cursor: "pointer",
-  },
 };
 
 export default Quiz;

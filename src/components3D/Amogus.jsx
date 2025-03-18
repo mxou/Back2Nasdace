@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { Html } from "@react-three/drei";
+import "./styles/Amogus.css";
 
 export default function Amogus({ position, scale = [5, 5, 5], playerRef, onQuizStart }) {
   const { scene } = useGLTF("src/assets/modeles/amogus.glb");
@@ -41,7 +42,9 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, onQuizS
       {/* Affichage du message si le joueur est proche */}
       {isNear && (
         <Html position={[1, 1, -14]} center>
-          <div style={styles.interactionText}>Press E to interact</div>
+          <div className="interaction-message">
+            <span className="key">E</span> <span className="instruction">pour intéragir</span>
+          </div>
         </Html>
       )}
     </RigidBody>

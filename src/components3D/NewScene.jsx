@@ -10,7 +10,7 @@ import ControlPannel from "../components/ControlPannel.jsx";
 export default function NewScene({ playerData }) {
   const cameraRef = useRef();
   const targetRef = useRef(); // Création d'une référence pour la cible à regarder
-  const targetPosition = [0, 1, 0]; // Position de la cible à regarder, tu peux la changer
+  const targetPosition = [0, 1, 0]; // Position de la cible à regarder
   const [showPopup, setShowPopup] = useState(false);
   const [showControlPannel, setShowControlPannel] = useState(false);
   const [takeoff, setTakeoff] = useState(false);
