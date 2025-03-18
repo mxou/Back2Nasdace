@@ -24,9 +24,9 @@ export default function MiddleScene() {
         {/* Les autres composants */}
         <ATH showChrono={false} fuel={fuel} />
         {/* <Quiz setter={setFuel} fuel={fuel} /> */}
-        <SpaceshipGame />
+        {/* <SpaceshipGame setter={setFuel} fuel={fuel} /> */}
 
-        {/* <Blaster setter={setFuel} fuel={fuel} /> */}
+        <Blaster setter={setFuel} fuel={fuel} />
       </div>
     </div>
   );

@@ -1,34 +1,21 @@
-import React, { useRef, useState } from "react";
-import { useFrame } from "@react-three/fiber";
-import { RigidBody } from "@react-three/rapier";
+// Ship.js
+import React, { forwardRef } from "react";
 import { Model } from "../components/Model";
 
-export default function Ship({
-  position = [0, 0, 0],
-  scale = [4, 4, 4],
-  colors,
-  gravity = 1,
-}) {
-  const shipRef = useRef();
-  const [isFlying, setIsFlying] = useState(false);
-
-  // États pour les couleurs
-  const [colorShip, setColorShip] = useState("#ff0000");
-  const [colorLight, setColorLight] = useState("#00ff00");
-  const [colorGlass, setColorGlass] = useState("#0000ff");
-  const [colorBoost, setColorBoost] = useState("#ffff00");
-
-  return (
-    <RigidBody
-      ref={shipRef}
-      colliders="hull"
-      gravityScale={gravity}
-      restitution={0.5}
-      type="dynamic"
-      mass={5}
-      friction={1}
-      onClick={() => setIsFlying(!isFlying)}
-    >
+const Ship = forwardRef(
+  (
+    {
+      position = [0, 0, 0],
+      scale = [4, 4, 4],
+      colors = {
+        colorShip: "#4a4a4a",
+        colorLight: "#f9d71c",
+        colorGlass: "#8ab4f8",
+      },
+    },
+    ref
+  ) => {
+    return (
       <Model
         position={position}
         scale={scale}
@@ -36,6 +23,9 @@ export default function Ship({
         colorLight={colors.colorLight}
         colorGlass={colors.colorGlass}
       />
-    </RigidBody>
-  );
-}
+    );
+  }
+);
+
+Ship.displayName = "Ship";
+export default Ship;

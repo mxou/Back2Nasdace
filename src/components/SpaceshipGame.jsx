@@ -1,350 +1,290 @@
-import React, { useRef, useEffect, useState } from "react";
-import * as THREE from "three";
+// SpaceshipGame.js
+import React, { useRef, useEffect, useState, Suspense } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Physics, RigidBody } from "@react-three/rapier";
+import { Environment, useGLTF } from "@react-three/drei";
+import { useNavigate } from "react-router-dom";
+import Ship from "../components3D/Ship";
+import galaxyImage from "../assets/images/space.jpg";
 
-const SpaceshipGame = () => {
-  const mountRef = useRef(null);
-  const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(false);
-  const gameRef = useRef({
-    scene: null,
-    camera: null,
-    renderer: null,
-    ship: null,
-    asteroids: [],
-    keys: {
-      ArrowUp: false,
-      ArrowDown: false,
-      ArrowLeft: false,
-      ArrowRight: false,
-    },
-    speed: 0.15,
-    frameId: null,
-    lastAsteroidTime: 0,
-    asteroidInterval: 750, // ms entre chaque astéroïde
-    gameActive: true,
+// Composant pour charger le modèle 3D d'astéroïde
+const AsteroidModel = ({ scale = 1 }) => {
+  const modelRef = useRef();
+  const { scene } = useGLTF("/src/assets/modeles/asteroid_1.glb"); // Chemin relatif
+  // Rotation aléatoire pour chaque astéroïde
+  const rotX = useRef(Math.random() * 0.01);
+  const rotY = useRef(Math.random() * 0.01);
+  const rotZ = useRef(Math.random() * 0.01);
+
+  useFrame(() => {
+    if (modelRef.current) {
+      modelRef.current.rotation.x += rotX.current;
+      modelRef.current.rotation.y += rotY.current;
+      modelRef.current.rotation.z += rotZ.current;
+    }
   });
 
-  useEffect(() => {
-    // Initialisation
-    const game = gameRef.current;
-    const width = mountRef.current.clientWidth;
-    const height = mountRef.current.clientHeight;
+  return (
+    <group ref={modelRef} scale={scale}>
+      <primitive object={scene} />
+    </group>
+  );
+};
 
-    // Création de la scène
-    game.scene = new THREE.Scene();
-    game.scene.background = new THREE.Color(0x000020);
+// Composant pour les astéroïdes avec la physique
+const Asteroid = ({ position, speed, onCollision }) => {
+  const asteroidRef = useRef();
+  const lastCollisionTime = useRef(0);
 
-    // Caméra et renderer
-    game.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    game.camera.position.z = 15;
+  // Taille aléatoire pour plus de variété
+  const scale = useRef(0.5 + Math.random() * 0.5);
 
-    game.renderer = new THREE.WebGLRenderer({ antialias: true });
-    game.renderer.setSize(width, height);
-    mountRef.current.appendChild(game.renderer.domElement);
+  useFrame(() => {
+    if (asteroidRef.current) {
+      // Mouvement des astéroïdes
+      asteroidRef.current.setTranslation({
+        x: asteroidRef.current.translation().x,
+        y: asteroidRef.current.translation().y - speed,
+        z: 0,
+      });
 
-    // Éclairage
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-    game.scene.add(ambientLight);
+      // Repositionnement lorsque l'astéroïde sort de l'écran
+      if (asteroidRef.current.translation().y < -10) {
+        asteroidRef.current.setTranslation({
+          x: Math.random() * 8 - 4,
+          y: 15 + Math.random() * 5,
+          z: 0,
+        });
 
-    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    directionalLight.position.set(0, 1, 1);
-    game.scene.add(directionalLight);
-
-    // Création du vaisseau spatial
-    const shipGeometry = new THREE.ConeGeometry(0.5, 1.5, 16);
-    const shipMaterial = new THREE.MeshPhongMaterial({ color: 0x3399ff });
-    game.ship = new THREE.Mesh(shipGeometry, shipMaterial);
-    game.ship.rotation.x = Math.PI / 2;
-    game.ship.position.y = 0;
-    game.scene.add(game.ship);
-
-    // Gestionnaires d'événements pour le contrôle du clavier
-    const handleKeyDown = (e) => {
-      if (game.keys.hasOwnProperty(e.key)) {
-        game.keys[e.key] = true;
+        // Nouvelle taille aléatoire
+        scale.current = 0.5 + Math.random() * 0.5;
       }
+
+      // Vérification de distance pour simuler une collision visuelle
+      const shipPosition = onCollision.getShipPosition();
+      if (shipPosition) {
+        const dx = asteroidRef.current.translation().x - shipPosition.x;
+        const dy = asteroidRef.current.translation().y - shipPosition.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Collision avec rayon ajusté
+        const now = Date.now();
+        if (distance < 1.8 && now - lastCollisionTime.current > 1000) {
+          lastCollisionTime.current = now;
+          onCollision.triggerEffect();
+        }
+      }
+    }
+  });
+
+  return (
+    <RigidBody
+      ref={asteroidRef}
+      position={position}
+      type="kinematicPosition"
+      colliders="ball"
+      sensor={true}
+    >
+      <AsteroidModel scale={scale.current} />
+    </RigidBody>
+  );
+};
+
+// Composant pour le vaisseau et son contrôle - À l'intérieur du Canvas
+const GameScene = ({ keysPressed, onCollision }) => {
+  const shipRef = useRef(null);
+
+  useFrame(() => {
+    if (shipRef.current) {
+      let moveX = 0;
+      let moveY = 0;
+      const moveSpeed = 0.1; // Vitesse réduite pour plus de fluidité
+
+      // Lecture des touches pressées pour déterminer le mouvement
+      if (keysPressed.current["ArrowUp"]) moveY = moveSpeed;
+      if (keysPressed.current["ArrowDown"]) moveY = -moveSpeed;
+      if (keysPressed.current["ArrowLeft"]) moveX = -moveSpeed;
+      if (keysPressed.current["ArrowRight"]) moveX = moveSpeed;
+
+      if (moveX === 0 && moveY === 0) return;
+
+      // Position actuelle
+      const currentX = shipRef.current.translation().x;
+      const currentY = shipRef.current.translation().y;
+
+      // Limites du jeu
+      const xLimit = 6;
+      const yLimit = 4;
+
+      // Nouvelle position avec limites strictes
+      const newX = Math.max(-xLimit, Math.min(xLimit, currentX + moveX));
+      const newY = Math.max(-yLimit, Math.min(yLimit, currentY + moveY));
+
+      // Application de la nouvelle position sans autre effet physique
+      shipRef.current.setTranslation({
+        x: newX,
+        y: newY,
+        z: 0,
+      });
+    }
+  });
+
+  // Fonction pour obtenir la position actuelle du vaisseau
+  const getShipPosition = () => {
+    if (shipRef.current) {
+      return {
+        x: shipRef.current.translation().x,
+        y: shipRef.current.translation().y,
+      };
+    }
+    return null;
+  };
+
+  // Moins d'astéroïdes
+  const asteroidCount = 3;
+  // Vitesse plus lente
+  const asteroidSpeed = 0.02;
+
+  return (
+    <>
+      <Environment preset="night" />
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[0, 10, 10]} intensity={1} />
+      <Physics>
+        <RigidBody
+          ref={shipRef}
+          type="kinematicPosition"
+          name="ship"
+          lockRotations={true}
+          enabledRotations={[false, false, false]}
+          linearDamping={100}
+          angularDamping={100}
+          mass={0}
+          ccd={true}
+          sensor={true}
+        >
+          <Ship
+            position={[0, -3, 0]}
+            scale={[2, 2, 2]}
+            colors={{
+              colorShip: "#4a4a4a",
+              colorLight: "#f9d71c",
+              colorGlass: "#8ab4f8",
+            }}
+          />
+        </RigidBody>
+
+        {/* Génération d'astéroïdes avec modèle 3D */}
+        {[...Array(asteroidCount)].map((_, i) => (
+          <Asteroid
+            key={i}
+            position={[
+              Math.random() * 8 - 4,
+              10 + i * 5, // Distribution verticale pour éviter le groupement
+              0,
+            ]}
+            speed={asteroidSpeed}
+            onCollision={{
+              getShipPosition: getShipPosition,
+              triggerEffect: onCollision,
+            }}
+          />
+        ))}
+      </Physics>
+    </>
+  );
+};
+
+// Composant principal
+const SpaceshipGame = ({ setter, fuel }) => {
+  const navigate = useNavigate();
+  const keysPressed = useRef({});
+  const containerRef = useRef(null);
+  const lastCollisionTime = useRef(0);
+  const [hitEffect, setHitEffect] = useState(false);
+
+  useEffect(() => {
+    if (fuel <= 0) {
+      navigate("/gameover");
+    }
+  }, [fuel, navigate]);
+
+  // Gestion des touches enfoncées pour un mouvement fluide
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      keysPressed.current[e.key] = true;
     };
 
     const handleKeyUp = (e) => {
-      if (game.keys.hasOwnProperty(e.key)) {
-        game.keys[e.key] = false;
-      }
+      keysPressed.current[e.key] = false;
     };
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
-    // Fonction pour créer plusieurs astéroïdes à chaque vague
-    const createMultipleAsteroids = () => {
-      const asteroidCount = Math.min(5, Math.floor(score / 10) + 1); // Le nombre d'astéroïdes augmente avec le score
-      for (let i = 0; i < asteroidCount; i++) {
-        createAsteroid(); // Appel à la fonction de création d'un astéroïde existante
-      }
-    };
-
-    // Fonction pour obtenir un multiplicateur de vitesse des astéroïdes en fonction du score
-    const getAsteroidSpeedMultiplier = () => {
-      return 1 + Math.floor(score / 10) * 0.1; // Augmente la vitesse de 10% toutes les 10 unités de score
-    };
-
-    // Fonction pour créer un astéroïde
-    const createAsteroid = () => {
-      const size = Math.random() * 0.8 + 0.6;
-      const asteroidGeometry = new THREE.IcosahedronGeometry(size, 0);
-      const asteroidMaterial = new THREE.MeshPhongMaterial({
-        color: 0x888888,
-        flatShading: true,
-      });
-
-      const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
-
-      // Position aléatoire en haut de l'écran
-      asteroid.position.x = (Math.random() - 0.5) * 12;
-      asteroid.position.y = 10;
-      asteroid.position.z = 0;
-
-      // Vitesse et rotation des astéroïdes, avec la multiplication de la vitesse en fonction du score
-      const speedMultiplier = getAsteroidSpeedMultiplier();
-      asteroid.userData = {
-        velocity: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.05 * speedMultiplier,
-          -(Math.random() * 0.15 + 0.05) * speedMultiplier,
-          0
-        ),
-        rotationSpeed: {
-          x: Math.random() * 0.05,
-          y: Math.random() * 0.05,
-          z: Math.random() * 0.05,
-        },
-      };
-
-      game.scene.add(asteroid);
-      game.asteroids.push(asteroid);
-    };
-
-    // Vérification des collisions
-    const checkCollisions = () => {
-      if (!game.ship || !game.gameActive) return false;
-
-      const shipPosition = game.ship.position.clone();
-      const shipSize = 0.6; // Rayon approximatif du vaisseau
-
-      for (let asteroid of game.asteroids) {
-        const asteroidPosition = asteroid.position.clone();
-        const distance = shipPosition.distanceTo(asteroidPosition);
-        const asteroidSize = asteroid.geometry.parameters.radius;
-
-        if (distance < shipSize + asteroidSize) {
-          return true; // Collision détectée
-        }
-      }
-
-      return false; // Pas de collision
-    };
-
-    // Boucle d'animation principale
-    const animate = () => {
-      const game = gameRef.current;
-      if (!game.gameActive) return;
-
-      // Déplacement du vaisseau
-      if (game.keys.ArrowUp && game.ship.position.y < 8) {
-        game.ship.position.y += game.speed;
-      }
-      if (game.keys.ArrowDown && game.ship.position.y > -8) {
-        game.ship.position.y -= game.speed;
-      }
-      if (game.keys.ArrowLeft && game.ship.position.x > -8) {
-        game.ship.position.x -= game.speed;
-      }
-      if (game.keys.ArrowRight && game.ship.position.x < 8) {
-        game.ship.position.x += game.speed;
-      }
-
-      // Génération d'astéroïdes (plus d'astéroïdes à chaque vague)
-      const now = Date.now();
-      if (now - game.lastAsteroidTime > game.asteroidInterval) {
-        createMultipleAsteroids(); // Appelle la nouvelle fonction pour générer plus d'astéroïdes
-        game.lastAsteroidTime = now;
-
-        // Augmentation progressive de la difficulté en réduisant l'intervalle de génération des astéroïdes
-        game.asteroidInterval = Math.max(500, game.asteroidInterval - 50);
-      }
-
-      // Mise à jour des astéroïdes
-      for (let i = game.asteroids.length - 1; i >= 0; i--) {
-        const asteroid = game.asteroids[i];
-
-        // Mise à jour de la position
-        asteroid.position.add(asteroid.userData.velocity);
-
-        // Rotation
-        asteroid.rotation.x += asteroid.userData.rotationSpeed.x;
-        asteroid.rotation.y += asteroid.userData.rotationSpeed.y;
-        asteroid.rotation.z += asteroid.userData.rotationSpeed.z;
-
-        // Suppression des astéroïdes hors de l'écran
-        if (asteroid.position.y < -10) {
-          game.scene.remove(asteroid);
-          game.asteroids.splice(i, 1);
-          setScore((prevScore) => prevScore + 1); // Augmentation du score
-        }
-      }
-
-      // Vérification des collisions
-      if (checkCollisions()) {
-        game.gameActive = false;
-        setGameOver(true);
-      }
-
-      // Rendu
-      game.renderer.render(game.scene, game.camera);
-      game.frameId = requestAnimationFrame(animate);
-    };
-
-    // Démarrage de l'animation
-    animate();
-
-    // Nettoyage
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
-      cancelAnimationFrame(game.frameId);
-      if (mountRef.current && game.renderer?.domElement) {
-        mountRef.current.removeChild(game.renderer.domElement);
-      }
     };
   }, []);
 
-  const restartGame = () => {
-    const game = gameRef.current;
+  // Gestion de la collision avec un astéroïde - effet visuel uniquement
+  const handleAsteroidCollision = () => {
+    const now = Date.now();
+    // Empêcher les collisions multiples trop rapides (cooldown de 1 seconde)
+    if (now - lastCollisionTime.current > 1000) {
+      lastCollisionTime.current = now;
+      setter((prev) => {
+        const newFuel = Math.max(0, prev - 10);
+        console.log("Collision! Fuel:", newFuel);
+        return newFuel;
+      });
 
-    // Réinitialisation des variables de jeu
-    game.gameActive = true;
-    setGameOver(false);
-    setScore(0);
-
-    // Réinitialisation de la position du vaisseau
-    if (game.ship) {
-      game.ship.position.set(0, 0, 0);
-    }
-
-    // Suppression de tous les astéroïdes
-    for (let asteroid of game.asteroids) {
-      game.scene.remove(asteroid);
-    }
-    game.asteroids = [];
-
-    // Réinitialisation de l'intervalle des astéroïdes
-    game.lastAsteroidTime = Date.now();
-    game.asteroidInterval = 1500;
-
-    // Redémarrage de l'animation
-    if (!game.frameId) {
-      const animate = () => {
-        const game = gameRef.current;
-        if (!game.gameActive) return;
-
-        // Code d'animation similaire à celui ci-dessus
-        // ...
-
-        game.renderer.render(game.scene, game.camera);
-        game.frameId = requestAnimationFrame(animate);
-      };
-
-      animate();
+      // Effet visuel temporaire lors d'une collision
+      setHitEffect(true);
+      setTimeout(() => setHitEffect(false), 300);
     }
   };
 
   return (
-    <div>
-      <style>
-        {`
-          .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background-color: #1d1d3d;
-            color: white;
-            font-family: 'Arial', sans-serif;
-          }
-          .game-container {
-            position: relative;
-            width: 100%;
-            height: 600px;
-            max-width: 900px;
-            border: 2px solid #fff;
-            border-radius: 10px;
-            margin-top: 20px;
-            background-color: #000;
-          }
-          .score {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px 10px;
-            border-radius: 5px;
-          }
-          .gameOver-container {
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-          }
-          .gameOver {
-            font-size: 24px;
-            font-weight: bold;
-            color: #ff5733;
-          }
-          .finalScore {
-            margin-top: 10px;
-            font-size: 20px;
-          }
-          .restart {
-            margin-top: 20px;
-            background-color: #008cba;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-          }
-          .restart:hover {
-            background-color: #005f6b;
-          }
-          .instruction {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 14px;
-          }
-        `}
-      </style>
+    <div
+      ref={containerRef}
+      style={{
+        width: "100%",
+        height: "100vh",
+        position: "relative",
+        overflow: "hidden",
+        border: "2px solid #333",
+        backgroundImage: `url(${galaxyImage})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      {/* Effet de collision */}
+      {hitEffect && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(255, 0, 0, 0.2)",
+            zIndex: 5,
+            pointerEvents: "none",
+          }}
+        />
+      )}
 
-      <div className="container">
-        <div ref={mountRef} className="game-container" />
-
-        <div className="score">Score: {score}</div>
-
-        {gameOver && (
-          <div className="gameOver-container">
-            <h2 className="gameOver">Game Over</h2>
-            <p className="finalScore">Score final: {score}</p>
-            <button onClick={restartGame} className="restart">
-              Rejouer
-            </button>
-          </div>
-        )}
-
-        <div className="instruction">
-          Utilisez les flèches du clavier pour déplacer le vaisseau
-        </div>
-      </div>
+      <Canvas>
+        <Suspense fallback={null}>
+          <GameScene
+            keysPressed={keysPressed}
+            onCollision={handleAsteroidCollision}
+          />
+        </Suspense>
+      </Canvas>
     </div>
   );
 };

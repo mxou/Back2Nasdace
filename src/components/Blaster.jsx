@@ -3,41 +3,43 @@ import { useNavigate } from "react-router-dom";
 import victorySound from "./../assets/audio/success.mp3";
 import defeatSound from "./../assets/audio/fail.mp3";
 
-const Blaster = ({
-  onGameOver,
-  onScoreUpdate,
-  setter,
-  fuel,
-  vocabulary = [],
-}) => {
-  const [targets, setTargets] = useState([]);
+const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
+  const [threats, setThreats] = useState([]);
   const [score, setScore] = useState(0);
-  const [currentWord, setCurrentWord] = useState(null);
+  const [virusTarget, setVirusTarget] = useState(null);
   const [isGameActive, setIsGameActive] = useState(true);
   const [result, setResult] = useState("");
-  const [countdown, setCountdown] = useState(800);
+  const [countdown, setCountdown] = useState(8);
   const [laser, setLaser] = useState(null);
   const [containerDimensions, setContainerDimensions] = useState({
     width: 0,
     height: 0,
   });
-  const [selectedVocab, setSelectedVocab] = useState([]);
+  const [selectedEntities, setSelectedEntities] = useState([]);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [level, setLevel] = useState(1);
+  const [securityLevel, setSecurityLevel] = useState(1);
   const gameAreaRef = useRef(null);
   const spaceshipRef = useRef(null);
   const navigate = useNavigate();
 
-  const defaultVocabulary = [
-    { word: "planète", correct: true },
-    { word: "satellite", correct: true },
-    { word: "galaxie", correct: true },
-    { word: "étoile", correct: true },
-    { word: "météorite", correct: true },
-    { word: "voiture", correct: false },
-    { word: "ordinateur", correct: false },
+  // Types of cyber threats with their emojis
+  const threatTypes = [
+    { name: "ordinateur", emoji: "💻", isVirus: false },
+    { name: "smartphone", emoji: "📱", isVirus: false },
+    { name: "wifi", emoji: "📶", isVirus: false },
+    { name: "serveur", emoji: "🖥️", isVirus: false },
+    { name: "antenne", emoji: "📡", isVirus: false },
+    { name: "cloud", emoji: "☁️", isVirus: false },
+    { name: "carte-sd", emoji: "💾", isVirus: false },
+    { name: "cd", emoji: "💿", isVirus: false },
+    { name: "réseau", emoji: "🌐", isVirus: false },
+    { name: "robot", emoji: "🤖", isVirus: false },
+    { name: "chiffrement", emoji: "🔒", isVirus: false },
+    { name: "email", emoji: "📧", isVirus: false },
+    { name: "virus", emoji: "🦠", isVirus: true },
   ];
 
-  const vocabToUse = vocabulary.length > 0 ? vocabulary : defaultVocabulary;
   const victoryAudio = new Audio(victorySound);
   const defeatAudio = new Audio(defeatSound);
 
@@ -69,35 +71,25 @@ const Blaster = ({
     };
   }, []);
 
-  // Sélectionner le vocabulaire et le mot cible au premier chargement seulement
+  // Sélectionner les menaces et le virus au premier chargement seulement
   useEffect(() => {
     if (isInitialLoad) {
-      const shuffled = [...vocabToUse].sort(() => 0.5 - Math.random());
-      const vocabSelection = shuffled.slice(0, 4);
-      setSelectedVocab(vocabSelection);
-
-      // Choisir un mot cible parmi les mots corrects
-      const correctVocab = vocabSelection.filter((item) => item.correct);
-      if (correctVocab.length > 0) {
-        const randomIndex = Math.floor(Math.random() * correctVocab.length);
-        setCurrentWord(correctVocab[randomIndex].word);
-      }
-
+      generateNewThreatSet(level);
       setIsInitialLoad(false);
     }
-  }, [vocabToUse, isInitialLoad]);
+  }, [isInitialLoad]);
 
-  // Regénérer uniquement les positions des astéroïdes quand la taille du conteneur change
+  // Regénérer uniquement les positions des menaces quand la taille du conteneur change
   useEffect(() => {
     if (
       containerDimensions.width > 0 &&
       containerDimensions.height > 0 &&
-      selectedVocab.length > 0
+      selectedEntities.length > 0
     ) {
-      // Ne pas changer les mots, juste repositionner
-      repositionTargets();
+      // Ne pas changer les menaces, juste repositionner
+      repositionThreats();
     }
-  }, [containerDimensions, selectedVocab]);
+  }, [containerDimensions, selectedEntities]);
 
   useEffect(() => {
     if (fuel <= 0) {
@@ -123,86 +115,140 @@ const Blaster = ({
     return () => clearInterval(timer);
   }, [isGameActive]);
 
-  // Repositionner les astéroïdes sans changer les mots
-  const repositionTargets = () => {
-    if (!gameAreaRef.current || selectedVocab.length === 0) return;
+  // Fonction pour calculer le nombre de menaces basé sur le niveau
+  const getThreatCount = (currentLevel) => {
+    // Niveau fixe selon les specs: 1:2, 2:4, 3:8, 4:16, 5:32, 6:64, 7:128, 8:256
+    const threatCounts = [2, 4, 8, 16, 32, 64, 128, 256];
+    return threatCounts[currentLevel - 1] || 2; // Fallback à 2 si niveau non défini
+  };
+
+  // Générer un nouveau set de menaces incluant un virus
+  const generateNewThreatSet = (currentLevel) => {
+    // Utiliser le niveau actuel pour déterminer le nombre de menaces
+    const threatCount = getThreatCount(currentLevel);
+
+    // Toujours inclure un virus
+    const virus = threatTypes.find((threat) => threat.isVirus);
+
+    // Sélectionner des menaces aléatoires (non-virus)
+    const nonVirusThreats = threatTypes.filter((threat) => !threat.isVirus);
+
+    // Créer un tableau avec le nombre requis de menaces (peut contenir des répétitions)
+    const selectedThreats = [];
+    for (let i = 0; i < threatCount - 1; i++) {
+      const randomIndex = Math.floor(Math.random() * nonVirusThreats.length);
+      selectedThreats.push(nonVirusThreats[randomIndex]);
+    }
+
+    // Combiner le virus avec les autres menaces
+    const newEntities = [...selectedThreats, virus];
+
+    // Mélanger l'ordre
+    const finalEntities = [...newEntities].sort(() => 0.5 - Math.random());
+
+    setSelectedEntities(finalEntities);
+    // Le virus est toujours notre cible
+    setVirusTarget(virus);
+  };
+
+  // Repositionner les menaces sans changer leurs types
+  const repositionThreats = () => {
+    if (!gameAreaRef.current || selectedEntities.length === 0) return;
 
     const gameWidth = containerDimensions.width;
     const gameHeight = containerDimensions.height - 100;
 
-    const baseSize = Math.min(gameWidth, gameHeight) * 0.12;
+    // Calculer la taille optimale des menaces en fonction de leur nombre
+    const totalThreats = selectedEntities.length;
+    const areaPerThreat = (gameWidth * gameHeight) / totalThreats;
+    const optimalThreatRadius = Math.sqrt(areaPerThreat / Math.PI) * 0.4;
+
+    // Limiter la taille minimale et maximale
+    const minSize = Math.max(10, optimalThreatRadius * 0.5);
+    const maxSize = Math.min(50, optimalThreatRadius * 1.5);
+
+    // Taille de base ajustée pour le nombre de menaces
+    const baseSize = Math.max(minSize, Math.min(maxSize, optimalThreatRadius));
     const maxSizeVariation = baseSize * 0.3;
 
-    let newTargets = [];
-    let maxAttempts = 100;
+    let newThreats = [];
 
-    for (let i = 0; i < selectedVocab.length; i++) {
-      let x, y;
-      let overlap = true;
-      let attempts = 0;
+    // Créer une grille pour placer les menaces
+    const rows = Math.ceil(Math.sqrt(totalThreats));
+    const cols = Math.ceil(totalThreats / rows);
+    const cellWidth = gameWidth / cols;
+    const cellHeight = gameHeight / rows;
 
+    for (let i = 0; i < selectedEntities.length; i++) {
       const size = baseSize + Math.random() * maxSizeVariation;
 
-      while (overlap && attempts < maxAttempts) {
-        attempts++;
-        overlap = false;
+      // Utiliser une approche de grille pour répartir les menaces
+      const row = Math.floor(i / cols);
+      const col = i % cols;
 
-        const margin = size / 2;
-        x = margin + Math.random() * (gameWidth - size - margin * 2);
-        y = margin + Math.random() * (gameHeight * 0.5);
+      // Position de base au centre de la cellule
+      let x = col * cellWidth + cellWidth / 2;
+      let y = row * cellHeight + cellHeight / 2;
 
-        for (const target of newTargets) {
-          const distance = Math.sqrt(
-            Math.pow(target.x - x, 2) + Math.pow(target.y - y, 2)
-          );
-          const minDistance = target.size / 2 + size / 2 + 20;
+      // Ajouter un peu de variation aléatoire dans la cellule
+      x += (Math.random() - 0.5) * cellWidth * 0.5;
+      y += (Math.random() - 0.5) * cellHeight * 0.5;
 
-          if (distance < minDistance) {
-            overlap = true;
-            break;
-          }
-        }
-      }
+      // Vérifier que les menaces ne sont pas trop près des bords
+      const margin = size / 2;
+      x = Math.max(margin, Math.min(gameWidth - margin, x));
+      y = Math.max(margin, Math.min(gameHeight * 0.9 - margin, y));
 
-      newTargets.push({
-        id: Date.now() + i,
-        word: selectedVocab[i].word,
+      newThreats.push({
+        id: `threat-${i}-${Date.now()}`,
+        entity: selectedEntities[i],
         x,
         y,
         size,
-        correct: selectedVocab[i].correct,
+        isVirus: selectedEntities[i].isVirus,
       });
     }
 
-    setTargets(newTargets);
+    setThreats(newThreats);
 
     if (!isGameActive) {
-      setCountdown(800);
+      setCountdown(8); // Chrono fixe à 8 secondes
       setIsGameActive(true);
       setResult("");
     }
   };
 
   // Commence une nouvelle partie après une victoire ou une défaite
-  const startNewGame = () => {
-    // Sélectionner de nouveaux mots uniquement pour une nouvelle partie (pas pour un redimensionnement)
-    const shuffled = [...vocabToUse].sort(() => 0.5 - Math.random());
-    const vocabSelection = shuffled.slice(0, 4);
-    setSelectedVocab(vocabSelection);
+  const startNewGame = (levelUp = false) => {
+    // Déterminer le niveau à utiliser
+    let nextLevel = level;
 
-    // Choisir un nouveau mot cible
-    const correctVocab = vocabSelection.filter((item) => item.correct);
-    if (correctVocab.length > 0) {
-      const randomIndex = Math.floor(Math.random() * correctVocab.length);
-      setCurrentWord(correctVocab[randomIndex].word);
+    // Mettre à jour le niveau si c'est une victoire
+    if (levelUp) {
+      if (level < 8) {
+        nextLevel = level + 1;
+        setLevel(nextLevel);
+        setSecurityLevel(nextLevel);
+
+        generateNewThreatSet(nextLevel);
+      } else {
+        // Si niveau 8 réussi, ne pas lancer un autre niveau
+        setResult("SÉCURITÉ MAXIMALE ATTEINTE - VICTOIRE !");
+        return; // Pas de nouveau niveau
+      }
+    } else {
+      // En cas d'échec, on reste au même niveau mais on regénère les menaces
+      setTimeout(() => {
+        generateNewThreatSet(nextLevel);
+      }, 0);
+
+      // Repositionner avec les nouvelles menaces
+      setTimeout(() => {
+        repositionThreats();
+      }, 100);
     }
 
-    // Repositionner avec les nouveaux mots
-    setTimeout(() => {
-      repositionTargets();
-    }, 0);
-
-    setCountdown(800);
+    setCountdown(8); // Toujours 8 secondes
     setIsGameActive(true);
     setResult("");
   };
@@ -215,7 +261,11 @@ const Blaster = ({
     defeatAudio.play();
 
     setTimeout(() => {
-      if (fuel > 10) startNewGame(); // Nouvelle partie avec nouveaux mots
+      if (fuel > 10) {
+        startNewGame(false); // Nouvelle partie sans augmenter le niveau
+      } else {
+        onGameOver?.();
+      }
     }, 1000);
   };
 
@@ -247,7 +297,7 @@ const Blaster = ({
       startY,
       angle,
       length,
-      color: Math.random() > 0.5 ? "#ff0000" : "#00ff00",
+      color: Math.random() > 0.5 ? "#00ffff" : "#00ff80", // Cyan ou vert néon
     });
 
     // Supprimer le laser après l'animation
@@ -256,93 +306,132 @@ const Blaster = ({
     }, 300);
   };
 
-  const handleShoot = (targetId, event) => {
+  const handleShoot = (threatId, event) => {
     if (!isGameActive) return;
 
-    const target = targets.find((t) => t.id === targetId);
-    if (!target) return;
+    const threat = threats.find((t) => t.id === threatId);
+    if (!threat) return;
 
     // Tirer le laser
-    fireLaser(target.x, target.y, target.size);
+    fireLaser(threat.x, threat.y, threat.size);
 
-    if (target.word === currentWord) {
-      setResult("Victoire !");
-      setScore((prev) => prev + 10);
-      onScoreUpdate?.(score + 10);
+    if (threat.isVirus) {
+      // Calcul de points basé sur le niveau
+      const levelPoints = 10 * level * (level + 1); // Plus de points pour les niveaux plus élevés
+      setScore((prev) => prev + levelPoints);
+      onScoreUpdate?.(score + levelPoints);
+
+      // Ajouter du carburant comme bonus
+      setter((prev) => Math.min(prev + 5, 100)); // Limiter à 100
+
+      // Message de victoire avec niveau
+      setResult(`Niveau de sécurité ${securityLevel} sécurisé !`);
       victoryAudio.play();
 
       // Explosion animation
-      const targetElement = event.currentTarget;
-      targetElement.style.animation = "explode 0.5s";
+      const threatElement = event.currentTarget;
+      threatElement.style.animation = "cyberExplode 0.5s";
 
       setIsGameActive(false);
-      setTimeout(startNewGame, 800); // Nouvelle partie avec nouveaux mots
+      setTimeout(() => startNewGame(true), 1500); // Augmenter le niveau
     } else {
-      setResult("Perdu !");
+      setResult("Cible non-hostile ! Pénalité !");
       setter((prev) => Math.max(0, prev - 10));
       if (fuel <= 10) {
         onGameOver?.();
       } else {
         setTimeout(() => {
-          startNewGame(); // Nouvelle partie avec nouveaux mots
+          startNewGame(false); // Nouvelle partie sans augmenter le niveau
         }, 800);
       }
       defeatAudio.play();
     }
   };
 
-  // Calculer la taille de la police en fonction de la taille de l'astéroïde
-  const getAsteroidFontSize = (size) => {
-    return Math.max(12, size * 0.25); // 25% de la taille de l'astéroïde, minimum 12px
+  // Calculer la taille de l'emoji en fonction de la taille de la menace
+  const getThreatFontSize = (size) => {
+    return Math.max(12, size * 0.6); // 60% de la taille de la menace, minimum 12px
   };
 
   return (
     <div ref={gameAreaRef} style={styles.container}>
       <style>
         {`
-          @keyframes explode {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.5); opacity: 0.7; }
-            100% { transform: scale(2); opacity: 0; }
+          @keyframes cyberExplode {
+            0% { transform: scale(1); opacity: 1; box-shadow: 0 0 5px #00ffff; }
+            50% { transform: scale(1.5); opacity: 0.7; box-shadow: 0 0 20px #00ffff; }
+            100% { transform: scale(2); opacity: 0; box-shadow: 0 0 40px #00ffff; }
           }
           
           @keyframes laserBeam {
             0% { opacity: 0.7; }
-            50% { opacity: 1; }
+            50% { opacity: 1; box-shadow: 0 0 8px currentColor; }
             100% { opacity: 0.7; }
+          }
+          
+          @keyframes scanLine {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+          }
+          
+          @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
           }
         `}
       </style>
 
+      {/* Scan lines overlay */}
+      <div style={styles.scanLines}></div>
+
       <div style={styles.hud}>
-        <div>Score: {score}</div>
-        <div>Temps restant: {countdown}</div>
+        <div style={styles.hudItem}>
+          SCORE: <span style={styles.hudValue}>{score}</span>
+        </div>
+        <div style={styles.hudItem}>
+          SÉCURITÉ: <span style={styles.hudValue}>{securityLevel}/8</span>
+        </div>
+        <div style={styles.hudItem}>
+          TEMPS: <span style={styles.hudValue}>{countdown}</span>
+        </div>
+        <div style={styles.hudItem}>
+          MENACES: <span style={styles.hudValue}>{threats.length}</span>
+        </div>
       </div>
 
       <div style={styles.targetContainer}>
-        Trouvez: <span style={styles.targetText}>{currentWord}</span>
+        ALERTE: <span style={styles.targetText}>VIRUS DÉTECTÉ 🦠</span>
       </div>
 
       {result && (
-        <div style={result === "Victoire !" ? styles.success : styles.failure}>
+        <div
+          style={
+            result.includes("sécurisé")
+              ? styles.success
+              : result.includes("MAXIMALE")
+              ? styles.megaSuccess
+              : styles.failure
+          }
+        >
           {result}
         </div>
       )}
 
-      {targets.map((target) => (
+      {threats.map((threat) => (
         <div
-          key={target.id}
-          onClick={(e) => handleShoot(target.id, e)}
+          key={threat.id}
+          onClick={(e) => handleShoot(threat.id, e)}
           style={{
-            ...styles.asteroid,
-            left: `${target.x}px`,
-            top: `${target.y}px`,
-            width: `${target.size}px`,
-            height: `${target.size}px`,
-            fontSize: `${getAsteroidFontSize(target.size)}px`,
+            ...styles.threat,
+            left: `${threat.x}px`,
+            top: `${threat.y}px`,
+            width: `${threat.size}px`,
+            height: `${threat.size}px`,
+            fontSize: `${getThreatFontSize(threat.size)}px`,
           }}
         >
-          {target.word}
+          {threat.entity.emoji}
         </div>
       ))}
 
@@ -355,6 +444,7 @@ const Blaster = ({
             width: `${laser.length}px`,
             transform: `rotate(${laser.angle}deg)`,
             backgroundColor: laser.color,
+            boxShadow: `0 0 8px ${laser.color}`,
             transformOrigin: "left center",
             animation: "laserBeam 0.3s",
           }}
@@ -371,7 +461,7 @@ const Blaster = ({
           }px`,
         }}
       >
-        🚀
+        🛸
       </div>
     </div>
   );
@@ -382,9 +472,22 @@ const styles = {
     position: "relative",
     width: "100%",
     height: "100%",
-    background: "linear-gradient(to bottom, #0a0a2a, #1e1e5a)",
+    background: "linear-gradient(to bottom, #000428, #004e92)",
     overflow: "hidden",
-    color: "white",
+    color: "#00ffff",
+    fontFamily: "'Courier New', monospace",
+  },
+  scanLines: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundImage:
+      "linear-gradient(transparent 50%, rgba(0, 255, 255, 0.05) 50%)",
+    backgroundSize: "100% 4px",
+    pointerEvents: "none",
+    zIndex: 10,
   },
   hud: {
     textAlign: "center",
@@ -392,52 +495,79 @@ const styles = {
     fontSize: "clamp(14px, 2vw, 18px)",
     display: "flex",
     justifyContent: "space-between",
+    backgroundColor: "rgba(0, 0, 20, 0.7)",
+    borderBottom: "2px solid #00ffff",
+    boxShadow: "0 0 10px #00ffff",
+  },
+  hudItem: {
+    fontWeight: "bold",
+  },
+  hudValue: {
+    color: "#00ffff",
+    fontWeight: "normal",
   },
   targetContainer: {
     textAlign: "center",
     fontSize: "clamp(16px, 2.5vw, 20px)",
     fontWeight: "bold",
     padding: "10px 0",
+    backgroundColor: "rgba(255, 0, 0, 0.2)",
+    borderBottom: "1px solid #ff3333",
+    animation: "pulse 2s infinite",
   },
   targetText: {
-    color: "#facc15",
+    color: "#ff3333",
+    textShadow: "0 0 5px #ff3333",
   },
   success: {
     textAlign: "center",
     fontSize: "clamp(18px, 3vw, 24px)",
-    color: "#4ade80",
+    color: "#00ffaa",
+    textShadow: "0 0 10px #00ffaa",
+    fontWeight: "bold",
+    letterSpacing: "1px",
+  },
+  megaSuccess: {
+    textAlign: "center",
+    fontSize: "clamp(22px, 4vw, 28px)",
+    color: "#ffff00",
+    fontWeight: "bold",
+    textShadow: "0 0 10px #ffff00, 0 0 20px #ffff00",
+    letterSpacing: "2px",
   },
   failure: {
     textAlign: "center",
     fontSize: "clamp(18px, 3vw, 24px)",
-    color: "#f87171",
+    color: "#ff3333",
+    textShadow: "0 0 10px #ff3333",
   },
-  asteroid: {
+  threat: {
     position: "absolute",
-    backgroundColor: "#4338ca",
-    border: "2px solid #818cf8",
-    borderRadius: "50%",
+    backgroundColor: "rgba(0, 40, 80, 0.8)",
+    border: "2px solid #00ffff",
+    borderRadius: "10%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     color: "white",
-    fontWeight: "bold",
     cursor: "pointer",
     textAlign: "center",
     padding: "5px",
-    wordBreak: "break-word",
     overflow: "hidden",
+    transition: "box-shadow 0.2s",
+    boxShadow: "0 0 5px #00ffff",
   },
   spaceship: {
     position: "absolute",
     bottom: "10px",
     left: "50%",
     transform: "translateX(-50%)",
+    filter: "drop-shadow(0 0 5px #00ffff)",
   },
   laser: {
     position: "absolute",
     height: "3px",
-    backgroundColor: "#ff0000",
+    backgroundColor: "#00ffff",
     zIndex: 10,
   },
 };
