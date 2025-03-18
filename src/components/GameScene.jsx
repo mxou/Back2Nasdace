@@ -41,10 +41,12 @@ export default function GameScene({ playerData }) {
 
   const handleQuizAnswer = (result) => {
     setQuizResult(result);
+    const timerQuizAnswer = setTimeout(() => setQuizResult(null), 3000);
     if (result === "Réussi") {
       navigate("/Takeoff");
     }
     setShowQuiz(false); // Fermer le quiz après la réponse
+    return () => clearTimeout(timerQuizAnswer);
   };
 
   useEffect(() => {
@@ -82,7 +84,10 @@ export default function GameScene({ playerData }) {
       {showQuiz && <Quiz onAnswer={handleQuizAnswer} onClose={() => setShowQuiz(false)} />}
       {quizResult && (
         <div style={styles.quizResult}>
-          <p>{quizResult}</p>
+          <p style={styles.resultText}>{quizResult}</p>
+          {quizResult === "Perdu" && (
+            <p style={styles.hintText}>C'est pourtant logique, ça prends pas se temps la utilisant une orbite de transfert de Hohmann... redflag</p>
+          )}
         </div>
       )}
     </>
@@ -95,12 +100,29 @@ const styles = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    padding: "20px",
-    borderRadius: "8px",
-    color: "white",
-    fontSize: "20px",
-    fontFamily: "Arial, sans-serif",
+    background: "linear-gradient(135deg, rgba(15, 25, 65, 0.9) 0%, rgba(30, 40, 90, 0.9) 100%)",
+    padding: "25px 30px",
+    borderRadius: "15px",
+    color: "#e6f7ff",
+    fontSize: "22px",
+    fontFamily: "'Rajdhani', 'Orbitron', sans-serif",
     zIndex: 20,
+    border: "2px solid rgba(100, 180, 255, 0.6)",
+    boxShadow: "0 0 30px rgba(80, 160, 255, 0.4), inset 0 0 15px rgba(80, 160, 255, 0.2)",
+    textAlign: "center",
+    minWidth: "300px",
+  },
+  resultText: {
+    margin: "0 0 15px 0",
+    fontWeight: "bold",
+    fontSize: "28px",
+    textShadow: "0 0 10px rgba(100, 180, 255, 0.7)",
+    color: "rgb(252, 58, 58)",
+  },
+  hintText: {
+    margin: "10px 0 0 0",
+    fontSize: "16px",
+    fontStyle: "italic",
+    opacity: "0.9",
   },
 };

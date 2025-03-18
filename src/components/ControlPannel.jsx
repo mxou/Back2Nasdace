@@ -1,5 +1,6 @@
 import { useState } from "react";
 import NewScene from "../components3D/NewScene";
+import "./styles/ControlPannel.css";
 
 export default function ControlPannel({ takeoff }) {
   const [fuelPercentage, setFuelPercentage] = useState(0);
@@ -35,107 +36,86 @@ export default function ControlPannel({ takeoff }) {
   };
 
   return (
-    <div style={styles.control_pannel}>
-      <div style={styles.fuel_container}>
-        <button onClick={handleFuelInjection}>Injecter le Plutonium</button>
-        <div
-          style={{
-            ...styles.fuel_jauge,
-            width: `${fuelPercentage}%`, // Dynamise la largeur en fonction du pourcentage
-          }}
-        ></div>
+    <div className="control-panel">
+      <div className="panel-section fuel-container">
+        <h3 className="section-title">RÉSERVOIR DE CARBURANT</h3>
+        <div className="fuel-gauge-container">
+          <div className="fuel-gauge-background">
+            <div className="fuel-gauge-fill" style={{ width: `${fuelPercentage}%` }}>
+              <div className="fuel-gauge-glow"></div>
+            </div>
+          </div>
+          <div className="fuel-percentage">{fuelPercentage}%</div>
+        </div>
+        <button className="fuel-injection-button" onClick={handleFuelInjection}>
+          <span className="button-icon">⚛️</span>
+          <span className="button-text">INJECTER LE PLUTONIUM</span>
+        </button>
       </div>
-      <div style={styles.propulseurs_container}>
-        <div style={styles.propulseurs_buttons_container}>
-          <div style={propulseurState1 ? styles.propulseurs_light_on : styles.propulseurs_light_off}></div>
-          <button onClick={() => setPropulseurState1(!propulseurState1)}></button>
-        </div>
-        <div style={styles.propulseurs_buttons_container}>
-          <div style={propulseurState2 ? styles.propulseurs_light_on : styles.propulseurs_light_off}></div>
-          <button onClick={() => setPropulseurState2(!propulseurState2)}></button>
-        </div>
-        <div style={styles.propulseurs_buttons_container}>
-          <div style={propulseurState3 ? styles.propulseurs_light_on : styles.propulseurs_light_off}></div>
-          <button onClick={() => setPropulseurState3(!propulseurState3)}></button>
-        </div>
-        <div style={styles.propulseurs_buttons_container}>
-          <div style={propulseurState4 ? styles.propulseurs_light_on : styles.propulseurs_light_off}></div>
-          <button onClick={() => setPropulseurState4(!propulseurState4)}></button>
+
+      <div className="panel-section propulseurs-container">
+        <h3 className="section-title">PROPULSEURS</h3>
+        <div className="propulseurs-grid">
+          <div className="propulseur-unit">
+            <div className={`propulseur-light ${propulseurState1 ? "active" : ""}`}>
+              <div className="light-glow"></div>
+            </div>
+            <button className={`propulseur-button ${propulseurState1 ? "active" : ""}`} onClick={() => setPropulseurState1(!propulseurState1)}>
+              P1
+            </button>
+            <div className="propulseur-label">PRINCIPAL</div>
+          </div>
+
+          <div className="propulseur-unit">
+            <div className={`propulseur-light ${propulseurState2 ? "active" : ""}`}>
+              <div className="light-glow"></div>
+            </div>
+            <button className={`propulseur-button ${propulseurState2 ? "active" : ""}`} onClick={() => setPropulseurState2(!propulseurState2)}>
+              P2
+            </button>
+            <div className="propulseur-label">SECONDAIRE</div>
+          </div>
+
+          <div className="propulseur-unit">
+            <div className={`propulseur-light ${propulseurState3 ? "active" : ""}`}>
+              <div className="light-glow"></div>
+            </div>
+            <button className={`propulseur-button ${propulseurState3 ? "active" : ""}`} onClick={() => setPropulseurState3(!propulseurState3)}>
+              P3
+            </button>
+            <div className="propulseur-label">AUXILIAIRE</div>
+          </div>
+
+          <div className="propulseur-unit">
+            <div className={`propulseur-light ${propulseurState4 ? "active" : ""}`}>
+              <div className="light-glow"></div>
+            </div>
+            <button className={`propulseur-button ${propulseurState4 ? "active" : ""}`} onClick={() => setPropulseurState4(!propulseurState4)}>
+              P4
+            </button>
+            <div className="propulseur-label">STABILISATEUR</div>
+          </div>
         </div>
       </div>
-      <div style={styles.start_button_container}>
-        <button style={styles.start_button} onClick={handleTakeoff}></button>
+
+      <div className="panel-section launch-container">
+        <h3 className="section-title">DÉCOLLAGE</h3>
+        <button className="launch-button" onClick={handleTakeoff}>
+          <div className="launch-button-inner">
+            <div className="launch-button-text">LANCER</div>
+          </div>
+        </button>
+        <div className="launch-warning">ATTENTION: VÉRIFIER TOUS LES SYSTÈMES</div>
+      </div>
+
+      <div className="panel-decorations">
+        <div className="panel-lights">
+          <div className="panel-light"></div>
+          <div className="panel-light"></div>
+          <div className="panel-light"></div>
+        </div>
+        <div className="panel-brand">COSMOS-X</div>
       </div>
     </div>
   );
 }
-
-const styles = {
-  control_pannel: {
-    width: "1200px",
-    height: "300px",
-    backgroundColor: "rgb(80, 80, 80)",
-    position: "absolute",
-    zIndex: 20,
-    bottom: "0%",
-    left: "5%",
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  fuel_container: {
-    border: "2px solid red",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "space-evenly",
-    width: "100%",
-  },
-  fuel_jauge: {
-    width: "0%",
-    height: "30px", // Hauteur de la jauge
-    backgroundColor: "green", // Couleur de la jauge
-    transition: "width 0.1s ease",
-    border: "2px solid black",
-  },
-  propulseurs_container: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-    width: "30%",
-    border: "2px solid blue",
-  },
-  propulseurs_buttons_container: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    flexDirection: "row-reverse",
-    width: "50%",
-  },
-  propulseurs_light_off: {
-    backgroundColor: "red",
-    width: "10px",
-    height: "10px",
-    borderRadius: "50px",
-  },
-  propulseurs_light_on: {
-    backgroundColor: "green",
-    width: "10px",
-    height: "10px",
-    borderRadius: "50px",
-  },
-  start_button_container: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    border: "2px solid purple",
-    width: "100%",
-  },
-  start_button: {
-    backgroundColor: "red",
-    width: "200px",
-    height: "200px",
-    borderRadius: "100px",
-  },
-};

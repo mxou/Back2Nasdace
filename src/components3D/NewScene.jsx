@@ -28,7 +28,7 @@ export default function NewScene({ playerData }) {
   }, [targetPosition]); // L'effet sera déclenché à chaque changement de la position de la cible
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowPopup(true), 1800);
+    const timer = setTimeout(() => setShowPopup(true), 500);
     return () => clearTimeout(timer);
   }, []);
   useEffect(() => {
