@@ -20,7 +20,7 @@ const SpaceshipGame = () => {
     speed: 0.15,
     frameId: null,
     lastAsteroidTime: 0,
-    asteroidInterval: 1500, // ms entre chaque astéroïde
+    asteroidInterval: 750, // ms entre chaque astéroïde
     gameActive: true,
   });
 
@@ -74,6 +74,19 @@ const SpaceshipGame = () => {
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
 
+    // Fonction pour créer plusieurs astéroïdes à chaque vague
+    const createMultipleAsteroids = () => {
+      const asteroidCount = Math.min(5, Math.floor(score / 10) + 1); // Le nombre d'astéroïdes augmente avec le score
+      for (let i = 0; i < asteroidCount; i++) {
+        createAsteroid(); // Appel à la fonction de création d'un astéroïde existante
+      }
+    };
+
+    // Fonction pour obtenir un multiplicateur de vitesse des astéroïdes en fonction du score
+    const getAsteroidSpeedMultiplier = () => {
+      return 1 + Math.floor(score / 10) * 0.1; // Augmente la vitesse de 10% toutes les 10 unités de score
+    };
+
     // Fonction pour créer un astéroïde
     const createAsteroid = () => {
       const size = Math.random() * 0.8 + 0.6;
@@ -90,11 +103,12 @@ const SpaceshipGame = () => {
       asteroid.position.y = 10;
       asteroid.position.z = 0;
 
-      // Vitesse et rotation aléatoires
+      // Vitesse et rotation des astéroïdes, avec la multiplication de la vitesse en fonction du score
+      const speedMultiplier = getAsteroidSpeedMultiplier();
       asteroid.userData = {
         velocity: new THREE.Vector3(
-          (Math.random() - 0.5) * 0.05,
-          -(Math.random() * 0.15 + 0.05),
+          (Math.random() - 0.5) * 0.05 * speedMultiplier,
+          -(Math.random() * 0.15 + 0.05) * speedMultiplier,
           0
         ),
         rotationSpeed: {
@@ -147,14 +161,14 @@ const SpaceshipGame = () => {
         game.ship.position.x += game.speed;
       }
 
-      // Génération d'astéroïdes
+      // Génération d'astéroïdes (plus d'astéroïdes à chaque vague)
       const now = Date.now();
       if (now - game.lastAsteroidTime > game.asteroidInterval) {
-        createAsteroid();
+        createMultipleAsteroids(); // Appelle la nouvelle fonction pour générer plus d'astéroïdes
         game.lastAsteroidTime = now;
 
-        // Augmentation progressive de la difficulté
-        game.asteroidInterval = Math.max(500, game.asteroidInterval - 20);
+        // Augmentation progressive de la difficulté en réduisant l'intervalle de génération des astéroïdes
+        game.asteroidInterval = Math.max(500, game.asteroidInterval - 50);
       }
 
       // Mise à jour des astéroïdes

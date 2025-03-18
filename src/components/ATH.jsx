@@ -10,7 +10,7 @@ const ATH = ({ showChrono = true, fuel = 100 }) => {
       <div style={styles.fuelContainer}>
         <div style={{ ...styles.fuelBar, width: `${fuel}%` }} />
       </div>
-      <span>⛽ Carburant : {fuel}%</span>
+      <span>⛽ Pipoulitre : {fuel}%</span>
     </div>
   );
 };
