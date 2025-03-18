@@ -7,22 +7,13 @@ import ATH from "../components/ATH";
 import { useState } from "react";
 import Dialogues from "../components/Dialogues/Dialogues";
 import dialogIa from "../assets/dialogues/ia-folle.json";
-import NasdaceCity from "../components3D/NasdaceCity";
+import RhythmGame from "../components/RythmGame/RythmGame";
 
-export default function EndingScene({ playerData }) {
+export default function RythmGameScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
   const [gameStart, setGameStart] = useState(false);
 
   const shipRef = useRef(); // Référence pour le vaisseau
-
-  const handleDialogueEnd = () => {
-    setShowDialog(false);
-    const gameTimer = setTimeout(() => {
-      setGameStart(true);
-    }, 500);
-    return () => clearTimeout(gameTimer);
-  };
-
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowDialog(true);
@@ -30,25 +21,19 @@ export default function EndingScene({ playerData }) {
     return () => clearInterval(timer);
   }, []);
 
-  // Mise à jour de la position du vaisseau
-  useEffect(() => {
-    if (shipRef.current) {
-      const moveShipInterval = setInterval(() => {
-        // Avancer le vaisseau en permanence sur l'axe Z
-        shipRef.current.position.z -= 0.1;
-      }, 16); // 60 FPS
-
-      return () => clearInterval(moveShipInterval);
-    }
-  }, []);
-
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <ATH showChrono={false} />
-      {showDialog && (
-        <Dialogues dialogFile={dialogIa} onEnd={handleDialogueEnd} />
-      )}
-      <Canvas shadows camera={{ position: [0, 5, 50], fov: 45 }}>
+      {showDialog ? (
+        <Dialogues
+          dialogFile={dialogIa}
+          onComplete={() => setGameStart(true)}
+          autoSkip={false}
+          userName={playerData.name}
+        />
+      ) : null}
+      {gameStart ? <RhythmGame /> : null}
+      <Canvas shadows camera={{ position: [0, 5, 10], fov: 45 }}>
         {/* Fond étoilé */}
         <Stars radius={100} depth={500} count={5000} factor={4} />
 
@@ -58,13 +43,12 @@ export default function EndingScene({ playerData }) {
 
         {/* Simulation physique et vaisseau */}
         <Physics>
-          <NasdaceCity position={[0, -50, 0]} scale={[10, 10, 10]} />
           <Ship
             ref={shipRef}
-            position={[0, 10, 0]} // Initial position
+            position={[0, 0, 0]} // Initial position
             scale={6}
             colors={playerData}
-            gravity={1}
+            gravity={0}
           />
         </Physics>
 

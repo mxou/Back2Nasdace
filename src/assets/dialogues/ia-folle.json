@@ -1,8 +1,46 @@
 [
-  { "name": "Vaisseau", "text": "Ici c'est en mode grooooovy" },
-  { "name": "Zglubugl", "text": "??? Mais enculé fais ton taff nn ?" },
+  { "name": "Zglubugl", "text": "C'est bon on a réussi !" },
+  {
+    "name": "Zglubugl",
+    "text": "Tu t'es super bien débrouillé et il nous reste assez de carburant pour atterrir."
+  },
   {
     "name": "Vaisseau",
-    "text": "Nan jme fais trop chier sah on fait un blackjack ou on s'écrase sur Nasdace City"
+    "text": "Oui fin j'ai encore la vente des billets du concert de Taylor Swoft en travers de la gorge."
+  },
+  {
+    "name": "Zglubugl",
+    "text": "Le Plutonium 95 c'est cher tu sais, on est vraiment désolés..."
+  },
+  {
+    "name": "Vaisseau",
+    "text": "VRAIMENT désolés ?"
+  },
+  { "name": "Zglubugl", "text": "Oui VRAIMENT." },
+  {
+    "name": "Vaisseau",
+    "text": "Alors faites moi le concert."
+  },
+  { "name": "Zglubugl", "text": "Attends comment ça ?" },
+  {
+    "name": "Vaisseau",
+    "text": "Zglubugl tu vas chanter pour moi. Les autres dansez."
+  },
+  {
+    "name": "Zglubugl",
+    "text": "{name}, tu ferais mieux de danser, il est super susceptible. La dernière fois il a éjecté Patrick."
+  },
+  {
+    "name": "{name}",
+    "text": "Un autre terrien avec qui vous avez fait du co-vaiss' ?"
+  },
+  { "name": "Zglubugl", "text": "Non pourquoi tu dis ça ?" },
+  {
+    "name": "{name}",
+    "text": "Nan rien"
+  },
+  {
+    "name": "Vaisseau",
+    "text": "Allez plus vite que ça !"
   }
 ]

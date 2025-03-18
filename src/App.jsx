@@ -7,6 +7,8 @@ import Loader from "./components/Loader";
 import EndingScene from "./scenes/EndingScene";
 import ExplosionScene from "./scenes/ExplosionScene";
 import SpaceCollisionScene from "./scenes/SpaceCollisionScene";
+import RythmGame from "./scenes/RythmGameScene";
+import RythmGameScene from "./scenes/RythmGameScene";
 
 function App() {
   const [playerData, setPlayerData] = useState(null);
@@ -62,6 +64,10 @@ function App() {
           element={<ExplosionScene playerData={playerData} />}
         />
 
+        <Route
+          path="/dev/rythm-game"
+          element={<RythmGameScene playerData={playerData} />}
+        />
         <Route path="/dev/test" element={<SpaceCollisionScene />} />
 
         {/* Redirection si route inconnue */}

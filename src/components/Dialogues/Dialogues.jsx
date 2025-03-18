@@ -1,10 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import "./Dialogues.css";
 
-export default function Dialogues({ dialogFile, onEnd, autoSkip = true }) {
+export default function Dialogues({
+  dialogFile,
+  onComplete,
+  autoSkip = true,
+  userName,
+}) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [visible, setVisible] = useState(true); // Ajout d'un état interne
 
   const currentDialogue = dialogFile[currentIndex];
   const typingIntervalRef = useRef(null);
@@ -12,6 +19,8 @@ export default function Dialogues({ dialogFile, onEnd, autoSkip = true }) {
 
   useEffect(() => {
     let i = -1;
+
+    currentDialogue.text = currentDialogue.text.replace("{name}", userName);
     setDisplayText("");
     setIsTyping(true);
 
@@ -44,6 +53,9 @@ export default function Dialogues({ dialogFile, onEnd, autoSkip = true }) {
   }, [isTyping, autoSkip]);
 
   const handleNext = () => {
+    const clickSound = new Audio("/src/assets/audio/skip.mp3"); // Remplace par ton fichier
+    clickSound.volume = 0.5; // Ajuste le volume si nécessaire
+
     if (isTyping) {
       setDisplayText(currentDialogue.text);
       clearInterval(typingIntervalRef.current);
@@ -51,11 +63,18 @@ export default function Dialogues({ dialogFile, onEnd, autoSkip = true }) {
     } else {
       if (currentIndex < dialogFile.length - 1) {
         setCurrentIndex(currentIndex + 1);
+        clickSound.play();
       } else {
-        if (onEnd) onEnd();
+        clickSound.play();
+        setVisible(false); // Masque le dialogue
+        setTimeout(() => {
+          if (onComplete) onComplete(); // Exécute la suite du jeu
+        }, 500);
       }
     }
   };
+
+  if (!visible) return null; // Cache le composant après la fin
 
   return (
     <motion.div
@@ -63,24 +82,9 @@ export default function Dialogues({ dialogFile, onEnd, autoSkip = true }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5 }}
-      style={{
-        position: "fixed",
-        bottom: "20px",
-        left: "50%",
-        x: "-50%",
-        background: "rgba(0, 0, 0, 0.8)",
-        color: "white",
-        padding: "20px",
-        borderRadius: "10px",
-        display: "flex",
-        alignItems: "center",
-        cursor: "pointer",
-        zIndex: 1000,
-        pointerEvents: "auto",
-        width: "500px",
-        height: "100px",
-      }}
+      className="dialogue-container"
       onClick={handleNext}
+      style={{ x: "-50%" }}
     >
       <motion.img
         key={currentDialogue.name}
@@ -89,11 +93,20 @@ export default function Dialogues({ dialogFile, onEnd, autoSkip = true }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        style={{ width: "80px", borderRadius: "50%", marginRight: "10px" }}
+        className="dialogue-avatar"
       />
-      <div style={{ textAlign: "left", height: "100%" }}>
-        <h2>{currentDialogue.name}</h2>
+      <div className="dialogue-text">
+        <h2>
+          {currentDialogue.name == "{name}" ? userName : currentDialogue.name}
+        </h2>
         <p>{displayText}</p>
+        {!isTyping && (
+          <motion.div
+            animate={{ y: [0, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 0.8, ease: "easeInOut" }}
+            className="dialogue-arrow"
+          />
+        )}
       </div>
     </motion.div>
   );

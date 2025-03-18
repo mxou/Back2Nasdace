@@ -10,7 +10,7 @@ const ATH = ({ showChrono = true, fuel = 100 }) => {
       <div style={styles.fuelContainer}>
         <div style={{ ...styles.fuelBar, width: `${fuel}%` }} />
       </div>
-      <span>⛽ Carburant : {fuel}%</span>
+      <span>⛽ Plutonium 95 : {fuel}%</span>
     </div>
   );
 };
@@ -18,19 +18,17 @@ const ATH = ({ showChrono = true, fuel = 100 }) => {
 const styles = {
   athContainer: {
     position: "fixed",
-    top: 0,
-    left: 0,
-    width: "100%",
-    padding: "10px",
-    background: "rgba(0, 0, 0, 0.7)",
+    top: "20px",
+    left: "20px",
+    width: "30vw",
+    // background: "rgba(0, 0, 0, 0.7)",
     color: "white",
-    borderBottom: "2px solid #fff",
-    textAlign: "center",
+    textAlign: "left",
     fontFamily: "Arial, sans-serif",
+    userSelect: "none",
     zIndex: 1000,
   },
   fuelContainer: {
-    width: "80%",
     height: "15px",
     background: "#444",
     borderRadius: "5px",
