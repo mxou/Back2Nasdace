@@ -25,7 +25,6 @@ export default function Popup({ message }) {
   );
 }
 
-// Style de la popup
 const styles = {
   popup: {
     position: "fixed",

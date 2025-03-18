@@ -2,12 +2,11 @@ import { useState } from "react";
 import NewScene from "../components3D/NewScene";
 
 export default function ControlPannel({ takeoff }) {
-  const [fuelPercentage, setFuelPercentage] = useState(0); // État de la jauge de carburant
+  const [fuelPercentage, setFuelPercentage] = useState(0);
   const [propulseurState1, setPropulseurState1] = useState(false);
   const [propulseurState2, setPropulseurState2] = useState(false);
   const [propulseurState3, setPropulseurState3] = useState(false);
   const [propulseurState4, setPropulseurState4] = useState(false);
-  //   const [takeoff, setTakeoff] = useState(false);
 
   const handleFuelInjection = () => {
     let start = 0;
@@ -24,11 +23,10 @@ export default function ControlPannel({ takeoff }) {
       }
     };
 
-    animateFuel(); // Lance l'animation
+    animateFuel();
   };
 
   const handleTakeoff = () => {
-    // Vérifier si fuelPercentage est à 100 et si tous les propulseurs sont activés
     if (fuelPercentage === 100 && propulseurState1 && propulseurState2 && propulseurState3 && propulseurState4) {
       takeoff(); // Appelle la fonction takeoff passée en prop
     } else {
@@ -94,10 +92,10 @@ const styles = {
     width: "100%",
   },
   fuel_jauge: {
-    width: "0%", // Initialement vide
+    width: "0%",
     height: "30px", // Hauteur de la jauge
     backgroundColor: "green", // Couleur de la jauge
-    transition: "width 0.1s ease", // Ajout d'une transition pour lisser le changement
+    transition: "width 0.1s ease",
     border: "2px solid black",
   },
   propulseurs_container: {

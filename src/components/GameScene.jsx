@@ -1,9 +1,13 @@
+// MODULES
 import { useRef, useEffect, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { Gltf, Environment, KeyboardControls } from "@react-three/drei";
 import Controller from "ecctrl";
 import { useNavigate } from "react-router-dom";
+// MODULES
+
+// COMPONENTS
 import Amogus from "../components3D/Amogus.jsx";
 import Ship from "../components3D/Ship.jsx";
 import Popup from "./Popup.jsx";
@@ -12,13 +16,14 @@ import Crosshair from "./Crosshair.jsx";
 import Nasdace from "../components3D/Nasdace.jsx";
 import Quiz from "./Quiz.jsx";
 import NewScene from "../components3D/NewScene.jsx";
+// COMPONENTS
 
 export default function GameScene({ playerData }) {
   const playerRef = useRef();
   const [showPopup, setShowPopup] = useState(false);
-  const [showQuiz, setShowQuiz] = useState(false); // Afficher ou non le quiz
-  const [quizResult, setQuizResult] = useState(null); // Résultat du quiz
-  const [sceneChanged, setSceneChanged] = useState(false); // Suivi de l'état de la scène
+  const [showQuiz, setShowQuiz] = useState(false);
+  const [quizResult, setQuizResult] = useState(null);
+  const [sceneChanged, setSceneChanged] = useState(false);
   const navigate = useNavigate();
 
   const keyboardMap = [
@@ -31,14 +36,12 @@ export default function GameScene({ playerData }) {
   ];
 
   const handleQuizStart = () => {
-    setShowQuiz(true); // Afficher le quiz
+    setShowQuiz(true);
   };
 
   const handleQuizAnswer = (result) => {
-    setQuizResult(result); // Log du résultat
+    setQuizResult(result);
     if (result === "Réussi") {
-      // Si l'utilisateur a réussi, on change de scène
-      // setSceneChanged(true);
       navigate("/Takeoff");
     }
     setShowQuiz(false); // Fermer le quiz après la réponse

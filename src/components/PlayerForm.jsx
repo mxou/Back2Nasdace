@@ -70,7 +70,6 @@ export default function PlayerForm({ onSubmit }) {
   );
 }
 
-// Styles en JS
 const styles = {
   formContainer: {
     position: "fixed",
