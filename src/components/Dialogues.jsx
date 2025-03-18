@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-export default function Dialogues({ dialogFile, onEnd }) {
+export default function Dialogues({ dialogFile, onEnd, autoSkip = true }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
 
   const currentDialogue = dialogFile[currentIndex];
-
   const typingIntervalRef = useRef(null);
+  const autoNextTimeoutRef = useRef(null);
 
   useEffect(() => {
     let i = -1;
@@ -26,11 +26,22 @@ export default function Dialogues({ dialogFile, onEnd }) {
     }, 20);
 
     return () => {
-      if (typingIntervalRef.current) {
-        clearInterval(typingIntervalRef.current);
-      }
+      if (typingIntervalRef.current) clearInterval(typingIntervalRef.current);
+      if (autoNextTimeoutRef.current) clearTimeout(autoNextTimeoutRef.current);
     };
   }, [currentIndex]);
+
+  useEffect(() => {
+    if (!isTyping && autoSkip) {
+      autoNextTimeoutRef.current = setTimeout(() => {
+        handleNext();
+      }, 2000);
+    }
+
+    return () => {
+      if (autoNextTimeoutRef.current) clearTimeout(autoNextTimeoutRef.current);
+    };
+  }, [isTyping, autoSkip]);
 
   const handleNext = () => {
     if (isTyping) {

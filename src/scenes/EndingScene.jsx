@@ -48,7 +48,7 @@ export default function EndingScene({ playerData }) {
       {showDialog && (
         <Dialogues dialogFile={dialogIa} onEnd={handleDialogueEnd} />
       )}
-      <Canvas shadows camera={{ position: [0, 5, 10], fov: 45 }}>
+      <Canvas shadows camera={{ position: [0, 5, 50], fov: 45 }}>
         {/* Fond étoilé */}
         <Stars radius={100} depth={500} count={5000} factor={4} />
 
@@ -56,16 +56,15 @@ export default function EndingScene({ playerData }) {
         <directionalLight intensity={1.5} castShadow position={[5, 10, 5]} />
         <ambientLight intensity={0.4} />
 
-        <NasdaceCity position={[0, -50, 0]} scale={[10, 10, 10]} />
-
         {/* Simulation physique et vaisseau */}
         <Physics>
+          <NasdaceCity position={[0, -50, 0]} scale={[10, 10, 10]} />
           <Ship
             ref={shipRef}
-            position={[0, 0, 0]} // Initial position
+            position={[0, 10, 0]} // Initial position
             scale={6}
             colors={playerData}
-            gravity={0}
+            gravity={1}
           />
         </Physics>
 

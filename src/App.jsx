@@ -6,6 +6,7 @@ import GameScene from "./components/GameScene";
 import Loader from "./components/Loader";
 import EndingScene from "./scenes/EndingScene";
 import ExplosionScene from "./scenes/ExplosionScene";
+import SpaceCollisionScene from "./scenes/SpaceCollisionScene";
 
 function App() {
   const [playerData, setPlayerData] = useState(null);
@@ -60,6 +61,8 @@ function App() {
           path="/dev/explosion-scene"
           element={<ExplosionScene playerData={playerData} />}
         />
+
+        <Route path="/dev/test" element={<SpaceCollisionScene />} />
 
         {/* Redirection si route inconnue */}
         <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,7 +1,8 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useFrame } from "@react-three/fiber";
+import React, { useRef, useEffect } from "react";
 import { RigidBody } from "@react-three/rapier";
 import { Model } from "../components/Model";
+import { useFrame } from "@react-three/fiber";
+import { useRaycastCollision } from "./UseRaycastCollision";
 
 const Ship = React.forwardRef(
   (
@@ -9,36 +10,50 @@ const Ship = React.forwardRef(
       position = [0, 0, 0],
       scale = [4, 4, 4],
       colors,
-      gravity = 1,
-      startAnimation,
+      gravity = 0,
+      isMoving = false, // Contrôle du mouvement passé par le parent
+      onCollisionEnter,
     },
     ref
   ) => {
     const shipRef = useRef();
-    const [isFlying, setIsFlying] = useState(false);
 
-    // États pour les couleurs
-    const [colorShip, setColorShip] = useState("#ff0000");
-    const [colorLight, setColorLight] = useState("#00ff00");
-    const [colorGlass, setColorGlass] = useState("#0000ff");
-    const [colorBoost, setColorBoost] = useState("#ffff00");
+    useRaycastCollision(shipRef, (collision) => {
+      console.log("Collision détectée avec :", collision.object.name);
+      onCollisionEnter?.(collision);
+    });
 
-    // L'animation ne se déclenche que lorsque startAnimation est vrai
     useFrame(() => {
-      if (shipRef.current && startAnimation) {
-        // Vérification supplémentaire pour s'assurer que shipRef.current est défini avant d'essayer d'accéder à la position
+      if (shipRef.current && isMoving) {
         const translation = shipRef.current.translation();
-
         if (translation) {
-          // Mise à jour de la position Z pour donner l'impression que le vaisseau avance
           shipRef.current.setTranslation({
-            x: translation.x,
-            y: translation.y,
-            z: translation.z - 0.1,
+            x: translation.x + 0.8,
+            y: translation.y - 0.2,
+            z: translation.z - 0.5,
           });
         }
       }
     });
+
+    useEffect(() => {
+      const handleCollision = () => {
+        if (onCollisionEnter) {
+          onCollisionEnter();
+        }
+      };
+
+      const ship = shipRef.current;
+      if (ship) {
+        ship.onCollisionEnter = handleCollision;
+      }
+
+      return () => {
+        if (ship) {
+          ship.onCollisionEnter = null;
+        }
+      };
+    }, [onCollisionEnter]);
 
     return (
       <RigidBody
@@ -49,7 +64,6 @@ const Ship = React.forwardRef(
         type="dynamic"
         mass={5}
         friction={1}
-        onClick={() => setIsFlying(!isFlying)}
       >
         <Model
           position={position}
@@ -63,7 +77,6 @@ const Ship = React.forwardRef(
   }
 );
 
-// Donner un nom au composant pour le débogage
 Ship.displayName = "Ship";
 
 export default Ship;
