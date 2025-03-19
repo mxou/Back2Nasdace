@@ -7,6 +7,7 @@ import { useRaycastCollision } from "./UseRaycastCollision";
 export default function Ship({ position = [0, 0, 0], scale = [4, 4, 4], colors, takeoff }) {
   const shipRef = useRef();
   const [yPos, setYPos] = useState(position[1]); // Suivi de la position Y
+  const [rotation, setRotation] = useState(0);
 
   // États pour les couleurs
   const [colorShip, setColorShip] = useState("#ff0000");
@@ -16,15 +17,22 @@ export default function Ship({ position = [0, 0, 0], scale = [4, 4, 4], colors, 
 
   // Utilisation de useFrame pour animer le décollage
   useFrame(() => {
-    if (takeoff && yPos < 20) {
-      // Condition pour décoller (faire monter le vaisseau jusqu'à Y = 20)
-      setYPos((prevY) => prevY + 0.05); // Incrémenter la position Y de manière fluide
+    if (takeoff) {
+      if (yPos < 20) {
+        // Décollage, faire monter le vaisseau
+        setYPos((prevY) => prevY + 0.05); // Incrémenter la position Y de manière fluide
+      }
+
+      // Rotation continue du vaisseau
+      setRotation((prevRotation) => prevRotation + 0.15); // Faire tourner le vaisseau lentement
     }
   });
+
   return (
     <RigidBody ref={shipRef} colliders="hull" gravityScale={1} restitution={0.5} type="fixed" mass={5} friction={1}>
       <Model
         position={[position[0], yPos, position[2]]}
+        rotation={[0, rotation, 0]}
         scale={scale}
         colorShip={colors.colorShip}
         colorLight={colors.colorLight}
