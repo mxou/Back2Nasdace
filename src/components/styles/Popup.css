@@ -1,0 +1,103 @@
+/* Popup.css */
+.space-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  perspective: 800px;
+}
+
+.space-popup-content {
+  background: linear-gradient(135deg, rgba(23, 32, 90, 0.9) 0%, rgba(51, 10, 123, 0.9) 100%);
+  color: #fff;
+  padding: 20px 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 25px rgba(80, 160, 255, 0.5), 0 0 5px rgba(80, 160, 255, 0.3) inset;
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1.5;
+  font-size: 20px;
+  max-width: 400px;
+  width: max-content;
+  border: 2px solid rgba(120, 200, 255, 0.6);
+  position: relative;
+  overflow: hidden;
+}
+
+.space-popup-text {
+  position: relative;
+  z-index: 2;
+  text-shadow: 0 0 10px rgba(150, 220, 255, 0.7);
+}
+
+/* Étoiles d'arrière-plan */
+.space-popup-stars {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(1px 1px at 25px 5px, white, rgba(255, 255, 255, 0)), radial-gradient(1px 1px at 50px 25px, white, rgba(255, 255, 255, 0)),
+    radial-gradient(1px 1px at 125px 20px, white, rgba(255, 255, 255, 0)), radial-gradient(1.5px 1.5px at 50px 75px, white, rgba(255, 255, 255, 0)),
+    radial-gradient(2px 2px at 175px 15px, white, rgba(255, 255, 255, 0)), radial-gradient(2px 2px at 200px 100px, white, rgba(255, 255, 255, 0)),
+    radial-gradient(1px 1px at 225px 50px, white, rgba(255, 255, 255, 0));
+  opacity: 0.5;
+  z-index: 1;
+}
+
+/* Animations */
+.appear {
+  animation: spaceAppear 0.8s cubic-bezier(0.17, 0.67, 0.39, 1.29) forwards;
+}
+
+.disappear {
+  animation: spaceDisappear 1s ease forwards;
+}
+
+@keyframes spaceAppear {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1) rotate(-5deg);
+  }
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05) rotate(2deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1) rotate(0);
+  }
+}
+
+@keyframes spaceDisappear {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.1) translateY(50px);
+  }
+}
+
+/* Animation de pulsation de la bordure */
+@keyframes pulseBorder {
+  0% {
+    box-shadow: 0 0 20px rgba(80, 160, 255, 0.5), 0 0 5px rgba(80, 160, 255, 0.3) inset;
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(110, 180, 255, 0.7), 0 0 10px rgba(110, 180, 255, 0.5) inset;
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(80, 160, 255, 0.5), 0 0 5px rgba(80, 160, 255, 0.3) inset;
+  }
+}
+
+.space-popup-content {
+  animation: pulseBorder 2s infinite;
+}

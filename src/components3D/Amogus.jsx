@@ -2,10 +2,13 @@ import React, { useEffect, useState } from "react";
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
 import { Html } from "@react-three/drei";
+import "./styles/Amogus.css";
 
-export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShowForm }) {
+export default function Amogus({ position, scale = [5, 5, 5], playerRef, onQuizStart }) {
   const { scene } = useGLTF("src/assets/modeles/amogus.glb");
   const [isNear, setIsNear] = useState(false);
+  const audio = new Audio("/audio/mcoof.mp3");
+  audio.volume = 0.1;
 
   // Vérifier la distance entre le joueur et Amogus
   useEffect(() => {
@@ -15,7 +18,7 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShow
       const playerPosition = playerRef.current.translation(); // Position du joueur
       const distance = Math.sqrt((playerPosition.x - position[0]) ** 2 + (playerPosition.z - position[2]) ** 2);
 
-      setIsNear(distance < 3);
+      setIsNear(distance < 5); // Proximité de 5 unités
     };
 
     const interval = setInterval(checkProximity, 500);
@@ -26,13 +29,16 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShow
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === "e" && isNear) {
-        setShowForm(true);
+        audio.play().catch((err) => {
+          console.log("Erreur de lecture du son :", err);
+        }); // Joue le son
+        onQuizStart(); // Déclenche le quiz lorsqu'on appuie sur "E"
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [isNear, setShowForm]);
+  }, [isNear, onQuizStart]);
 
   return (
     <RigidBody type="fixed" colliders="hull">
@@ -40,8 +46,10 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, setShow
 
       {/* Affichage du message si le joueur est proche */}
       {isNear && (
-        <Html position={[10, 1, 11]} center>
-          <div style={styles.interactionText}>Press E to interact</div>
+        <Html position={[1, 1, -14]} center>
+          <div className="interaction-message">
+            <span className="key">E</span> <span className="instruction">pour intéragir</span>
+          </div>
         </Html>
       )}
     </RigidBody>

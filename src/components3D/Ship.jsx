@@ -1,95 +1,37 @@
-import React, { useRef, useEffect, useState } from "react";
+
+import React, { useRef, useState, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { Model } from "../components/Model";
 import { useFrame } from "@react-three/fiber";
 import { useRaycastCollision } from "./UseRaycastCollision";
 
-const Ship = React.forwardRef(
-  (
-    {
-      position = [0, 0, 0],
-      scale = [4, 4, 4],
-      colors,
-      gravity = 0,
-      isMoving = false, // Contrôle du mouvement passé par le parent
-      onCollisionEnter,
-      idleSpace = false, // Nouvelle propriété qui contrôle le mouvement continu
-    },
-    ref
-  ) => {
-    const shipRef = useRef();
-    const [yOffset, setYOffset] = useState(0); // Suivi de la position Y pour le mouvement continu
+export default function Ship({ position = [0, 0, 0], scale = [4, 4, 4], colors, takeoff }) {
+  const shipRef = useRef();
+  const [yPos, setYPos] = useState(position[1]); // Suivi de la position Y
 
-    // Collision
-    useRaycastCollision(shipRef, (collision) => {
-      console.log("Collision détectée avec :", collision.object.name);
-      onCollisionEnter?.(collision);
-    });
+  // États pour les couleurs
+  const [colorShip, setColorShip] = useState("#ff0000");
+  const [colorLight, setColorLight] = useState("#00ff00");
+  const [colorGlass, setColorGlass] = useState("#0000ff");
+  const [colorBoost, setColorBoost] = useState("#ffff00");
 
-    // Mouvement continu en haut/bas si idleSpace est activé
-    useFrame(() => {
-      if (shipRef.current && idleSpace) {
-        const translation = shipRef.current.translation();
-        if (translation) {
-          // Mouvement vertical sinusoïdal
-          setYOffset(Math.sin(Date.now() * 0.002) * 0.5); // Vitesse et amplitude du mouvement vertical
-        }
-      }
-
-      // Si le vaisseau est en mouvement (contrôlé par isMoving)
-      if (shipRef.current && isMoving) {
-        const translation = shipRef.current.translation();
-        if (translation) {
-          shipRef.current.setTranslation({
-            x: translation.x + 0.4,
-            y: translation.y - 0.1,
-            z: translation.z - 0.25,
-          });
-        }
-      }
-    });
-
-    useEffect(() => {
-      const handleCollision = () => {
-        if (onCollisionEnter) {
-          onCollisionEnter();
-        }
-      };
-
-      const ship = shipRef.current;
-      if (ship) {
-        ship.onCollisionEnter = handleCollision;
-      }
-
-      return () => {
-        if (ship) {
-          ship.onCollisionEnter = null;
-        }
-      };
-    }, [onCollisionEnter]);
-
-    return (
-      <RigidBody
-        ref={shipRef}
-        colliders="hull"
-        gravityScale={gravity}
-        restitution={0.5}
-        type="dynamic"
-        mass={5}
-        friction={1}
-      >
-        <Model
-          position={[position[0], position[1] + yOffset, position[2]]} // Applique le déplacement Y sinusoïdal ici
-          scale={scale}
-          colorShip={colors.colorShip}
-          colorLight={colors.colorLight}
-          colorGlass={colors.colorGlass}
-        />
-      </RigidBody>
-    );
-  }
-);
-
-Ship.displayName = "Ship";
-
-export default Ship;
+  // Utilisation de useFrame pour animer le décollage
+  useFrame(() => {
+    if (takeoff && yPos < 20) {
+      // Condition pour décoller (faire monter le vaisseau jusqu'à Y = 20)
+      setYPos((prevY) => prevY + 0.05); // Incrémenter la position Y de manière fluide
+    }
+  });
+  return (
+    <RigidBody ref={shipRef} colliders="hull" gravityScale={1} restitution={0.5} type="fixed" mass={5} friction={1}>
+      <Model
+        position={[position[0], yPos, position[2]]}
+        scale={scale}
+        colorShip={colors.colorShip}
+        colorLight={colors.colorLight}
+        colorGlass={colors.colorGlass}
+      />
+    </RigidBody>
+  );
+}
