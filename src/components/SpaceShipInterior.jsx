@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Physics, RigidBody } from "@react-three/rapier";
-import { KeyboardControls, Html } from "@react-three/drei";
+import { KeyboardControls, Html, useTexture } from "@react-three/drei";
 import Controller from "ecctrl";
 import { Gltf } from "@react-three/drei";
 import * as THREE from "three";
@@ -13,6 +13,53 @@ import ATH from "./ATH";
 import NasdaceModel from "/src/assets/modeles/Nasdace.glb";
 import ghostModel from "/src/assets/modeles/ghost_w_tophat-transformed.glb";
 import doda from "/src/assets/modeles/doda 2.glb";
+import galaxyImage from "/src/assets/images/space.jpg";
+import asteroidHit from "/public/audio/musicMiddleScene.mp3";
+// Composant pour le fond de la scène
+// Composant pour le fond de la scène
+const SceneBackground = () => {
+  const { scene } = useThree();
+  const texture = useTexture(galaxyImage);
+  const soundRef = useRef(null);
+  const soundInitialized = useRef(false);
+
+  useEffect(() => {
+    // Configurer la texture comme fond
+    scene.background = texture;
+
+    // Vérifier si la musique a déjà été initialisée
+    if (!soundInitialized.current) {
+      // Créer et jouer la musique de fond
+      const listener = new THREE.AudioListener();
+      scene.add(listener);
+
+      const sound = new THREE.Audio(listener);
+      soundRef.current = sound;
+
+      const audioLoader = new THREE.AudioLoader();
+
+      audioLoader.load(asteroidHit, (buffer) => {
+        if (soundRef.current) {
+          sound.setBuffer(buffer);
+          sound.setLoop(true);
+          sound.setVolume(0.5);
+          sound.play();
+          soundInitialized.current = true;
+        }
+      });
+    }
+
+    // Nettoyage
+    return () => {
+      if (soundRef.current) {
+        soundRef.current.stop();
+      }
+      scene.background = null;
+    };
+  }, [scene, texture]);
+
+  return null;
+};
 
 // Composant Alien
 const Alien = ({
@@ -243,7 +290,7 @@ const SpaceshipInterior = ({ playerData }) => {
 
       // Attendre quelques secondes avant de naviguer
       const timer = setTimeout(() => {
-        navigate("/dev/ending-scene", { state: { playerData } });
+        navigate("/dev/rythm-scene", { state: { playerData } });
       }, 3000); // 3 secondes avant de naviguer
 
       return () => clearTimeout(timer);
@@ -254,6 +301,7 @@ const SpaceshipInterior = ({ playerData }) => {
     <>
       <div style={{ width: "100%", height: "100%" }}>
         <Canvas shadows>
+          <SceneBackground />
           <directionalLight intensity={0.5} castShadow position={[0, 5, 5]} />
           <ambientLight intensity={0.5} />
 
@@ -346,6 +394,7 @@ const SpaceshipInterior = ({ playerData }) => {
               fuel={fuel}
               onClose={handleGameClose}
               onComplete={() => handleGameClose(true)}
+              playerData={playerData}
             />
           </div>
         )}

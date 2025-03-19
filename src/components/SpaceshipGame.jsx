@@ -7,7 +7,7 @@ import * as THREE from "three";
 import Ship from "../components3D/ShipPlayable";
 import galaxyImage from "/src/assets/images/space.jpg";
 import asteroid from "/src/assets/modeles/asteroid_1.glb";
-
+import asteroidHit from "/public/audio/rock.mp3";
 // Préchargement du modèle d'astéroïde
 useGLTF.preload(asteroid);
 
@@ -139,7 +139,7 @@ const Asteroid = ({ position, speed, onCollision, debugMode }) => {
 };
 
 // Composant pour le vaisseau et son contrôle
-const GameScene = ({ keysPressed, onCollision, debug }) => {
+const GameScene = ({ keysPressed, onCollision, debug, playerData }) => {
   const shipRef = useRef(null);
   const shipModelRef = useRef(null);
 
@@ -219,9 +219,9 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
             ref={shipModelRef}
             scale={[1, 1, 1]}
             colors={{
-              colorShip: "#4a4a4a",
-              colorLight: "#f9d71c",
-              colorGlass: "#8ab4f8",
+              colorShip: playerData?.shipColor || "#ff0000",
+              colorLight: playerData?.lightColor || "#00ff00",
+              colorGlass: playerData?.glassColor || "#0000ff",
             }}
           />
           {debug && (
@@ -256,7 +256,7 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
 };
 
 // Composant principal
-const SpaceshipGame = ({ setter, fuel, onComplete }) => {
+const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
   const navigate = useNavigate();
   const keysPressed = useRef({});
   const containerRef = useRef(null);
@@ -332,6 +332,12 @@ const SpaceshipGame = ({ setter, fuel, onComplete }) => {
       } else {
         console.error("Le setter n'est pas une fonction valide");
       }
+      // Jouer le son de collision
+      const hitSound = new Audio(asteroidHit);
+      hitSound.volume = 0.7; // Volume à 70%
+      hitSound.play().catch((error) => {
+        console.error("Erreur lors de la lecture du son:", error);
+      });
 
       // Effet visuel de collision
       setHitEffect(true);
