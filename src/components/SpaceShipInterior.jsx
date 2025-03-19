@@ -5,7 +5,7 @@ import { KeyboardControls, Html, useTexture } from "@react-three/drei";
 import Controller from "ecctrl";
 import { Gltf } from "@react-three/drei";
 import * as THREE from "three";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 import Exam from "./Exam";
 import Blaster from "./Blaster";
 import SpaceshipGame from "./SpaceshipGame";
@@ -15,7 +15,7 @@ import ghostModel from "/src/assets/modeles/ghost_w_tophat-transformed.glb";
 import doda from "/src/assets/modeles/doda 2.glb";
 import galaxyImage from "/src/assets/images/space.jpg";
 import asteroidHit from "/public/audio/musicMiddleScene.mp3";
-// Composant pour le fond de la scène
+
 // Composant pour le fond de la scène
 const SceneBackground = () => {
   const { scene } = useThree();
@@ -61,7 +61,55 @@ const SceneBackground = () => {
   return null;
 };
 
-// Composant Alien
+// Composant pour le panneau d'avertissement
+const WarningSign = ({ position, rotation = [0, 0, 0] }) => {
+  return (
+    <group position={position} rotation={rotation}>
+      {/* Panneau */}
+      <mesh castShadow receiveShadow position={[0, 1, 0]}>
+        <boxGeometry args={[2, 1.2, 0.1]} />
+        <meshStandardMaterial color="#ffdd00" />
+      </mesh>
+
+      {/* Pied du panneau */}
+      <mesh castShadow receiveShadow position={[0, 0, -0.1]}>
+        <cylinderGeometry args={[0.1, 0.1, 2, 16]} />
+        <meshStandardMaterial color="#888888" />
+      </mesh>
+
+      {/* Texte d'avertissement */}
+      <Html
+        position={[2.7, 1, 0.06]}
+        transform
+        distanceFactor={10}
+        rotation={[0, 0, 0]}
+      >
+        <div
+          style={{
+            width: "100px",
+            backgroundColor: "transparent",
+            color: "black",
+            fontWeight: "bold",
+            textAlign: "center",
+            padding: "5px",
+            fontSize: "8px",
+            fontFamily: "Arial",
+            whiteSpace: "normal",
+            transform: "translateX(-100%)",
+          }}
+        >
+          ATTENTION!
+          <br />
+          LES NASDACES NE COUVRENT PAS
+          <br />
+          SI CHUTE
+        </div>
+      </Html>
+    </group>
+  );
+};
+
+// Composant Alien avec correction
 const Alien = ({
   position,
   color,
@@ -144,13 +192,23 @@ const Alien = ({
   return (
     <>
       <group ref={alienRef} position={position} onClick={handleInteraction}>
-        <Gltf castShadow receiveShadow scale={0.5} src={NasdaceModel} />
-        <mesh position={[0, 1, 0]}>
+        {/* Ajustement de la position et échelle du modèle */}
+        <Gltf
+          castShadow
+          receiveShadow
+          scale={0.5}
+          position={[0, 0, 0]}
+          visible={true}
+          src={NasdaceModel}
+        />
+
+        {/* Déplacer la sphère colorée plus haut pour ne pas masquer le modèle */}
+        <mesh position={[0, 2, 0]}>
           <sphereGeometry args={[0.5, 16, 16]} />
           <meshStandardMaterial
             color={isCompleted ? "#00FF00" : color}
             transparent
-            opacity={0.8}
+            opacity={0.6}
             emissive={isCompleted ? "#00FF00" : "black"}
             emissiveIntensity={isCompleted ? 0.5 : 0}
           />
@@ -158,8 +216,18 @@ const Alien = ({
       </group>
 
       {showInteractionHint && (
-        <Html position={[0, 2, 0]} center>
-          <div className="interaction-hint">
+        <Html position={[position[0], position[1] + 3, position[2]]} center>
+          <div
+            className="interaction-hint"
+            style={{
+              backgroundColor: "rgba(0, 0, 0, 0.7)",
+              color: "white",
+              padding: "5px 10px",
+              borderRadius: "5px",
+              fontFamily: "'Rajdhani', sans-serif",
+              fontSize: "14px",
+            }}
+          >
             {isCompleted
               ? `${name} (Défi complété)`
               : `Cliquez pour parler à ${name}`}
@@ -196,7 +264,7 @@ const DialogueBox = ({ alienName, onClose, onSelect, isCompleted }) => {
 
 // Composant pour l'intérieur du vaisseau
 const SpaceshipInterior = ({ playerData }) => {
-  const navigate = useNavigate(); // Ajouter useNavigate
+  const navigate = useNavigate();
   const playerRef = useRef(null);
   const [showDialogue, setShowDialogue] = useState(false);
   const [currentAlien, setCurrentAlien] = useState(null);
@@ -206,9 +274,9 @@ const SpaceshipInterior = ({ playerData }) => {
 
   // État pour suivre les défis complétés
   const [gameCompletions, setGameCompletions] = useState({
-    "Quiz Master": false, // gameComplete1
-    "Blaster Pro": false, // gameComplete2
-    "Captain Nasdace": false, // gameComplete3
+    "Quiz Master": false,
+    "Blaster Pro": false,
+    "Captain Nasdace": false,
   });
 
   const keyboardMap = [
@@ -303,7 +371,9 @@ const SpaceshipInterior = ({ playerData }) => {
         <Canvas shadows>
           <SceneBackground />
           <directionalLight intensity={0.5} castShadow position={[0, 5, 5]} />
-          <ambientLight intensity={0.5} />
+          <pointLight intensity={1} position={[-5, 0, 0]} color="#ffffff" />
+          <pointLight intensity={1} position={[5, 0, 0]} color="#ffffff" />
+          <ambientLight intensity={0.7} />
 
           <Physics>
             <KeyboardControls map={keyboardMap}>
@@ -323,7 +393,10 @@ const SpaceshipInterior = ({ playerData }) => {
               <Gltf receiveShadow scale={15} position={[0, 2, 0]} src={doda} />
             </RigidBody>
 
-            {/* Les trois aliens */}
+            {/* Panneau d'avertissement près d'une zone glissante */}
+            <WarningSign position={[-2, -3.5, 6]} rotation={[0, 9, 0]} />
+
+            {/* Les trois aliens avec correction de visibilité */}
             <Alien
               position={[-5, -4, 0]}
               color="blue"
