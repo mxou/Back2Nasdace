@@ -39,7 +39,6 @@ const Ship = React.forwardRef(
       // Si le vaisseau est en mouvement (contrôlé par isMoving)
       if (shipRef.current && isMoving) {
         const translation = shipRef.current.translation();
-        console.log(translation);
         if (translation) {
           shipRef.current.setTranslation({
             x: translation.x + 0.4,

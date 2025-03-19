@@ -2,7 +2,7 @@
   { "name": "Grogksblux", "text": "C'est bon on a réussi !" },
   {
     "name": "Zglubugl",
-    "text": "Tu t'es super bien débrouillé et il nous reste assez de carburant pour atterrir."
+    "text": "Tu t'es super bien débrouillé {name} et il nous reste assez de carburant pour atterrir."
   },
   {
     "name": "Vaisseau",
