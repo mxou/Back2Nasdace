@@ -13,7 +13,6 @@ export default function ClearStorageButton() {
   );
 }
 
-// Styles
 const styles = {
   button: {
     position: "fixed",

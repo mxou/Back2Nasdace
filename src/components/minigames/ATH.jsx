@@ -8,16 +8,9 @@ const ATH = ({ showChrono = true, fuel = 100 }) => {
 
       {/* Barre de carburant */}
       <div style={styles.fuelContainer}>
-        <div
-          style={{
-            ...styles.fuelBar,
-            width: `${fuel}%`,
-            background: `linear-gradient(90deg, #ff0000, #ffff00, #00ff00)`,
-          }}
-        />
+        <div style={{ ...styles.fuelBar, width: `${fuel}%` }} />
       </div>
-
-      <span>⛽ Plutonium 95 : {fuel}%</span>
+      <span>⛽ Carburant : {fuel}%</span>
     </div>
   );
 };
@@ -25,27 +18,28 @@ const ATH = ({ showChrono = true, fuel = 100 }) => {
 const styles = {
   athContainer: {
     position: "fixed",
-    top: "20px",
-    left: "20px",
-    width: "30vw",
+    top: 0,
+    left: 0,
+    width: "100%",
+    padding: "10px",
+    background: "rgba(0, 0, 0, 0.7)",
     color: "white",
-    textAlign: "left",
+    borderBottom: "2px solid #fff",
+    textAlign: "center",
     fontFamily: "Arial, sans-serif",
-    userSelect: "none",
-    zIndex: 1000,
   },
   fuelContainer: {
-    height: "10px",
-    background: "#222",
-    borderRadius: "10px",
+    width: "80%",
+    height: "15px",
+    background: "#444",
+    borderRadius: "5px",
     overflow: "hidden",
     margin: "0 auto 5px auto",
-    boxShadow: "inset 0px 0px 5px rgba(0,0,0,0.5)",
   },
   fuelBar: {
     height: "100%",
-    transition: "width 0.5s ease-in-out",
-    borderRadius: "10px",
+    background: "limegreen",
+    transition: "width 0.5s linear",
   },
 };
 

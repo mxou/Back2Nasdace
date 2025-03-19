@@ -111,7 +111,6 @@ export default function PlayerForm({ onSubmit }) {
   );
 }
 
-// Styles en JS
 const styles = {
   formContainer: {
     position: "fixed",
@@ -139,7 +138,7 @@ const styles = {
     boxShadow:
       "0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(64, 194, 255, 0.4), inset 0 0 15px rgba(64, 194, 255, 0.2)",
     position: "relative",
-    animation: "pulse 4s ease-in-out infinite",
+    // animation: "pulse 4s ease-in-out infinite",
     transform: "translateY(0px)",
     transition: "transform 0.3s ease",
   },

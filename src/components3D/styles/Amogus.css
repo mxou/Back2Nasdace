@@ -1,0 +1,67 @@
+/* InteractionMessage.css */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(72, 159, 255, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(72, 159, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(72, 159, 255, 0);
+  }
+}
+
+@keyframes hover {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.interaction-message {
+  background: rgba(10, 25, 65, 0.75);
+  color: #e6f7ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-family: "Rajdhani", "Orbitron", sans-serif;
+  text-align: center;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(120, 200, 255, 0.4);
+  backdrop-filter: blur(2px);
+  box-shadow: 0 0 15px rgba(72, 159, 255, 0.3);
+  transform: perspective(400px) rotateX(10deg);
+  animation: hover 2s ease-in-out infinite;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.key {
+  display: inline-block;
+  background: rgba(140, 200, 255, 0.25);
+  border: 1px solid rgba(140, 200, 255, 0.6);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-right: 5px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 0 0 5px rgba(140, 200, 255, 0.8);
+  animation: pulse 2s infinite;
+}
+
+.instruction {
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+/* Support pour les écrans à plus haute résolution */
+@media (min-resolution: 2dppx) {
+  .interaction-message {
+    font-size: 16px;
+  }
+}

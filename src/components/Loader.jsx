@@ -14,7 +14,6 @@ export default function Loader() {
   );
 }
 
-// Styles du loader
 const styles = {
   loader: {
     position: "fixed",

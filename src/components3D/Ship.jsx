@@ -2,13 +2,11 @@ import React, { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { Model } from "../components/Model";
+import { useFrame } from "@react-three/fiber";
+import { useRaycastCollision } from "./UseRaycastCollision";
 
-export default function Ship({
-  position = [0, 0, 0],
-  scale = [4, 4, 4],
-  colors,
-  takeoff,
-}) {
+
+export default function Ship({ position = [0, 0, 0], scale = [4, 4, 4], colors, takeoff }) {
   const shipRef = useRef();
   const [yPos, setYPos] = useState(position[1]); // Suivi de la position Y
 
@@ -26,15 +24,8 @@ export default function Ship({
     }
   });
   return (
-    <RigidBody
-      ref={shipRef}
-      colliders="hull"
-      gravityScale={1}
-      restitution={0.5}
-      type="fixed"
-      mass={5}
-      friction={1}
-    >
+
+    <RigidBody ref={shipRef} colliders="hull" gravityScale={1} restitution={0.5} type="fixed" mass={5} friction={1}>
       <Model
         position={[position[0], yPos, position[2]]}
         scale={scale}
