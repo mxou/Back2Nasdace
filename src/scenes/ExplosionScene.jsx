@@ -47,7 +47,7 @@ export default function ExplosionScene(playerData) {
 
       <Physics>
         {!removeObjects ? (
-          <NasdaceCity ref={cityRef} position={[0, -15, 0]} />
+          <NasdaceCity ref={cityRef} position={[0, -15, 0]} scale={[1, 1, 1]} />
         ) : null}
 
         {!explosionTriggered ? (

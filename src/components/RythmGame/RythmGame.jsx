@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./RythmGame.css";
+import { div } from "framer-motion/client";
 
-const RhythmGame = () => {
+const RhythmGame = ({
+  hasScored = false,
+  setHasScored,
+  hitSound,
+  missSound,
+  navigate,
+}) => {
   const [notes, setNotes] = useState([]);
   const [score, setScore] = useState(0);
   const [combo, setCombo] = useState(0);
@@ -10,12 +17,13 @@ const RhythmGame = () => {
   const [misses, setMisses] = useState(0);
   const [hits, setHits] = useState({ perfect: 0, good: 0, ok: 0 });
   const [scrollSpeed, setScrollSpeed] = useState(2);
-  const [approachRate, setApproachRate] = useState(1);
+  const [approachRate, setApproachRate] = useState(1.5);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [lastHit, setLastHit] = useState(null);
   const [timeLeft, setTimeLeft] = useState(60); // Jeu limité à 60 secondes
   const [gameTime, setGameTime] = useState(60); // Durée configurable
+  const [feedBack, setFeedBack] = useState(-1);
   const gameRef = useRef(null);
   const frameRef = useRef(null);
   const noteIdRef = useRef(0);
@@ -107,6 +115,7 @@ const RhythmGame = () => {
             const isMissed =
               !note.hit && newY > hitAreaPosition + hitAreaHeight;
             if (isMissed && !note.missed) {
+              missSound.play();
               setCombo(0);
               setMisses((prev) => prev + 1);
               return { ...note, y: newY, missed: true };
@@ -134,9 +143,13 @@ const RhythmGame = () => {
       else if (e.key === "ArrowUp") lane = 2;
       else if (e.key === "ArrowRight") lane = 3;
       if (lane !== -1) {
+        setFeedBack(true);
         e.preventDefault();
         handleLaneHit(lane);
       }
+      const feedBackTimeout = setTimeout(() => {
+        setFeedBack(-1);
+      }, 200);
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => {
@@ -160,6 +173,7 @@ const RhythmGame = () => {
       const accuracyRatio = distance / hitAreaHeight;
       let pointsToAdd = 0;
       let hitType = "";
+      hitSound.play();
       if (accuracyRatio <= PERFECT_TIMING) {
         pointsToAdd = PERFECT_POINTS;
         hitType = "PERFECT";
@@ -242,64 +256,69 @@ const RhythmGame = () => {
                   Commencer
                 </button>
                 {/* Paramètres de jeu */}
-                <div className="settings-row">
-                  <div className="setting-group">
-                    <label htmlFor="scrollSpeed" className="setting-label">
-                      Vitesse: {scrollSpeed}
-                    </label>
-                    <input
-                      id="scrollSpeed"
-                      type="range"
-                      min="1"
-                      max="10"
-                      step="0.5"
-                      value={scrollSpeed}
-                      onChange={(e) =>
-                        setScrollSpeed(parseFloat(e.target.value))
-                      }
-                      className="setting-slider"
-                    />
+                {hasScored ? (
+                  <div>
+                    <div className="settings-row">
+                      <div className="setting-group">
+                        <label htmlFor="scrollSpeed" className="setting-label">
+                          Vitesse: {scrollSpeed}
+                        </label>
+                        <input
+                          id="scrollSpeed"
+                          type="range"
+                          min="1"
+                          max="10"
+                          step="0.5"
+                          value={scrollSpeed}
+                          onChange={(e) =>
+                            setScrollSpeed(parseFloat(e.target.value))
+                          }
+                          className="setting-slider"
+                        />
+                      </div>
+                      <div className="setting-group">
+                        <label htmlFor="approachRate" className="setting-label">
+                          Fréquence: {approachRate}
+                        </label>
+                        <input
+                          id="approachRate"
+                          type="range"
+                          min="0.5"
+                          max="3"
+                          step="0.1"
+                          value={approachRate}
+                          onChange={(e) =>
+                            setApproachRate(parseFloat(e.target.value))
+                          }
+                          className="setting-slider"
+                        />
+                      </div>
+                    </div>
+                    <div className="setting-group">
+                      <label htmlFor="gameTime" className="setting-label">
+                        Durée (sec): {gameTime}
+                      </label>
+                      <input
+                        id="gameTime"
+                        type="range"
+                        min="30"
+                        max="180"
+                        step="10"
+                        value={gameTime}
+                        onChange={(e) => setGameTime(parseInt(e.target.value))}
+                        className="setting-slider"
+                        style={{ width: "12rem" }}
+                      />
+                    </div>
                   </div>
-                  <div className="setting-group">
-                    <label htmlFor="approachRate" className="setting-label">
-                      Fréquence: {approachRate}
-                    </label>
-                    <input
-                      id="approachRate"
-                      type="range"
-                      min="0.5"
-                      max="3"
-                      step="0.1"
-                      value={approachRate}
-                      onChange={(e) =>
-                        setApproachRate(parseFloat(e.target.value))
-                      }
-                      className="setting-slider"
-                    />
-                  </div>
-                </div>
-                <div className="setting-group">
-                  <label htmlFor="gameTime" className="setting-label">
-                    Durée (sec): {gameTime}
-                  </label>
-                  <input
-                    id="gameTime"
-                    type="range"
-                    min="30"
-                    max="180"
-                    step="10"
-                    value={gameTime}
-                    onChange={(e) => setGameTime(parseInt(e.target.value))}
-                    className="setting-slider"
-                    style={{ width: "12rem" }}
-                  />
-                </div>
+                ) : null}
               </div>
-            ) : (
+            ) : null}
+            {isPlaying && hasScored ? (
               <button onClick={endGame} className="stop-button">
                 Arrêter
               </button>
-            )}
+            ) : null}
           </div>
           {isPlaying && (
             <div className="timer-display">
@@ -315,6 +334,7 @@ const RhythmGame = () => {
           {isPlaying && (
             <div className="score-display">
               <div>Score: {score}</div>
+              <div>Précision: {calculateAccuracy()}</div>
               <div>
                 Combo: <span className="combo-count">{combo}</span>{" "}
                 <span className="multiplier">x{multiplier}</span>
@@ -429,7 +449,20 @@ const RhythmGame = () => {
           </div>
           <button
             onClick={() => {
+              if (calculateGrade() === "D" || calculateGrade() === "F") {
+                navigate("/dev/explosion-scene");
+              } else {
+                navigate("/dev/ending-scene");
+              }
+            }}
+            className="continue-button"
+          >
+            Continuer
+          </button>
+          <button
+            onClick={() => {
               setGameOver(false);
+              setHasScored(true);
             }}
             className="replay-button"
           >

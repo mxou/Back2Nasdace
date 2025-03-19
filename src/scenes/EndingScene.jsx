@@ -46,7 +46,11 @@ export default function EndingScene({ playerData }) {
     <div style={{ width: "100vw", height: "100vh" }}>
       <ATH showChrono={false} />
       {showDialog && (
-        <Dialogues dialogFile={dialogIa} onEnd={handleDialogueEnd} />
+        <Dialogues
+          dialogFile={dialogIa}
+          onEnd={handleDialogueEnd}
+          userName={playerData.name}
+        />
       )}
       <Canvas shadows camera={{ position: [0, 5, 50], fov: 45 }}>
         {/* Fond étoilé */}
