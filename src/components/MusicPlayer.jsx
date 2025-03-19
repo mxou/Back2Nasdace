@@ -14,17 +14,28 @@ export default function MusicPlayer({ path }) {
           audioRef.current.loop = true; // Pour que la musique joue en boucle
           audioRef.current.volume = 0.03;
         }
-        // Désabonner l'événement après que la touche ait été pressée
-        document.removeEventListener("keydown", handleKeyDown);
       }
     };
 
-    // Écoute de l'événement "keydown"
-    document.addEventListener("keydown", handleKeyDown);
+    // Fonction pour démarrer la musique lors d'un clic
+    const handleClick = () => {
+      if (audioRef.current) {
+        audioRef.current.play().catch((err) => {
+          console.log("Erreur de lecture du son au clic :", err);
+        });
+        audioRef.current.loop = true;
+        audioRef.current.volume = 0.03;
+      }
+    };
 
+    // Écoute des événements "keydown" et "click"
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("click", handleClick);
+
+    // Clean-up lorsque le composant est démonté
     return () => {
-      // Désabonne l'événement lors du démontage du composant
       document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleClick);
       if (audioRef.current) {
         audioRef.current.pause();
       }

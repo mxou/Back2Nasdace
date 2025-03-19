@@ -9,6 +9,7 @@ export default function ControlPannel({ takeoff }) {
   const [propulseurState3, setPropulseurState3] = useState(false);
   const [propulseurState4, setPropulseurState4] = useState(false);
   const injectionSound = new Audio("/audio/injection.mp3");
+  const buttonSound = new Audio("/audio/buttonsound.mp3");
   const soundButton1 = new Audio("/audio/button1.mp3");
   const soundButton2 = new Audio("/audio/button2.mp3");
   const soundButton3 = new Audio("/audio/button3.mp3");
@@ -38,21 +39,21 @@ export default function ControlPannel({ takeoff }) {
 
   // Activation des sons en fonction de l'état
   if (propulseurState1) {
-    playSound(soundButton1);
+    playSound(buttonSound);
   }
   if (propulseurState2) {
-    playSound(soundButton2);
+    playSound(buttonSound);
   }
   if (propulseurState3) {
-    playSound(soundButton3);
+    playSound(buttonSound);
   }
   if (propulseurState4) {
-    playSound(soundButton4);
+    playSound(buttonSound);
   }
 
   const handleFuelInjection = () => {
     let start = 0;
-    const duration = 4000; // Durée de l'animation (en ms)
+    const duration = 1300; // Durée de l'animation (en ms)
 
     // Fonction pour animer le remplissage de la jauge
     const animateFuel = () => {

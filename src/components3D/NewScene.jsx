@@ -6,6 +6,7 @@ import Ship from "../components3D/Ship.jsx";
 import * as THREE from "three";
 import Popup from "../components/Popup.jsx";
 import ControlPannel from "../components/ControlPannel.jsx";
+import MusicPlayer from "../components/MusicPlayer.jsx";
 
 export default function NewScene({ playerData }) {
   const cameraRef = useRef();
@@ -38,6 +39,7 @@ export default function NewScene({ playerData }) {
 
   return (
     <>
+      <MusicPlayer path={"/audio/galaxyAmbient.mp3"} />
       <Canvas>
         {/* Caméra de la scène */}
         <PerspectiveCamera
