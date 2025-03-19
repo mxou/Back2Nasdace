@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { RigidBody } from "@react-three/rapier";
 import { Model } from "../components/Model";
 import { useFrame } from "@react-three/fiber";
@@ -13,24 +13,38 @@ const Ship = React.forwardRef(
       gravity = 0,
       isMoving = false, // Contrôle du mouvement passé par le parent
       onCollisionEnter,
+      idleSpace = false, // Nouvelle propriété qui contrôle le mouvement continu
     },
     ref
   ) => {
     const shipRef = useRef();
+    const [yOffset, setYOffset] = useState(0); // Suivi de la position Y pour le mouvement continu
 
+    // Collision
     useRaycastCollision(shipRef, (collision) => {
       console.log("Collision détectée avec :", collision.object.name);
       onCollisionEnter?.(collision);
     });
 
+    // Mouvement continu en haut/bas si idleSpace est activé
     useFrame(() => {
-      if (shipRef.current && isMoving) {
+      if (shipRef.current && idleSpace) {
         const translation = shipRef.current.translation();
         if (translation) {
+          // Mouvement vertical sinusoïdal
+          setYOffset(Math.sin(Date.now() * 0.002) * 0.5); // Vitesse et amplitude du mouvement vertical
+        }
+      }
+
+      // Si le vaisseau est en mouvement (contrôlé par isMoving)
+      if (shipRef.current && isMoving) {
+        const translation = shipRef.current.translation();
+        console.log(translation);
+        if (translation) {
           shipRef.current.setTranslation({
-            x: translation.x + 0.8,
-            y: translation.y - 0.2,
-            z: translation.z - 0.5,
+            x: translation.x + 0.4,
+            y: translation.y - 0.1,
+            z: translation.z - 0.25,
           });
         }
       }
@@ -66,7 +80,7 @@ const Ship = React.forwardRef(
         friction={1}
       >
         <Model
-          position={position}
+          position={[position[0], position[1] + yOffset, position[2]]} // Applique le déplacement Y sinusoïdal ici
           scale={scale}
           colorShip={colors.colorShip}
           colorLight={colors.colorLight}

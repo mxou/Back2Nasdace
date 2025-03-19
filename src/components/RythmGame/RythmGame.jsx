@@ -231,7 +231,7 @@ const RhythmGame = () => {
   };
   return (
     <div className="game-container">
-      <div className="game-title">Jeu de Rythme</div>
+      <div className="game-title">Danse pour le vaisseau</div>
       {!gameOver ? (
         <>
           {/* Game Controls */}
@@ -335,7 +335,7 @@ const RhythmGame = () => {
                   : "hit-ok"
               }`}
             >
-              {lastHit.type} (+{lastHit.points})
+              {lastHit.type} !
             </div>
           )}
           {/* Game Area */}

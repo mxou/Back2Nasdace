@@ -33,7 +33,7 @@ export default function RythmGameScene({ playerData }) {
         />
       ) : null}
       {gameStart ? <RhythmGame /> : null}
-      <Canvas shadows camera={{ position: [0, 5, 10], fov: 45 }}>
+      <Canvas shadows camera={{ position: [10, 10, 20], fov: 45 }}>
         {/* Fond étoilé */}
         <Stars radius={100} depth={500} count={5000} factor={4} />
 
@@ -48,6 +48,7 @@ export default function RythmGameScene({ playerData }) {
             position={[0, 0, 0]} // Initial position
             scale={6}
             colors={playerData}
+            idleSpace
             gravity={0}
           />
         </Physics>

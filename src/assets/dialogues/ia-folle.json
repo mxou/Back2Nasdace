@@ -1,5 +1,5 @@
 [
-  { "name": "Zglubugl", "text": "C'est bon on a réussi !" },
+  { "name": "Grogksblux", "text": "C'est bon on a réussi !" },
   {
     "name": "Zglubugl",
     "text": "Tu t'es super bien débrouillé et il nous reste assez de carburant pour atterrir."
@@ -10,13 +10,13 @@
   },
   {
     "name": "Zglubugl",
-    "text": "Le Plutonium 95 c'est cher tu sais, on est vraiment désolés..."
+    "text": "Le Plutonium 95 c'est cher tu sais, on est vraiment désolé..."
   },
   {
     "name": "Vaisseau",
-    "text": "VRAIMENT désolés ?"
+    "text": "VRAIMENT désolé ?"
   },
-  { "name": "Zglubugl", "text": "Oui VRAIMENT." },
+  { "name": "Grogksblux", "text": "Oui VRAIMENT." },
   {
     "name": "Vaisseau",
     "text": "Alors faites moi le concert."
@@ -34,7 +34,7 @@
     "name": "{name}",
     "text": "Un autre terrien avec qui vous avez fait du co-vaiss' ?"
   },
-  { "name": "Zglubugl", "text": "Non pourquoi tu dis ça ?" },
+  { "name": "Zglubugl", "text": "Non un nasdace pourquoi ?" },
   {
     "name": "{name}",
     "text": "Nan rien"

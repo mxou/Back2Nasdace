@@ -8,7 +8,13 @@ const ATH = ({ showChrono = true, fuel = 100 }) => {
 
       {/* Barre de carburant */}
       <div style={styles.fuelContainer}>
-        <div style={{ ...styles.fuelBar, width: `${fuel}%` }} />
+        <div
+          style={{
+            ...styles.fuelBar,
+            width: `${fuel}%`,
+            background: `linear-gradient(90deg, #ff0000, #ffff00, #00ff00)`,
+          }}
+        />
       </div>
       <span>⛽ Plutonium 95 : {fuel}%</span>
     </div>
@@ -21,7 +27,6 @@ const styles = {
     top: "20px",
     left: "20px",
     width: "30vw",
-    // background: "rgba(0, 0, 0, 0.7)",
     color: "white",
     textAlign: "left",
     fontFamily: "Arial, sans-serif",
@@ -29,16 +34,17 @@ const styles = {
     zIndex: 1000,
   },
   fuelContainer: {
-    height: "15px",
-    background: "#444",
-    borderRadius: "5px",
+    height: "10px",
+    background: "#222",
+    borderRadius: "10px",
     overflow: "hidden",
     margin: "0 auto 5px auto",
+    boxShadow: "inset 0px 0px 5px rgba(0,0,0,0.5)",
   },
   fuelBar: {
     height: "100%",
-    background: "limegreen",
-    transition: "width 0.5s linear",
+    transition: "width 0.5s ease-in-out",
+    borderRadius: "10px",
   },
 };
 
