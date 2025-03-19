@@ -61,7 +61,7 @@ const AsteroidModel = ({ scale = 1 }) => {
 const Asteroid = ({ position, speed, onCollision, debugMode }) => {
   const asteroidRef = useRef();
   const collisionRef = useRef(false);
-  const scale = useRef(0.5 + Math.random() * 0.7);
+  const scale = useRef(0.2 + Math.random() * 0.7);
 
   useFrame(() => {
     if (asteroidRef.current) {
@@ -80,14 +80,13 @@ const Asteroid = ({ position, speed, onCollision, debugMode }) => {
           z: 0,
         });
         scale.current = 0.5 + Math.random() * 0.5;
-        collisionRef.current = false; // Réinitialiser l'état de collision pour ce nouvel astéroïde
       }
     }
   });
 
   // Utiliser la fonction concrète de collision plutôt que l'événement
   useFrame(() => {
-    if (asteroidRef.current && onCollision && !collisionRef.current) {
+    if (asteroidRef.current && onCollision) {
       const asteroidPosition = asteroidRef.current.translation();
 
       // Obtenir la position du vaisseau (si disponible)
@@ -105,12 +104,9 @@ const Asteroid = ({ position, speed, onCollision, debugMode }) => {
 
         // Si la distance est inférieure à un seuil, considérer qu'il y a collision
         // Ajuster cette valeur selon la taille de vos modèles
-        const collisionThreshold = 1.5 * scale.current;
+        const collisionThreshold = 1.2 * scale.current;
 
         if (distance < collisionThreshold) {
-          // Éviter les collisions multiples avec le même astéroïde
-          collisionRef.current = true;
-
           // Déclencher l'effet de collision
           if (onCollision.triggerEffect) {
             console.log("Collision détectée à distance:", distance);
@@ -189,8 +185,8 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
     return null;
   };
 
-  const asteroidCount = 5;
-  const asteroidSpeed = 0.02;
+  const asteroidCount = 10;
+  const asteroidSpeed = 0.04;
 
   return (
     <>
@@ -213,7 +209,7 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
         >
           <Ship
             ref={shipModelRef}
-            scale={[2, 2, 2]}
+            scale={[1, 1, 1]}
             colors={{
               colorShip: "#4a4a4a",
               colorLight: "#f9d71c",
@@ -290,7 +286,7 @@ const SpaceshipGame = ({ setter, fuel }) => {
   // Fonction de gestion des collisions
   const handleAsteroidCollision = () => {
     const now = Date.now();
-    if (now - lastCollisionTime.current > 1000) {
+    if (now - lastCollisionTime.current > 300) {
       lastCollisionTime.current = now;
 
       console.log("Avant collision - Fuel:", fuel);
