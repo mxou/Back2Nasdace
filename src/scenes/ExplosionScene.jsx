@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";
-import Ship from "../components3D/Ship";
+import ShipSus from "../components3D/ShipSus";
 import NasdaceCity from "../components3D/NasdaceCity";
 import ExplosionHandler from "../3Dhandlers/ExplosionHandler";
 import { Stars } from "@react-three/drei";
@@ -51,7 +51,7 @@ export default function ExplosionScene(playerData) {
         ) : null}
 
         {!explosionTriggered ? (
-          <Ship
+          <ShipSus
             ref={shipRef}
             position={[-80, 10, 50]} // Position initiale du vaisseau
             colors={playerData}

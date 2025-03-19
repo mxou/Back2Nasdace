@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";
 import { Stars, OrbitControls } from "@react-three/drei";
-import Ship from "../components3D/Ship";
+import ShipSus from "../components3D/ShipSus";
 import ATH from "../components/ATH";
 import { useState } from "react";
 import Dialogues from "../components/Dialogues/Dialogues";
@@ -63,7 +63,7 @@ export default function EndingScene({ playerData }) {
         {/* Simulation physique et vaisseau */}
         <Physics>
           <NasdaceCity position={[0, -50, 0]} scale={[10, 10, 10]} />
-          <Ship
+          <ShipSus
             ref={shipRef}
             position={[0, 10, 0]} // Initial position
             scale={6}
