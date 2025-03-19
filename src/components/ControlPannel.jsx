@@ -8,6 +8,47 @@ export default function ControlPannel({ takeoff }) {
   const [propulseurState2, setPropulseurState2] = useState(false);
   const [propulseurState3, setPropulseurState3] = useState(false);
   const [propulseurState4, setPropulseurState4] = useState(false);
+  const injectionSound = new Audio("/audio/injection.mp3");
+  const soundButton1 = new Audio("/audio/button1.mp3");
+  const soundButton2 = new Audio("/audio/button2.mp3");
+  const soundButton3 = new Audio("/audio/button3.mp3");
+  const soundButton4 = new Audio("/audio/button4.mp3");
+  const rs6TakeoffSound = new Audio("/audio/rs6_short.mp3");
+  // Fonction pour arrêter tous les sons en cours avant de jouer le nouveau son
+  const stopAllSounds = () => {
+    soundButton1.pause();
+    soundButton2.pause();
+    soundButton3.pause();
+    soundButton4.pause();
+
+    // Réinitialiser la lecture à la position 0 pour éviter que le son reprenne en cours
+    soundButton1.currentTime = 0;
+    soundButton2.currentTime = 0;
+    soundButton3.currentTime = 0;
+    soundButton4.currentTime = 0;
+  };
+
+  // Fonction de lecture d'un son
+  const playSound = (sound) => {
+    stopAllSounds(); // Stoppe tous les sons avant de lire un nouveau
+    sound.play().catch((err) => {
+      console.log("Erreur de lecture du son :", err);
+    });
+  };
+
+  // Activation des sons en fonction de l'état
+  if (propulseurState1) {
+    playSound(soundButton1);
+  }
+  if (propulseurState2) {
+    playSound(soundButton2);
+  }
+  if (propulseurState3) {
+    playSound(soundButton3);
+  }
+  if (propulseurState4) {
+    playSound(soundButton4);
+  }
 
   const handleFuelInjection = () => {
     let start = 0;
@@ -29,6 +70,7 @@ export default function ControlPannel({ takeoff }) {
 
   const handleTakeoff = () => {
     if (fuelPercentage === 100 && propulseurState1 && propulseurState2 && propulseurState3 && propulseurState4) {
+      playSound(rs6TakeoffSound);
       takeoff(); // Appelle la fonction takeoff passée en prop
     } else {
       console.log("Il manque quelque chose pour le décollage.");
@@ -47,7 +89,13 @@ export default function ControlPannel({ takeoff }) {
           </div>
           <div className="fuel-percentage">{fuelPercentage}%</div>
         </div>
-        <button className="fuel-injection-button" onClick={handleFuelInjection}>
+        <button
+          className="fuel-injection-button"
+          onClick={() => {
+            handleFuelInjection();
+            playSound(injectionSound);
+          }}
+        >
           <span className="button-icon">⚛️</span>
           <span className="button-text">INJECTER LE PLUTONIUM</span>
         </button>
