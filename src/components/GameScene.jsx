@@ -16,6 +16,7 @@ import Crosshair from "./Crosshair.jsx";
 import Nasdace from "../components3D/Nasdace.jsx";
 import Quiz from "./Quiz.jsx";
 import NewScene from "../components3D/NewScene.jsx";
+import MusicPlayer from "./MusicPlayer.jsx";
 // COMPONENTS
 
 export default function GameScene({ playerData }) {
@@ -60,6 +61,7 @@ export default function GameScene({ playerData }) {
 
   return (
     <>
+      <MusicPlayer path="/audio/konoha.mp3" />
       <Canvas shadows onPointerDown={(e) => e.target.requestPointerLock()}>
         <Environment files="src/assets/modeles/night.hdr" ground={{ scale: 100 }} />
         <directionalLight intensity={0.9} castShadow position={[-20, 20, 20]} />
