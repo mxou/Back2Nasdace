@@ -7,6 +7,8 @@ import "./styles/Amogus.css";
 export default function Amogus({ position, scale = [5, 5, 5], playerRef, onQuizStart }) {
   const { scene } = useGLTF("src/assets/modeles/amogus.glb");
   const [isNear, setIsNear] = useState(false);
+  const audio = new Audio("/audio/mcoof.mp3");
+  audio.volume = 0.1;
 
   // Vérifier la distance entre le joueur et Amogus
   useEffect(() => {
@@ -27,6 +29,9 @@ export default function Amogus({ position, scale = [5, 5, 5], playerRef, onQuizS
   useEffect(() => {
     const handleKeyPress = (event) => {
       if (event.key === "e" && isNear) {
+        audio.play().catch((err) => {
+          console.log("Erreur de lecture du son :", err);
+        }); // Joue le son
         onQuizStart(); // Déclenche le quiz lorsqu'on appuie sur "E"
       }
     };

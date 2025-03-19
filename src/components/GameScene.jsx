@@ -26,6 +26,8 @@ export default function GameScene({ playerData }) {
   const [quizResult, setQuizResult] = useState(null);
   const [sceneChanged, setSceneChanged] = useState(false);
   const navigate = useNavigate();
+  const wrongAnswerSound = new Audio("/audio/wrong.mp3");
+  const goodAnswerSound = new Audio("/audio/haki.mp3");
 
   const keyboardMap = [
     { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -44,7 +46,16 @@ export default function GameScene({ playerData }) {
     setQuizResult(result);
     const timerQuizAnswer = setTimeout(() => setQuizResult(null), 3000);
     if (result === "Réussi") {
-      navigate("/Takeoff");
+      goodAnswerSound.play().catch((err) => {
+        console.log("Erreur de lecture du son :", err);
+      });
+      setTimeout(() => {
+        navigate("/Takeoff");
+      }, 1500);
+    } else if (result === "Perdu") {
+      wrongAnswerSound.play().catch((err) => {
+        console.log("Erreur de lecture du son :", err);
+      });
     }
     setShowQuiz(false); // Fermer le quiz après la réponse
     return () => clearTimeout(timerQuizAnswer);
