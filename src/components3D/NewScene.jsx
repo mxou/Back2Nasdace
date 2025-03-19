@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { Environment, PerspectiveCamera, Gltf, OrbitControls } from "@react-three/drei";
 import { Physics, RigidBody } from "@react-three/rapier";
+import { useNavigate } from "react-router-dom";
 import Ship from "../components3D/Ship.jsx";
 import * as THREE from "three";
 import Popup from "../components/Popup.jsx";
@@ -15,9 +16,10 @@ export default function NewScene({ playerData }) {
   const [showPopup, setShowPopup] = useState(false);
   const [showControlPannel, setShowControlPannel] = useState(false);
   const [takeoff, setTakeoff] = useState(false);
+  const navigate = useNavigate();
 
   const handleTakeoff = () => {
-    setTakeoff(true);
+    setTakeoff(true); // Met l'état de décollage à true
     console.log("Décollage lancé !");
     setTimeout(() => {
       navigate("/MiddleScene");
