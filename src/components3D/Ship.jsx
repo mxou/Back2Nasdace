@@ -1,7 +1,10 @@
+
 import React, { useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { RigidBody } from "@react-three/rapier";
 import { Model } from "../components/Model";
+import { useFrame } from "@react-three/fiber";
+import { useRaycastCollision } from "./UseRaycastCollision";
 
 export default function Ship({ position = [0, 0, 0], scale = [4, 4, 4], colors, takeoff }) {
   const shipRef = useRef();
