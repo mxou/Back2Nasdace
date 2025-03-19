@@ -19,6 +19,9 @@ export default function NewScene({ playerData }) {
   const handleTakeoff = () => {
     setTakeoff(true);
     console.log("Décollage lancé !");
+    setTimeout(() => {
+      navigate("/MiddleScene");
+    }, 3000);
   };
   // Effet pour orienter la caméra vers la cible
   useEffect(() => {

@@ -43,7 +43,7 @@ function App() {
 
   if (loading) return <Loader />;
   return (
-    <BrowserRouter>
+    <Router>
       <Routes>
         {/* Route vers le formulaire de joueur */}
         <Route path="/" element={playerData ? <GameScene playerData={playerData} /> : <PlayerForm onSubmit={handlePlayerSubmit} />} />
@@ -52,34 +52,19 @@ function App() {
         <Route path="/Takeoff" element={<Takeoff playerData={playerData} />} />
 
         {/* Votre route de développement */}
-        <Route
-          path="/dev/ending-scene"
-          element={<EndingScene playerData={playerData} />}
-        />
-        <Route
-          path="/dev/MiddleScene"
-          element={<MiddleScene playerData={playerData} />}
-        />
-        <Route
-          path="/GameOver"
-          element={<GameOver playerData={playerData} />}
-        />
+        <Route path="/dev/ending-scene" element={<EndingScene playerData={playerData} />} />
+        <Route path="/dev/MiddleScene" element={<MiddleScene playerData={playerData} />} />
+        <Route path="/GameOver" element={<GameOver playerData={playerData} />} />
 
-        <Route
-          path="/dev/explosion-scene"
-          element={<ExplosionScene playerData={playerData} />}
-        />
+        <Route path="/dev/explosion-scene" element={<ExplosionScene playerData={playerData} />} />
 
-        <Route
-          path="/dev/rythm-game"
-          element={<RythmGameScene playerData={playerData} />}
-        />
+        <Route path="/dev/rythm-game" element={<RythmGameScene playerData={playerData} />} />
         <Route path="/dev/test" element={<SpaceCollisionScene />} />
 
         {/* Redirection si route inconnue */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </Router>
   );
 }
 
