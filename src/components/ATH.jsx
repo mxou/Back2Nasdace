@@ -16,6 +16,7 @@ const ATH = ({ showChrono = true, fuel = 100 }) => {
           }}
         />
       </div>
+
       <span>⛽ Plutonium 95 : {fuel}%</span>
     </div>
   );

@@ -5,6 +5,8 @@ import "./App.css";
 import PlayerForm from "./components/PlayerForm";
 import GameScene from "./components/GameScene";
 import Loader from "./components/Loader";
+import MiddleScene from "./pages/MiddleScene";
+import GameOver from "./pages/GameOver";
 import EndingScene from "./scenes/EndingScene";
 import ExplosionScene from "./scenes/ExplosionScene";
 import SpaceCollisionScene from "./scenes/SpaceCollisionScene";
@@ -53,6 +55,14 @@ function App() {
         <Route
           path="/dev/ending-scene"
           element={<EndingScene playerData={playerData} />}
+        />
+        <Route
+          path="/dev/MiddleScene"
+          element={<MiddleScene playerData={playerData} />}
+        />
+        <Route
+          path="/GameOver"
+          element={<GameOver playerData={playerData} />}
         />
 
         <Route
