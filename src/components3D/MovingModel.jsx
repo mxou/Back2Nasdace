@@ -2,26 +2,32 @@ import "./../App.css";
 import React, { useEffect, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF, useAnimations } from "@react-three/drei";
+import collisionSoundFile from "/src/assets/audio/mcoof.mp3";
+import rs6SoundFile from "/src/assets/audio/rs6_short.mp3";
 import * as THREE from "three";
 
 export default function MovingModel({ position, trees, onPadEnter }) {
   const ref = useRef();
-  const { scene, animations } = useGLTF("./../src/assets/black_spiderman/scene.gltf"); // Charge le modèle
+  const { scene, animations } = useGLTF(
+    "/src/assets/black_spiderman/scene.gltf"
+  ); // Charge le modèle
   const [keys, setKeys] = useState({});
   const [isMoving, setIsMoving] = useState(false);
   const [collisionPlaying, setCollisionPlaying] = useState(false);
   const { actions } = useAnimations(animations, ref); // 🔹 Récupère les animations
 
   // Sons
-  const collisionSound = useRef(new Audio("./../src/assets/audio/mcoof.mp3")).current;
-  const rs6Sound = useRef(new Audio("./../src/assets/audio/rs6_short.mp3")).current;
+  const collisionSound = useRef(new Audio(collisionSoundFile)).current;
+  const rs6Sound = useRef(new Audio(rs6SoundFile)).current;
 
   useEffect(() => {
     collisionSound.load();
     rs6Sound.load();
 
-    const handleKeyDown = (event) => setKeys((keys) => ({ ...keys, [event.key]: true }));
-    const handleKeyUp = (event) => setKeys((keys) => ({ ...keys, [event.key]: false }));
+    const handleKeyDown = (event) =>
+      setKeys((keys) => ({ ...keys, [event.key]: true }));
+    const handleKeyUp = (event) =>
+      setKeys((keys) => ({ ...keys, [event.key]: false }));
 
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("keyup", handleKeyUp);
@@ -118,5 +124,12 @@ export default function MovingModel({ position, trees, onPadEnter }) {
     }
   });
 
-  return <primitive ref={ref} object={scene} position={position} scale={[0.5, 0.5, 0.5]} />;
+  return (
+    <primitive
+      ref={ref}
+      object={scene}
+      position={position}
+      scale={[0.5, 0.5, 0.5]}
+    />
+  );
 }

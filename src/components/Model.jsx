@@ -1,5 +1,6 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
+import shipModel from "/src/assets/modeles/ship.glb";
 
 export function Model({
   colorShip = "#ff0000",
@@ -8,7 +9,7 @@ export function Model({
   colorBoost = "#ffff00",
   ...props
 }) {
-  const { nodes, materials } = useGLTF("/src/assets/modeles/ship.glb");
+  const { nodes, materials } = useGLTF(shipModel);
 
   // Appliquer les couleurs dynamiquement
   materials.shipmetal.color.set(colorShip);

@@ -9,14 +9,16 @@ import Dialogues from "../components/Dialogues/Dialogues";
 import dialogIa from "../assets/dialogues/ia-folle.json";
 import RhythmGame from "../components/RythmGame/RythmGame";
 import { useNavigate } from "react-router-dom";
+import hitSoundFile from "/src/assets/audio/hit.wav";
+import missSoundFile from "/src/assets/audio/miss.wav";
 
 export default function RythmGameScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
   const [gameStart, setGameStart] = useState(false);
   const [hasScored, setHasScored] = useState(false);
 
-  const hitSound = new Audio("/src/assets/audio/hit.wav");
-  const missSound = new Audio("/src/assets/audio/miss.wav");
+  const hitSound = new Audio(hitSoundFile);
+  const missSound = new Audio(missSoundFile);
 
   hitSound.volume = 0.3;
   missSound.volume = 0.3;

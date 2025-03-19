@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import "./Dialogues.css";
+import dialogueSkip from "/src/assets/audio/skip.mp3";
 
 export default function Dialogues({
   dialogFile,
@@ -53,7 +54,7 @@ export default function Dialogues({
   }, [isTyping, autoSkip]);
 
   const handleNext = () => {
-    const clickSound = new Audio("/src/assets/audio/skip.mp3"); // Remplace par ton fichier
+    const clickSound = new Audio(dialogueSkip); // Remplace par ton fichier
     clickSound.volume = 0.3; // Ajuste le volume si nécessaire
 
     if (isTyping) {

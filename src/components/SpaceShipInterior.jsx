@@ -10,6 +10,9 @@ import Exam from "./Exam";
 import Blaster from "./Blaster";
 import SpaceshipGame from "./SpaceshipGame";
 import ATH from "./ATH";
+import NasdaceModel from "/src/assets/modeles/Nasdace.glb";
+import ghostModel from "/src/assets/modeles/ghost_w_tophat-transformed.glb";
+import doda from "/src/assets/modeles/doda 2.glb";
 
 // Composant Alien
 const Alien = ({
@@ -94,12 +97,7 @@ const Alien = ({
   return (
     <>
       <group ref={alienRef} position={position} onClick={handleInteraction}>
-        <Gltf
-          castShadow
-          receiveShadow
-          scale={0.5}
-          src="/src/assets/modeles/Nasdace.glb"
-        />
+        <Gltf castShadow receiveShadow scale={0.5} src={NasdaceModel} />
         <mesh position={[0, 1, 0]}>
           <sphereGeometry args={[0.5, 16, 16]} />
           <meshStandardMaterial
@@ -267,19 +265,14 @@ const SpaceshipInterior = ({ playerData }) => {
                   receiveShadow
                   scale={0.315}
                   position={[0, 0, 0]}
-                  src="/src/assets/modeles/ghost_w_tophat-transformed.glb"
+                  src={ghostModel}
                 />
               </Controller>
             </KeyboardControls>
 
             <RigidBody type="fixed" colliders="trimesh">
               {/* Modèle de l'intérieur du vaisseau */}
-              <Gltf
-                receiveShadow
-                scale={15}
-                position={[0, 2, 0]}
-                src="/src/assets/modeles/doda 2.glb"
-              />
+              <Gltf receiveShadow scale={15} position={[0, 2, 0]} src={doda} />
             </RigidBody>
 
             {/* Les trois aliens */}

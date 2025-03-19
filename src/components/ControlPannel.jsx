@@ -1,6 +1,13 @@
 import { useState } from "react";
 import NewScene from "../components3D/NewScene";
 import "./styles/ControlPannel.css";
+import injectionSoundFile from "/public/audio/injection.mp3";
+import buttonSoundFile from "/audio/buttonsound.mp3";
+import soundButton1File from "/public/audio/button1.mp3";
+import soundButton2File from "/public/audio/button2.mp3";
+import soundButton3File from "/public/audio/button3.mp3";
+import soundButton4File from "/public/audio/button4.mp3";
+import rs6TakeoffSoundFile from "/public/audio/rs6_short.mp3";
 
 export default function ControlPannel({ takeoff }) {
   const [fuelPercentage, setFuelPercentage] = useState(0);
@@ -8,13 +15,13 @@ export default function ControlPannel({ takeoff }) {
   const [propulseurState2, setPropulseurState2] = useState(false);
   const [propulseurState3, setPropulseurState3] = useState(false);
   const [propulseurState4, setPropulseurState4] = useState(false);
-  const injectionSound = new Audio("/audio/injection.mp3");
-  const buttonSound = new Audio("/audio/buttonsound.mp3");
-  const soundButton1 = new Audio("/audio/button1.mp3");
-  const soundButton2 = new Audio("/audio/button2.mp3");
-  const soundButton3 = new Audio("/audio/button3.mp3");
-  const soundButton4 = new Audio("/audio/button4.mp3");
-  const rs6TakeoffSound = new Audio("/audio/rs6_short.mp3");
+  const injectionSound = new Audio(injectionSoundFile);
+  const buttonSound = new Audio(buttonSoundFile);
+  const soundButton1 = new Audio(soundButton1File);
+  const soundButton2 = new Audio(soundButton2File);
+  const soundButton3 = new Audio(soundButton3File);
+  const soundButton4 = new Audio(soundButton4File);
+  const rs6TakeoffSound = new Audio(rs6TakeoffSoundFile);
   // Fonction pour arrêter tous les sons en cours avant de jouer le nouveau son
   const stopAllSounds = () => {
     soundButton1.pause();
@@ -70,7 +77,13 @@ export default function ControlPannel({ takeoff }) {
   };
 
   const handleTakeoff = () => {
-    if (fuelPercentage === 100 && propulseurState1 && propulseurState2 && propulseurState3 && propulseurState4) {
+    if (
+      fuelPercentage === 100 &&
+      propulseurState1 &&
+      propulseurState2 &&
+      propulseurState3 &&
+      propulseurState4
+    ) {
       playSound(rs6TakeoffSound);
       takeoff(); // Appelle la fonction takeoff passée en prop
     } else {
@@ -84,7 +97,10 @@ export default function ControlPannel({ takeoff }) {
         <h3 className="section-title">RÉSERVOIR DE CARBURANT</h3>
         <div className="fuel-gauge-container">
           <div className="fuel-gauge-background">
-            <div className="fuel-gauge-fill" style={{ width: `${fuelPercentage}%` }}>
+            <div
+              className="fuel-gauge-fill"
+              style={{ width: `${fuelPercentage}%` }}
+            >
               <div className="fuel-gauge-glow"></div>
             </div>
           </div>
@@ -106,40 +122,68 @@ export default function ControlPannel({ takeoff }) {
         <h3 className="section-title">PROPULSEURS</h3>
         <div className="propulseurs-grid">
           <div className="propulseur-unit">
-            <div className={`propulseur-light ${propulseurState1 ? "active" : ""}`}>
+            <div
+              className={`propulseur-light ${propulseurState1 ? "active" : ""}`}
+            >
               <div className="light-glow"></div>
             </div>
-            <button className={`propulseur-button ${propulseurState1 ? "active" : ""}`} onClick={() => setPropulseurState1(!propulseurState1)}>
+            <button
+              className={`propulseur-button ${
+                propulseurState1 ? "active" : ""
+              }`}
+              onClick={() => setPropulseurState1(!propulseurState1)}
+            >
               P1
             </button>
             <div className="propulseur-label">PRINCIPAL</div>
           </div>
 
           <div className="propulseur-unit">
-            <div className={`propulseur-light ${propulseurState2 ? "active" : ""}`}>
+            <div
+              className={`propulseur-light ${propulseurState2 ? "active" : ""}`}
+            >
               <div className="light-glow"></div>
             </div>
-            <button className={`propulseur-button ${propulseurState2 ? "active" : ""}`} onClick={() => setPropulseurState2(!propulseurState2)}>
+            <button
+              className={`propulseur-button ${
+                propulseurState2 ? "active" : ""
+              }`}
+              onClick={() => setPropulseurState2(!propulseurState2)}
+            >
               P2
             </button>
             <div className="propulseur-label">SECONDAIRE</div>
           </div>
 
           <div className="propulseur-unit">
-            <div className={`propulseur-light ${propulseurState3 ? "active" : ""}`}>
+            <div
+              className={`propulseur-light ${propulseurState3 ? "active" : ""}`}
+            >
               <div className="light-glow"></div>
             </div>
-            <button className={`propulseur-button ${propulseurState3 ? "active" : ""}`} onClick={() => setPropulseurState3(!propulseurState3)}>
+            <button
+              className={`propulseur-button ${
+                propulseurState3 ? "active" : ""
+              }`}
+              onClick={() => setPropulseurState3(!propulseurState3)}
+            >
               P3
             </button>
             <div className="propulseur-label">AUXILIAIRE</div>
           </div>
 
           <div className="propulseur-unit">
-            <div className={`propulseur-light ${propulseurState4 ? "active" : ""}`}>
+            <div
+              className={`propulseur-light ${propulseurState4 ? "active" : ""}`}
+            >
               <div className="light-glow"></div>
             </div>
-            <button className={`propulseur-button ${propulseurState4 ? "active" : ""}`} onClick={() => setPropulseurState4(!propulseurState4)}>
+            <button
+              className={`propulseur-button ${
+                propulseurState4 ? "active" : ""
+              }`}
+              onClick={() => setPropulseurState4(!propulseurState4)}
+            >
               P4
             </button>
             <div className="propulseur-label">STABILISATEUR</div>
@@ -154,7 +198,9 @@ export default function ControlPannel({ takeoff }) {
             <div className="launch-button-text">LANCER</div>
           </div>
         </button>
-        <div className="launch-warning">ATTENTION: VÉRIFIER TOUS LES SYSTÈMES</div>
+        <div className="launch-warning">
+          ATTENTION: VÉRIFIER TOUS LES SYSTÈMES
+        </div>
       </div>
 
       <div className="panel-decorations">

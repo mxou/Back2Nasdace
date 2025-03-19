@@ -7,15 +7,14 @@ import {
   Navigate,
 } from "react-router-dom";
 import "./App.css";
-import PlayerForm from "./components/PlayerForm";
-import GameScene from "./components/GameScene";
-import Loader from "./components/Loader";
-import MiddleScene from "./scenes/MiddleScene";
-import GameOver from "./scenes/GameOver";
-import EndingScene from "./scenes/EndingScene";
-import ExplosionScene from "./scenes/ExplosionScene";
-import SpaceCollisionScene from "./scenes/SpaceCollisionScene";
-import RythmGameScene from "./scenes/RythmGameScene";
+import PlayerForm from "/src/components/PlayerForm";
+import GameScene from "/src/components/GameScene";
+import Loader from "/src/components/Loader";
+import MiddleScene from "/src/scenes/MiddleScene";
+import GameOver from "/src/scenes/GameOver";
+import EndingScene from "/src/scenes/EndingScene";
+import ExplosionScene from "/src/scenes/ExplosionScene";
+import RythmGameScene from "/src/scenes/RythmGameScene";
 import Takeoff from "./Takeoff";
 
 function App() {
@@ -87,7 +86,6 @@ function App() {
           path="/dev/rythm-game"
           element={<RythmGameScene playerData={playerData} />}
         />
-        <Route path="/dev/test" element={<SpaceCollisionScene />} />
 
         {/* Redirection si route inconnue */}
         <Route path="*" element={<Navigate to="/" replace />} />

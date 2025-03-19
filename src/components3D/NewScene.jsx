@@ -1,6 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Environment, PerspectiveCamera, Gltf, OrbitControls } from "@react-three/drei";
+import {
+  Environment,
+  PerspectiveCamera,
+  Gltf,
+  OrbitControls,
+} from "@react-three/drei";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { useNavigate } from "react-router-dom";
 import Ship from "../components3D/Ship.jsx";
@@ -8,6 +13,9 @@ import * as THREE from "three";
 import Popup from "../components/Popup.jsx";
 import ControlPannel from "../components/ControlPannel.jsx";
 import MusicPlayer from "../components/MusicPlayer.jsx";
+import marioGalaxyFile from "/audio/galaxyAmbient.mp3";
+import nightFile from "/src/assets/modeles/night.hdr";
+import islandModel from "/src/assets/modeles/Island.glb";
 
 export default function NewScene({ playerData }) {
   const cameraRef = useRef();
@@ -44,7 +52,7 @@ export default function NewScene({ playerData }) {
 
   return (
     <>
-      <MusicPlayer path={"/audio/galaxyAmbient.mp3"} />
+      <MusicPlayer path={marioGalaxyFile} />
       <Canvas>
         {/* Caméra de la scène */}
         <PerspectiveCamera
@@ -60,7 +68,7 @@ export default function NewScene({ playerData }) {
         <OrbitControls enabled={false} />
 
         {/* Environnement */}
-        <Environment files="src/assets/modeles/night.hdr" ground={{ scale: 100 }} />
+        <Environment files={nightFile} ground={{ scale: 100 }} />
 
         {/* Lumières */}
         <directionalLight intensity={0.9} castShadow position={[-20, 20, 20]} />
@@ -69,16 +77,28 @@ export default function NewScene({ playerData }) {
         {/* Physique */}
         <Physics timeStep="vary">
           <RigidBody type="fixed" colliders="trimesh">
-            <Gltf position={[10, 0, 5]} castShadow receiveShadow scale={125} src="src/assets/modeles/Island.glb" />
+            <Gltf
+              position={[10, 0, 5]}
+              castShadow
+              receiveShadow
+              scale={125}
+              src={islandModel}
+            />
           </RigidBody>
 
           {/* Affichage du vaisseau Ship */}
-          <Ship position={[1, -1.8, -5]} scale={6} colors={playerData} takeoff={takeoff} />
+          <Ship
+            position={[1, -1.8, -5]}
+            scale={6}
+            colors={playerData}
+            takeoff={takeoff}
+          />
 
           {/* Cible invisible pour la caméra */}
           <mesh ref={targetRef} position={targetPosition}>
             <sphereGeometry args={[0.1]} />
-            <meshBasicMaterial color="red" visible={false} /> {/* Rendre la cible invisible */}
+            <meshBasicMaterial color="red" visible={false} />{" "}
+            {/* Rendre la cible invisible */}
           </mesh>
         </Physics>
       </Canvas>

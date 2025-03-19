@@ -5,15 +5,16 @@ import { Environment, useGLTF } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import Ship from "../components3D/ShipPlayable";
-import galaxyImage from "../assets/images/space.jpg";
+import galaxyImage from "/src/assets/images/space.jpg";
+import asteroid from "/src/assets/modeles/asteroid_1.glb";
 
 // Préchargement du modèle d'astéroïde
-useGLTF.preload("/src/assets/modeles/asteroid_1.glb");
+useGLTF.preload(asteroid);
 
 // Composant pour charger le modèle 3D d'astéroïde
 const AsteroidModel = ({ scale = 1 }) => {
   const modelRef = useRef();
-  const { scene } = useGLTF("/src/assets/modeles/asteroid_1.glb"); // Chemin relatif
+  const { scene } = useGLTF(asteroid); // Chemin relatif
 
   // Créer une copie unique du modèle pour chaque instance
   const clonedScene = useMemo(() => scene.clone(), [scene]);

@@ -1,9 +1,10 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
+import NasdaceCityModel from "/src/assets/modeles/NasdaceCity.glb";
 
 const NasdaceCity = React.forwardRef((props, ref) => {
-  const { scene } = useGLTF("/src/assets/modeles/NasdaceCity.glb");
+  const { scene } = useGLTF(NasdaceCityModel);
 
   return (
     <RigidBody ref={ref} colliders="hull" type="static" gravityScale={0}>
