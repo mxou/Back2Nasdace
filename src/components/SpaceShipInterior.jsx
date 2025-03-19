@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Canvas, useThree } from "@react-three/fiber";
+import { Canvas, useThree, useFrame } from "@react-three/fiber";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { KeyboardControls, Html, useTexture } from "@react-three/drei";
 import Controller from "ecctrl";
@@ -15,6 +15,72 @@ import ghostModel from "/src/assets/modeles/ghost_w_tophat-transformed.glb";
 import doda from "/src/assets/modeles/doda 2.glb";
 import galaxyImage from "/src/assets/images/space.jpg";
 import asteroidHit from "/public/audio/musicMiddleScene.mp3";
+
+// Ajout du composant de contrôle de position du joueur
+const PlayerPositionMonitor = ({
+  playerRef,
+  respawnPosition = [0, -3, 0],
+  minHeight = -10,
+}) => {
+  useFrame(() => {
+    if (!playerRef.current) return;
+
+    // Obtenir la position actuelle du joueur
+    const playerPosition = new THREE.Vector3();
+
+    // Essayer d'accéder à la position du joueur selon le type d'objet
+    try {
+      if (playerRef.current.getWorldPosition) {
+        playerRef.current.getWorldPosition(playerPosition);
+      } else if (playerRef.current.position) {
+        playerPosition.copy(playerRef.current.position);
+      } else if (playerRef.current.translation) {
+        const translation = playerRef.current.translation();
+        playerPosition.set(translation.x, translation.y, translation.z);
+      } else {
+        // Fallback - chercher dans les enfants
+        const child = playerRef.current.children?.[0];
+        if (child && child.position) {
+          playerPosition.copy(child.position);
+        } else {
+          return; // Impossible de trouver la position
+        }
+      }
+
+      // Vérifier si le joueur est tombé trop bas
+      if (playerPosition.y < minHeight) {
+        console.log("Joueur tombé! Respawn...");
+
+        // Effectuer le respawn en réinitialisant la position du joueur
+        if (playerRef.current.teleportPosition) {
+          // Pour les contrôleurs ecctrl qui ont une fonction teleport
+          playerRef.current.teleportPosition({
+            x: respawnPosition[0],
+            y: respawnPosition[1],
+            z: respawnPosition[2],
+          });
+        } else if (playerRef.current.setTranslation) {
+          // Pour les RigidBody de Rapier
+          playerRef.current.setTranslation({
+            x: respawnPosition[0],
+            y: respawnPosition[1],
+            z: respawnPosition[2],
+          });
+        } else if (playerRef.current.position) {
+          // Pour les objets Three.js standard
+          playerRef.current.position.set(...respawnPosition);
+        }
+      }
+    } catch (error) {
+      console.error(
+        "Erreur lors de la vérification de la position du joueur:",
+        error
+      );
+    }
+  });
+
+  return null;
+};
 
 // Composant pour le fond de la scène
 const SceneBackground = () => {
@@ -271,6 +337,8 @@ const SpaceshipInterior = ({ playerData }) => {
   const [activeGame, setActiveGame] = useState(null);
   const [fuel, setFuel] = useState(100);
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
+  // Position de départ/respawn du joueur
+  const spawnPosition = [0, -3, 0];
 
   // État pour suivre les défis complétés
   const [gameCompletions, setGameCompletions] = useState({
@@ -387,7 +455,11 @@ const SpaceshipInterior = ({ playerData }) => {
                 />
               </Controller>
             </KeyboardControls>
-
+            <PlayerPositionMonitor
+              playerRef={playerRef}
+              respawnPosition={spawnPosition}
+              minHeight={-10}
+            />
             <RigidBody type="fixed" colliders="trimesh">
               {/* Modèle de l'intérieur du vaisseau */}
               <Gltf receiveShadow scale={15} position={[0, 2, 0]} src={doda} />
