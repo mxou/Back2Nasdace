@@ -1,33 +1,65 @@
-import React, { useState, useRef } from "react";
-import Quiz from "../components/Quiz";
-import Blaster from "../components/Blaster";
-import SpaceshipGame from "../components/SpaceshipGame";
-import ATH from "../components/ATH";
+import React, { useState, useRef, useEffect } from "react";
 import SpaceshipInterior from "../components/SpaceShipInterior";
+
 export default function MiddleScene() {
   const [fuel, setFuel] = useState(100);
-  const playerRef = useRef(); // Création du ref pour le player
+  const playerRef = useRef();
+  const [showIntro, setShowIntro] = useState(true);
+
+  // Effet pour masquer l'intro après 3 secondes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowIntro(false);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div
       style={{
-        textAlign: "center",
-        fontSize: "24px",
+        width: "100dvw",
+        height: "100dvh",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <h1>Bienvenue dans la Zone Tests</h1>
-      <p>Ici, tu peux tester tes fonctionnalités.</p>
-      <div style={{ width: "100dvw", height: "100dvh" }}>
-        {/* Ajout de SpaceshipInterior ici */}
-        {/* <SpaceshipInterior playerRef={playerRef} /> */}
+      {/* Affichage de l'intérieur du vaisseau avec les aliens */}
+      <SpaceshipInterior playerRef={playerRef} />
 
-        {/* Les autres composants */}
-        <ATH showChrono={false} fuel={fuel} />
-        {/* <Quiz setter={setFuel} fuel={fuel} /> */}
-        <SpaceshipGame setter={setFuel} fuel={fuel} />
-
-        {/* <Blaster setter={setFuel} fuel={fuel} /> */}
-      </div>
+      {/* Popup d'introduction */}
+      {showIntro && (
+        <div style={styles.introPopup}>
+          <h2>Bienvenue à bord du vaisseau</h2>
+          <p>
+            Explorez l'intérieur et parlez aux aliens pour relever des défis
+          </p>
+        </div>
+      )}
     </div>
   );
 }
+
+const styles = {
+  introPopup: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    background:
+      "linear-gradient(135deg, rgba(15, 25, 65, 0.9) 0%, rgba(30, 40, 90, 0.9) 100%)",
+    padding: "25px 30px",
+    borderRadius: "15px",
+    color: "#e6f7ff",
+    fontSize: "22px",
+    fontFamily: "'Rajdhani', 'Orbitron', sans-serif",
+    zIndex: 20,
+    border: "2px solid rgba(100, 180, 255, 0.6)",
+    boxShadow:
+      "0 0 30px rgba(80, 160, 255, 0.4), inset 0 0 15px rgba(80, 160, 255, 0.2)",
+    textAlign: "center",
+    minWidth: "300px",
+    animation:
+      "fadeIn 0.5s ease-in-out, fadeOut 0.5s ease-in-out 2.5s forwards",
+  },
+};

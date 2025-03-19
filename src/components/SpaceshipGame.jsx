@@ -4,7 +4,7 @@ import { Physics, RigidBody } from "@react-three/rapier";
 import { Environment, useGLTF } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
-import Ship from "../components3D/Ship";
+import Ship from "../components3D/ShipPlayable";
 import galaxyImage from "../assets/images/space.jpg";
 
 // Préchargement du modèle d'astéroïde
@@ -60,9 +60,10 @@ const AsteroidModel = ({ scale = 1 }) => {
 // Composant pour les astéroïdes avec la physique
 const Asteroid = ({ position, speed, onCollision, debugMode }) => {
   const asteroidRef = useRef();
-  const collisionRef = useRef(false);
-  const scale = useRef(0.2 + Math.random() * 0.7);
+  const initialPosition = useRef(position);
+  const scale = useRef(0.2 + Math.random() * 0.4);
 
+  // Utiliser useFrame pour le mouvement continu sans reset à chaque rendu
   useFrame(() => {
     if (asteroidRef.current) {
       // Déplacement de l'astéroïde
@@ -79,12 +80,12 @@ const Asteroid = ({ position, speed, onCollision, debugMode }) => {
           y: 10,
           z: 0,
         });
-        scale.current = 0.5 + Math.random() * 0.5;
+        scale.current = 0.2 + Math.random() * 0.4;
       }
     }
   });
 
-  // Utiliser la fonction concrète de collision plutôt que l'événement
+  // Vérification de collision
   useFrame(() => {
     if (asteroidRef.current && onCollision) {
       const asteroidPosition = asteroidRef.current.translation();
@@ -103,7 +104,6 @@ const Asteroid = ({ position, speed, onCollision, debugMode }) => {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         // Si la distance est inférieure à un seuil, considérer qu'il y a collision
-        // Ajuster cette valeur selon la taille de vos modèles
         const collisionThreshold = 1.2 * scale.current;
 
         if (distance < collisionThreshold) {
@@ -146,7 +146,7 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
     if (shipRef.current) {
       let moveX = 0;
       let moveY = 0;
-      const moveSpeed = 0.1;
+      const moveSpeed = 0.05;
 
       if (keysPressed.current["ArrowUp"]) moveY = moveSpeed;
       if (keysPressed.current["ArrowDown"]) moveY = -moveSpeed;
@@ -185,8 +185,15 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
     return null;
   };
 
-  const asteroidCount = 10;
-  const asteroidSpeed = 0.04;
+  const asteroidCount = 20;
+  const asteroidSpeed = 0.05;
+
+  // Positions initiales des astéroïdes - calculées une seule fois
+  const asteroidPositions = useMemo(() => {
+    return Array(asteroidCount)
+      .fill()
+      .map((_, i) => [Math.random() * 8 - 4, 10 + i * 5, 0]);
+  }, [asteroidCount]);
 
   return (
     <>
@@ -230,10 +237,10 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
         </RigidBody>
 
         {/* Astéroïdes */}
-        {[...Array(asteroidCount)].map((_, i) => (
+        {asteroidPositions.map((position, i) => (
           <Asteroid
             key={i}
-            position={[Math.random() * 8 - 4, 10 + i * 5, 0]}
+            position={position}
             speed={asteroidSpeed}
             onCollision={{
               getShipInfo: getShipInfo,
@@ -248,13 +255,36 @@ const GameScene = ({ keysPressed, onCollision, debug }) => {
 };
 
 // Composant principal
-const SpaceshipGame = ({ setter, fuel }) => {
+const SpaceshipGame = ({ setter, fuel, onComplete }) => {
   const navigate = useNavigate();
   const keysPressed = useRef({});
   const containerRef = useRef(null);
   const lastCollisionTime = useRef(0);
   const [hitEffect, setHitEffect] = useState(false);
   const [debugMode, setDebugMode] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(30);
+  const [gameCompleted, setGameCompleted] = useState(false);
+
+  // Gestion du chronomètre
+  useEffect(() => {
+    let timerInterval;
+
+    if (timeLeft > 0 && !gameCompleted) {
+      timerInterval = setInterval(() => {
+        setTimeLeft((prevTime) => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && !gameCompleted) {
+      setGameCompleted(true);
+      // Appel de la fonction onComplete pour signaler la fin du jeu
+      if (typeof onComplete === "function") {
+        onComplete();
+      }
+    }
+
+    return () => {
+      clearInterval(timerInterval);
+    };
+  }, [timeLeft, gameCompleted, onComplete]);
 
   useEffect(() => {
     if (fuel <= 0) {
@@ -308,6 +338,22 @@ const SpaceshipGame = ({ setter, fuel }) => {
     }
   };
 
+  // Style pour le chronomètre
+  const getTimerColor = () => {
+    if (timeLeft <= 5) return "#ff0000"; // Rouge quand il reste peu de temps
+    if (timeLeft <= 10) return "#ff9900"; // Orange quand le temps diminue
+    return "#ffffff"; // Blanc par défaut
+  };
+
+  // Fonction pour continuer après la fin du jeu
+  const handleContinue = () => {
+    if (typeof onComplete === "function") {
+      onComplete();
+    } else {
+      navigate("/");
+    }
+  };
+
   return (
     <div
       ref={containerRef}
@@ -339,6 +385,49 @@ const SpaceshipGame = ({ setter, fuel }) => {
         />
       )}
 
+      {/* Message de victoire/survie */}
+      {gameCompleted && (
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "rgba(0, 0, 0, 0.8)",
+            color: "#4ef542",
+            padding: "20px",
+            borderRadius: "10px",
+            fontFamily: "monospace",
+            fontSize: "24px",
+            textAlign: "center",
+            zIndex: 100,
+            width: "60%",
+            maxWidth: "500px",
+            boxShadow: "0 0 20px #4ef542",
+            border: "2px solid #4ef542",
+          }}
+        >
+          <h2 style={{ margin: "0 0 20px 0" }}>MISSION RÉUSSIE!</h2>
+          <p>Vous avez survécu à la tempête d'astéroïdes!</p>
+          <button
+            style={{
+              backgroundColor: "#4ef542",
+              color: "black",
+              border: "none",
+              padding: "10px 20px",
+              borderRadius: "5px",
+              fontSize: "18px",
+              cursor: "pointer",
+              marginTop: "20px",
+              fontWeight: "bold",
+            }}
+            onClick={handleContinue}
+          >
+            CONTINUER
+          </button>
+        </div>
+      )}
+
       <Canvas>
         <Suspense fallback={null}>
           <GameScene
@@ -363,6 +452,28 @@ const SpaceshipGame = ({ setter, fuel }) => {
         }}
       >
         Fuel: {fuel}
+      </div>
+
+      {/* Affichage du chronomètre */}
+      <div
+        style={{
+          position: "absolute",
+          top: 10,
+          left: "50%",
+          transform: "translateX(-50%)",
+          color: getTimerColor(),
+          backgroundColor: "rgba(0,0,0,0.7)",
+          padding: "8px 15px",
+          borderRadius: "5px",
+          fontFamily: "monospace",
+          fontSize: "20px",
+          fontWeight: "bold",
+          border: timeLeft <= 5 ? `2px solid ${getTimerColor()}` : "none",
+          boxShadow: timeLeft <= 5 ? `0 0 10px ${getTimerColor()}` : "none",
+          transition: "all 0.3s",
+        }}
+      >
+        Temps: {timeLeft}s
       </div>
 
       {/* Bouton de test pour vérifier que le setter fonctionne */}

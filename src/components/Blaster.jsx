@@ -3,7 +3,14 @@ import { useNavigate } from "react-router-dom";
 import victorySound from "./../assets/audio/success.mp3";
 import defeatSound from "./../assets/audio/fail.mp3";
 
-const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
+const Blaster = ({
+  onGameOver,
+  onScoreUpdate,
+  setter,
+  fuel,
+  onClose,
+  onComplete,
+}) => {
   const [threats, setThreats] = useState([]);
   const [score, setScore] = useState(0);
   const [virusTarget, setVirusTarget] = useState(null);
@@ -19,6 +26,7 @@ const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [level, setLevel] = useState(1);
   const [securityLevel, setSecurityLevel] = useState(1);
+  const [gameCompleted, setGameCompleted] = useState(false);
   const gameAreaRef = useRef(null);
   const spaceshipRef = useRef(null);
   const navigate = useNavigate();
@@ -96,7 +104,20 @@ const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
       onGameOver?.();
       navigate("/GameOver");
     }
-  }, [fuel]);
+  }, [fuel, onGameOver, navigate]);
+
+  useEffect(() => {
+    // Vérifier si le niveau max est atteint (condition de victoire complète)
+    if (securityLevel > 8 && !gameCompleted) {
+      setGameCompleted(true);
+      setResult("SÉCURITÉ MAXIMALE ATTEINTE - VICTOIRE !");
+
+      // Notifier le composant parent que le jeu est complété après un délai
+      setTimeout(() => {
+        onComplete?.();
+      }, 2000);
+    }
+  }, [securityLevel, gameCompleted, onComplete]);
 
   useEffect(() => {
     if (!isGameActive) return;
@@ -232,8 +253,15 @@ const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
 
         generateNewThreatSet(nextLevel);
       } else {
-        // Si niveau 8 réussi, ne pas lancer un autre niveau
+        // Si niveau 8 réussi, marquer comme victoire complète
         setResult("SÉCURITÉ MAXIMALE ATTEINTE - VICTOIRE !");
+        setGameCompleted(true);
+
+        // Notification au composant parent après délai
+        setTimeout(() => {
+          onComplete?.();
+        }, 2000);
+
         return; // Pas de nouveau niveau
       }
     } else {
@@ -333,7 +361,16 @@ const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
       threatElement.style.animation = "cyberExplode 0.5s";
 
       setIsGameActive(false);
-      setTimeout(() => startNewGame(true), 1500); // Augmenter le niveau
+
+      // Vérifier si c'est la dernière niveau
+      if (level >= 8) {
+        setTimeout(() => {
+          setGameCompleted(true);
+          onComplete?.();
+        }, 1500);
+      } else {
+        setTimeout(() => startNewGame(true), 1500); // Augmenter le niveau
+      }
     } else {
       setResult("Cible non-hostile ! Pénalité !");
       setter((prev) => Math.max(0, prev - 10));
@@ -346,6 +383,11 @@ const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
       }
       defeatAudio.play();
     }
+  };
+
+  // Ajouter un bouton pour quitter le jeu, comme dans Quiz
+  const handleQuit = () => {
+    onClose?.(gameCompleted);
   };
 
   // Calculer la taille de l'emoji en fonction de la taille de la menace
@@ -398,6 +440,9 @@ const Blaster = ({ onGameOver, onScoreUpdate, setter, fuel }) => {
         <div style={styles.hudItem}>
           MENACES: <span style={styles.hudValue}>{threats.length}</span>
         </div>
+        <button onClick={handleQuit} style={styles.quitButton}>
+          {gameCompleted ? "Terminer" : "Quitter"}
+        </button>
       </div>
 
       <div style={styles.targetContainer}>
@@ -505,6 +550,16 @@ const styles = {
   hudValue: {
     color: "#00ffff",
     fontWeight: "normal",
+  },
+  quitButton: {
+    padding: "5px 10px",
+    background: "rgba(255, 50, 50, 0.7)",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "bold",
   },
   targetContainer: {
     textAlign: "center",
