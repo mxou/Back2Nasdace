@@ -1,16 +1,20 @@
 // App.jsx
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import "./App.css";
 import PlayerForm from "./components/PlayerForm";
 import GameScene from "./components/GameScene";
 import Loader from "./components/Loader";
-import MiddleScene from "./pages/MiddleScene";
-import GameOver from "./pages/GameOver";
+import MiddleScene from "./scenes/MiddleScene";
+import GameOver from "./scenes/GameOver";
 import EndingScene from "./scenes/EndingScene";
 import ExplosionScene from "./scenes/ExplosionScene";
 import SpaceCollisionScene from "./scenes/SpaceCollisionScene";
-import RythmGame from "./scenes/RythmGameScene";
 import RythmGameScene from "./scenes/RythmGameScene";
 import Takeoff from "./Takeoff";
 
@@ -46,19 +50,43 @@ function App() {
     <Router>
       <Routes>
         {/* Route vers le formulaire de joueur */}
-        <Route path="/" element={playerData ? <GameScene playerData={playerData} /> : <PlayerForm onSubmit={handlePlayerSubmit} />} />
+        <Route
+          path="/"
+          element={
+            playerData ? (
+              <GameScene playerData={playerData} />
+            ) : (
+              <PlayerForm onSubmit={handlePlayerSubmit} />
+            )
+          }
+        />
 
         {/* Exemple de route vers Takeoff */}
         <Route path="/Takeoff" element={<Takeoff playerData={playerData} />} />
 
         {/* Votre route de développement */}
-        <Route path="/dev/ending-scene" element={<EndingScene playerData={playerData} />} />
-        <Route path="/dev/MiddleScene" element={<MiddleScene playerData={playerData} />} />
-        <Route path="/GameOver" element={<GameOver playerData={playerData} />} />
+        <Route
+          path="/dev/ending-scene"
+          element={<EndingScene playerData={playerData} />}
+        />
+        <Route
+          path="/dev/MiddleScene"
+          element={<MiddleScene playerData={playerData} />}
+        />
+        <Route
+          path="/GameOver"
+          element={<GameOver playerData={playerData} />}
+        />
 
-        <Route path="/dev/explosion-scene" element={<ExplosionScene playerData={playerData} />} />
+        <Route
+          path="/dev/explosion-scene"
+          element={<ExplosionScene playerData={playerData} />}
+        />
 
-        <Route path="/dev/rythm-game" element={<RythmGameScene playerData={playerData} />} />
+        <Route
+          path="/dev/rythm-game"
+          element={<RythmGameScene playerData={playerData} />}
+        />
         <Route path="/dev/test" element={<SpaceCollisionScene />} />
 
         {/* Redirection si route inconnue */}
