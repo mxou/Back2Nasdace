@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import SpaceshipInterior from "../components/SpaceShipInterior";
 
-export default function MiddleScene() {
+export default function MiddleScene(playerData) {
   const [fuel, setFuel] = useState(100);
   const playerRef = useRef();
   const [showIntro, setShowIntro] = useState(true);
@@ -25,7 +25,7 @@ export default function MiddleScene() {
       }}
     >
       {/* Affichage de l'intérieur du vaisseau avec les aliens */}
-      <SpaceshipInterior playerRef={playerRef} />
+      <SpaceshipInterior playerRef={playerRef} playerData={playerData} />
 
       {/* Popup d'introduction */}
       {showIntro && (

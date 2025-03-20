@@ -51,7 +51,7 @@ export default function GameScene({ playerData }) {
 
   const handleQuizAnswer = (result) => {
     setQuizResult(result);
-    const timerQuizAnswer = setTimeout(() => setQuizResult(null), 3000);
+    const timerQuizAnswer = setTimeout(() => setQuizResult(null), 5000);
     if (result === "Réussi") {
       goodAnswerSound.play().catch((err) => {
         console.log("Erreur de lecture du son :", err);
@@ -87,57 +87,26 @@ export default function GameScene({ playerData }) {
         <Physics timeStep="vary">
           <KeyboardControls map={keyboardMap}>
             <Controller ref={playerRef} maxVelLimit={5}>
-              <Gltf
-                castShadow
-                receiveShadow
-                scale={0.315}
-                position={[0, -0.55, 0]}
-                src={ghostModel}
-              />
+              <Gltf castShadow receiveShadow scale={0.315} position={[0, -0.55, 0]} src={ghostModel} />
             </Controller>
           </KeyboardControls>
           <RigidBody type="fixed" colliders="trimesh">
-            <Gltf
-              position={[10, 0, 5]}
-              castShadow
-              receiveShadow
-              scale={125}
-              src={islandModel}
-            />
-            <Amogus
-              position={[1, -2.48, -14]}
-              scale={[0.8, 0.8, 0.8]}
-              playerRef={playerRef}
-              onQuizStart={handleQuizStart}
-            />
-            <Nasdace
-              position={[4, -4, 4]}
-              scale={1}
-              rotation={[0, 180, 0]}
-              playerData={playerData}
-            />
+            <Gltf position={[10, 0, 5]} castShadow receiveShadow scale={125} src={islandModel} />
+            <Amogus position={[1, -2.48, -14]} scale={[0.8, 0.8, 0.8]} playerRef={playerRef} onQuizStart={handleQuizStart} />
+            <Nasdace position={[4, -4, 4]} scale={1} rotation={[0, 180, 0]} playerData={playerData} />
           </RigidBody>
           <Ship position={[10, -1.8, -8]} scale={6} colors={playerData} />
         </Physics>
       </Canvas>
       <ClearStorageButton />
       <Crosshair />
-      {showPopup && (
-        <Popup
-          message={`Bienvenue ${playerData.name} dans Back2NasdaceCity !`}
-        />
-      )}
-      {showQuiz && (
-        <Quiz onAnswer={handleQuizAnswer} onClose={() => setShowQuiz(false)} />
-      )}
+      {showPopup && <Popup message={`Bienvenue ${playerData.name} dans Back2NasdaceCity !`} />}
+      {showQuiz && <Quiz onAnswer={handleQuizAnswer} onClose={() => setShowQuiz(false)} />}
       {quizResult && (
         <div style={styles.quizResult}>
           <p style={styles.resultText}>{quizResult}</p>
           {quizResult === "Perdu" && (
-            <p style={styles.hintText}>
-              C'est pourtant logique, ça prends pas se temps la utilisant une
-              orbite de transfert de Hohmann... redflag
-            </p>
+            <p style={styles.hintText}>C'est pourtant logique, ça prends pas se temps la utilisant une orbite de transfert de Hohmann... redflag</p>
           )}
         </div>
       )}
@@ -151,8 +120,7 @@ const styles = {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    background:
-      "linear-gradient(135deg, rgba(15, 25, 65, 0.9) 0%, rgba(30, 40, 90, 0.9) 100%)",
+    background: "linear-gradient(135deg, rgba(15, 25, 65, 0.9) 0%, rgba(30, 40, 90, 0.9) 100%)",
     padding: "25px 30px",
     borderRadius: "15px",
     color: "#e6f7ff",
@@ -160,8 +128,7 @@ const styles = {
     fontFamily: "'Rajdhani', 'Orbitron', sans-serif",
     zIndex: 20,
     border: "2px solid rgba(100, 180, 255, 0.6)",
-    boxShadow:
-      "0 0 30px rgba(80, 160, 255, 0.4), inset 0 0 15px rgba(80, 160, 255, 0.2)",
+    boxShadow: "0 0 30px rgba(80, 160, 255, 0.4), inset 0 0 15px rgba(80, 160, 255, 0.2)",
     textAlign: "center",
     minWidth: "300px",
   },
