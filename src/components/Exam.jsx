@@ -1,20 +1,14 @@
 import React, { useState, useEffect } from "react";
 import victorySound from "./../assets/audio/success.mp3";
 import defeatSound from "./../assets/audio/fail.mp3";
+import { useNavigate } from "react-router-dom";
 
-const Exam = ({
-  onGameOver,
-  onScoreUpdate,
-  setter,
-  fuel,
-  onClose,
-  onComplete,
-}) => {
+const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
+  const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [countdown, setCountdown] = useState(8);
   const [result, setResult] = useState("");
   const [isGameActive, setIsGameActive] = useState(true);
-  const [score, setScore] = useState(0);
   const [clickedIndex, setClickedIndex] = useState(null);
   const [answeredCorrectly, setAnsweredCorrectly] = useState([]);
   const [failedQuestions, setFailedQuestions] = useState([]);
@@ -25,6 +19,7 @@ const Exam = ({
   useEffect(() => {
     if (fuel <= 0) {
       onGameOver?.();
+      navigate("/game-over");
     }
   }, [fuel, onGameOver]);
 
@@ -234,9 +229,6 @@ const Exam = ({
       if (!answeredCorrectly.some((q) => q.id === currentQuestion.id)) {
         setAnsweredCorrectly((prev) => [...prev, currentQuestion]);
       }
-
-      setScore((prev) => prev + 10);
-      onScoreUpdate?.(score + 10);
       victoryAudio.play();
     } else {
       // Ajouter à la liste des questions échouées si pas déjà présente
@@ -266,7 +258,6 @@ const Exam = ({
   return (
     <div style={styles.container}>
       <div style={styles.hud}>
-        <div style={styles.score}>💎 Score: {score}</div>
         <div style={styles.progress}>
           {answeredCorrectly.length}/{questions.length} questions
         </div>
@@ -324,6 +315,11 @@ const styles = {
     color: "white",
     fontFamily: "Orbitron, sans-serif",
     textAlign: "center",
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    zIndex: 999,
   },
   hud: {
     display: "flex",
@@ -333,9 +329,6 @@ const styles = {
     fontWeight: "bold",
     textShadow: "0 0 5px cyan",
     flexWrap: "wrap",
-  },
-  score: {
-    color: "cyan",
   },
   progress: {
     color: "yellow",
