@@ -5,7 +5,7 @@ import { Environment, useGLTF } from "@react-three/drei";
 import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import Ship from "../components3D/ShipPlayable";
-import galaxyImage from "/src/assets/images/space.jpg";
+import galaxyImage from "/public/images/space.jpg";
 import asteroid from "/src/assets/modeles/asteroid_1.glb";
 import asteroidHit from "/public/audio/rock.mp3";
 // Préchargement du modèle d'astéroïde

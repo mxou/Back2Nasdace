@@ -13,7 +13,7 @@ import ATH from "./ATH";
 import NasdaceModel from "/src/assets/modeles/Nasdace.glb";
 import ghostModel from "/src/assets/modeles/ghost_w_tophat-transformed.glb";
 import doda from "/src/assets/modeles/doda 2.glb";
-import galaxyImage from "/src/assets/images/space.jpg";
+import galaxyImage from "/public/images/space.jpg";
 import asteroidHit from "/public/audio/musicMiddleScene.mp3";
 import Dialogues from "/src/components/Dialogues/Dialogues";
 
