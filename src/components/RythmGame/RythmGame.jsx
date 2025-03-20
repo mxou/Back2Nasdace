@@ -7,7 +7,7 @@ const RhythmGame = ({
   setHasScored,
   hitSound,
   missSound,
-  navigate,
+  onComplete,
 }) => {
   const [notes, setNotes] = useState([]);
   const [score, setScore] = useState(0);
@@ -115,6 +115,7 @@ const RhythmGame = ({
             const isMissed =
               !note.hit && newY > hitAreaPosition + hitAreaHeight;
             if (isMissed && !note.missed) {
+              missSound.currentTime = 0;
               missSound.play();
               setCombo(0);
               setMisses((prev) => prev + 1);
@@ -173,6 +174,7 @@ const RhythmGame = ({
       const accuracyRatio = distance / hitAreaHeight;
       let pointsToAdd = 0;
       let hitType = "";
+      hitSound.currentTime = 0;
       hitSound.play();
       if (accuracyRatio <= PERFECT_TIMING) {
         pointsToAdd = PERFECT_POINTS;
@@ -450,9 +452,9 @@ const RhythmGame = ({
           <button
             onClick={() => {
               if (calculateGrade() === "D" || calculateGrade() === "F") {
-                navigate("/dev/explosion-scene");
+                onComplete(false);
               } else {
-                navigate("/dev/ending-scene");
+                onComplete(true);
               }
             }}
             className="continue-button"

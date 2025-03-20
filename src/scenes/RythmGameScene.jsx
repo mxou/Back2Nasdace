@@ -11,11 +11,18 @@ import RhythmGame from "../components/RythmGame/RythmGame";
 import { useNavigate } from "react-router-dom";
 import hitSoundFile from "/src/assets/audio/hit.wav";
 import missSoundFile from "/src/assets/audio/miss.wav";
+import GameFailed from "/src/assets/dialogues/dialogIaFailed";
+import GameSuccess from "/src/assets/dialogues/dialogIaSuccess";
 
 export default function RythmGameScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
   const [gameStart, setGameStart] = useState(false);
   const [hasScored, setHasScored] = useState(false);
+  const [lastDialog, setLastDialog] = useState(false);
+  const [onGameFinished, setOnGameFinished] = useState({
+    file: null,
+    action: null,
+  });
 
   const hitSound = new Audio(hitSoundFile);
   const missSound = new Audio(missSoundFile);
@@ -24,6 +31,28 @@ export default function RythmGameScene({ playerData }) {
   missSound.volume = 0.3;
 
   const navigate = useNavigate();
+
+  const handleNavigation = () => {
+    if (onGameFinished.action) {
+      onGameFinished.action(); // Exécute la navigation
+    }
+  };
+
+  const GameFinished = (gameStatus) => {
+    setGameStart(false);
+    if (gameStatus) {
+      setOnGameFinished({
+        file: GameSuccess,
+        action: () => navigate("/dev/ending-scene"),
+      });
+    } else {
+      setOnGameFinished({
+        file: GameFailed,
+        action: () => navigate("/dev/explosion-scene"),
+      });
+    }
+    setLastDialog(true);
+  };
 
   const shipRef = useRef(); // Référence pour le vaisseau
   useEffect(() => {
@@ -40,7 +69,15 @@ export default function RythmGameScene({ playerData }) {
         <Dialogues
           dialogFile={dialogIa}
           onComplete={() => setGameStart(true)}
-          autoSkip={false}
+          userName={playerData.name}
+        />
+      ) : null}
+      {lastDialog ? (
+        <Dialogues
+          dialogFile={onGameFinished.file}
+          onComplete={() => {
+            onGameFinished.action();
+          }}
           userName={playerData.name}
         />
       ) : null}
@@ -50,7 +87,7 @@ export default function RythmGameScene({ playerData }) {
           setHasScored={setHasScored}
           hitSound={hitSound}
           missSound={missSound}
-          navigate={navigate}
+          onComplete={GameFinished}
         />
       ) : null}
       <Canvas shadows camera={{ position: [10, 10, 20], fov: 45 }}>

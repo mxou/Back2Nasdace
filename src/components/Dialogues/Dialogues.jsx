@@ -6,7 +6,7 @@ import dialogueSkip from "/src/assets/audio/skip.mp3";
 export default function Dialogues({
   dialogFile,
   onComplete,
-  autoSkip = true,
+  autoSkip = false,
   userName,
 }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -89,7 +89,7 @@ export default function Dialogues({
     >
       <motion.img
         key={currentDialogue.name}
-        src={`/src/assets/images/${currentDialogue.name.toLowerCase()}.jpg`}
+        src={`/images/${currentDialogue.name.toLowerCase()}.jpg`}
         alt={currentDialogue.name}
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}

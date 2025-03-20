@@ -1,7 +1,7 @@
 import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { RigidBody } from "@react-three/rapier";
-import NasdaceCityModel from "/src/assets/modeles/NasdaceCity.glb";
+import NasdaceCityModel from "/src/assets/modeles/Snickers.glb";
 
 const NasdaceCity = React.forwardRef((props, ref) => {
   const { scene } = useGLTF(NasdaceCityModel);
