@@ -1,6 +1,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { Environment, PerspectiveCamera, Gltf, OrbitControls } from "@react-three/drei";
+import {
+  Environment,
+  PerspectiveCamera,
+  Gltf,
+  OrbitControls,
+} from "@react-three/drei";
 import { Physics, RigidBody } from "@react-three/rapier";
 import { useNavigate } from "react-router-dom";
 import Ship from "../components3D/Ship.jsx";
@@ -25,7 +30,7 @@ export default function NewScene({ playerData }) {
     setTakeoff(true); // Met l'état de décollage à true
     console.log("Décollage lancé !");
     setTimeout(() => {
-      navigate("/dev/MiddleScene");
+      navigate("/interior");
     }, 3000);
   };
   // Effet pour orienter la caméra vers la cible
@@ -72,16 +77,28 @@ export default function NewScene({ playerData }) {
         {/* Physique */}
         <Physics timeStep="vary">
           <RigidBody type="fixed" colliders="trimesh">
-            <Gltf position={[10, 0, 5]} castShadow receiveShadow scale={125} src={islandModel} />
+            <Gltf
+              position={[10, 0, 5]}
+              castShadow
+              receiveShadow
+              scale={125}
+              src={islandModel}
+            />
           </RigidBody>
 
           {/* Affichage du vaisseau Ship */}
-          <Ship position={[1, -1.8, -5]} scale={6} colors={playerData} takeoff={takeoff} />
+          <Ship
+            position={[1, -1.8, -5]}
+            scale={6}
+            colors={playerData}
+            takeoff={takeoff}
+          />
 
           {/* Cible invisible pour la caméra */}
           <mesh ref={targetRef} position={targetPosition}>
             <sphereGeometry args={[0.1]} />
-            <meshBasicMaterial color="red" visible={false} /> {/* Rendre la cible invisible */}
+            <meshBasicMaterial color="red" visible={false} />{" "}
+            {/* Rendre la cible invisible */}
           </mesh>
         </Physics>
       </Canvas>

@@ -65,25 +65,25 @@ function App() {
 
         {/* Votre route de développement */}
         <Route
-          path="/dev/ending-scene"
+          path="/ending"
           element={<EndingScene playerData={playerData} />}
         />
         <Route
-          path="/dev/MiddleScene"
+          path="/interior"
           element={<MiddleScene playerData={playerData} />}
         />
         <Route
-          path="/GameOver"
+          path="/game-over"
           element={<GameOver playerData={playerData} />}
         />
 
         <Route
-          path="/dev/explosion-scene"
+          path="/explosion"
           element={<ExplosionScene playerData={playerData} />}
         />
 
         <Route
-          path="/dev/rythm-game"
+          path="/rythm-game"
           element={<RythmGameScene playerData={playerData} />}
         />
 

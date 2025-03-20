@@ -440,7 +440,7 @@ const SpaceshipInterior = ({ playerData }) => {
 
       // Attendre quelques secondes avant de naviguer
       const timer = setTimeout(() => {
-        navigate("/dev/rythm-game", { state: { playerData } });
+        navigate("/rythm-game", { state: { playerData } });
       }, 3000); // 3 secondes avant de naviguer
 
       return () => clearTimeout(timer);

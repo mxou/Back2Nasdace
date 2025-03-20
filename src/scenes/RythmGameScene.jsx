@@ -75,12 +75,12 @@ export default function RythmGameScene({ playerData }) {
     if (gameStatus) {
       setOnGameFinished({
         file: GameSuccess,
-        action: () => navigate("/dev/ending-scene"),
+        action: () => navigate("/ending"),
       });
     } else {
       setOnGameFinished({
         file: GameFailed,
-        action: () => navigate("/dev/explosion-scene"),
+        action: () => navigate("/explosion"),
       });
     }
     setLastDialog(true);
