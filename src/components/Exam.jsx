@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import victorySound from "./../assets/audio/success.mp3";
 import defeatSound from "./../assets/audio/fail.mp3";
 
-const Quiz = ({
+const Exam = ({
   onGameOver,
   onScoreUpdate,
   setter,
@@ -31,88 +31,91 @@ const Quiz = ({
   const questions = [
     {
       id: 1,
-      question: "Quelle est la plus grande planète du système solaire ?",
-      choices: ["Mars", "Saturne", "Jupiter", "Neptune"],
-      correct: 2,
-    },
-    {
-      id: 2,
-      question: "Quelle est la distance moyenne entre la Terre et le Soleil ?",
+      question: "Quel surnom donne-t-on à Mars en raison de sa couleur ?",
       choices: [
-        "150 millions km",
-        "100 millions km",
-        "200 millions km",
-        "250 millions km",
-      ],
-      correct: 0,
-    },
-    {
-      id: 3,
-      question: "Qu'est-ce qu'un trou noir ?",
-      choices: [
-        "Une étoile morte",
-        "Un objet si dense que même la lumière ne peut s'en échapper",
-        "Une planète sombre",
-        "Un astéroïde noir",
+        "La planète bleue",
+        "La planète rouge",
+        "La planète dorée",
+        "La planète verte",
       ],
       correct: 1,
     },
     {
+      id: 2,
+      question: "Combien de satellites naturels Mars possède-t-elle ?",
+      choices: ["Aucun", "1", "2", "4"],
+      correct: 2,
+    },
+    {
+      id: 3,
+      question: "Comment s'appellent les deux lunes de Mars ?",
+      choices: [
+        "Ganymède et Callisto",
+        "Titan et Encelade",
+        "Phobos et Deimos",
+        "Europa et Io",
+      ],
+      correct: 2,
+    },
+    {
       id: 4,
-      question: "Quelle est la galaxie la plus proche de la Voie lactée ?",
-      choices: ["Andromède", "Triangle", "Grande Ourse", "Orion"],
+      question: "Quelle est la distance entre la Terre et Mars ?",
+      choices: [
+        "62 Millions de Km",
+        "69 Millions de Km",
+        "32 Millions de Km",
+        "86 Millions de Km",
+      ],
       correct: 0,
     },
     {
       id: 5,
-      question: "Quel est le nom du premier homme à avoir marché sur la Lune ?",
-      choices: [
-        "Buzz Aldrin",
-        "Neil Armstrong",
-        "Youri Gagarine",
-        "Alan Shepard",
-      ],
-      correct: 1,
+      question:
+        "Quel est le nom du plus grand volcan du système solaire, situé sur Mars ?",
+      choices: ["Olympus Mons", "Tharsis Montes", "Elysium Mons", "Arsia Mons"],
+      correct: 0,
     },
     {
       id: 6,
-      question: "Combien de planètes composent notre système solaire ?",
-      choices: ["7", "8", "9", "10"],
+      question: "Quelle est la température moyenne à la surface de Mars ?",
+      choices: ["15°C", "-63°C", "-20°C", "-120°C"],
       correct: 1,
     },
     {
       id: 7,
-      question: "Quelle est la planète la plus proche du Soleil ?",
-      choices: ["Mars", "Vénus", "Mercure", "Terre"],
+      question:
+        "Quel rover a été le premier à explorer avec succès la surface de Mars en 1997 ?",
+      choices: ["Curiosity", "Opportunity", "Sojourner", "Perseverance"],
       correct: 2,
     },
     {
       id: 8,
-      question: "De quoi sont principalement composés les anneaux de Saturne ?",
+      question: "Combien de temps dure une année sur Mars ?",
       choices: [
-        "De gaz",
-        "De glace et de poussière",
-        "De métal",
-        "De roches volcaniques",
+        "365 jours terrestres",
+        "687 jours terrestres",
+        "550 jours terrestres",
+        "780 jours terrestres",
       ],
       correct: 1,
     },
     {
       id: 9,
-      question: "Comment s'appelle le satellite naturel de la Terre ?",
-      choices: ["Luna", "La Lune", "Titan", "Europe"],
-      correct: 1,
+      question:
+        "Quelle vallée martienne est considérée comme le plus grand canyon du système solaire ?",
+      choices: [
+        "Valles Marineris",
+        "Noctis Labyrinthus",
+        "Melas Chasma",
+        "Hebes Chasma",
+      ],
+      correct: 0,
     },
     {
       id: 10,
-      question: "Quelle est la durée d'un jour sur Vénus ?",
-      choices: [
-        "24 heures",
-        "243 jours terrestres",
-        "18 heures",
-        "30 jours terrestres",
-      ],
-      correct: 1,
+      question: "Sous quelle forme l'eau est-elle présente sur Mars ?",
+      choices: ["Aucune", "Glace", "Vapeur", "Glace et vapeur"],
+      correct: 3,
     },
   ];
 
@@ -145,7 +148,7 @@ const Quiz = ({
       !gameCompleted
     ) {
       setGameCompleted(true);
-      setResult("🏆 Félicitations ! Quiz complété !");
+      setResult("🏆 Félicitations ! Exam complété !");
 
       // Notifier le composant parent que le jeu est complété
       setTimeout(() => {
@@ -176,7 +179,8 @@ const Quiz = ({
 
     if (unansweredQuestions.length === 0) {
       // Toutes les questions ont été répondues correctement
-      setResult("🏆 Félicitations ! Quiz complété !");
+      setResult("🏆 Félicitations ! Exam complété !");
+      setGameCompleted(true);
       return;
     }
 
@@ -189,15 +193,23 @@ const Quiz = ({
     setResult("⏳ Temps écoulé !");
     setClickedIndex(null);
 
+    // Réduire le carburant lorsque le temps est écoulé
+    setter((prev) => prev - 10);
+    defeatAudio.play();
+
     // Ajouter la question actuelle aux questions échouées si elle n'y est pas déjà
+    // et si elle n'a pas été correctement répondue auparavant
     if (
       currentQuestion &&
-      !failedQuestions.some((q) => q.id === currentQuestion.id)
+      !failedQuestions.some((q) => q.id === currentQuestion.id) &&
+      !answeredCorrectly.some((q) => q.id === currentQuestion.id)
     ) {
       setFailedQuestions((prev) => [...prev, currentQuestion]);
     }
 
-    if (fuel === 0) onGameOver?.();
+    // Vérifier si le carburant est épuisé après la pénalité
+    if (fuel <= 10) onGameOver?.();
+
     setTimeout(nextQuestion, 2000);
   };
 
@@ -228,7 +240,11 @@ const Quiz = ({
       victoryAudio.play();
     } else {
       // Ajouter à la liste des questions échouées si pas déjà présente
-      if (!failedQuestions.some((q) => q.id === currentQuestion.id)) {
+      // et si elle n'a pas été correctement répondue auparavant
+      if (
+        !failedQuestions.some((q) => q.id === currentQuestion.id) &&
+        !answeredCorrectly.some((q) => q.id === currentQuestion.id)
+      ) {
         setFailedQuestions((prev) => [...prev, currentQuestion]);
       }
 
@@ -240,7 +256,7 @@ const Quiz = ({
     setTimeout(nextQuestion, 2000);
   };
 
-  // Ajouter un bouton pour quitter le quiz
+  // Ajouter un bouton pour quitter le Exam
   const handleQuit = () => {
     onClose?.(gameCompleted);
   };
@@ -386,4 +402,4 @@ const styles = {
   },
 };
 
-export default Quiz;
+export default Exam;

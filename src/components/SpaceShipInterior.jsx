@@ -15,6 +15,13 @@ import ghostModel from "/src/assets/modeles/ghost_w_tophat-transformed.glb";
 import doda from "/src/assets/modeles/doda 2.glb";
 import galaxyImage from "/src/assets/images/space.jpg";
 import asteroidHit from "/public/audio/musicMiddleScene.mp3";
+import Dialogues from "/src/components/Dialogues/Dialogues";
+
+// Importez les fichiers de dialogue pour chaque alien
+import blasterDialogue from "/src/assets/dialogues/blaster.json";
+// Créez ces fichiers ou importez-les s'ils existent déjà
+import quizDialogue from "/src/assets/dialogues/quiz.json";
+import spaceshipDialogue from "/src/assets/dialogues/spaceship.json";
 
 // Ajout du composant de contrôle de position du joueur
 const PlayerPositionMonitor = ({
@@ -128,7 +135,10 @@ const SceneBackground = () => {
 };
 
 // Composant pour le panneau d'avertissement
-const WarningSign = ({ position, rotation = [0, 0, 0] }) => {
+const WarningSign = ({ position, rotation = [0, 0, 0], isGameActive }) => {
+  // Ne pas afficher le panneau d'avertissement si un jeu est actif
+  if (isGameActive) return null;
+
   return (
     <group position={position} rotation={rotation}>
       {/* Panneau */}
@@ -175,7 +185,7 @@ const WarningSign = ({ position, rotation = [0, 0, 0] }) => {
   );
 };
 
-// Composant Alien avec correction
+// Composant Alien avec modification pour désactiver l'interaction après complétion
 const Alien = ({
   position,
   color,
@@ -183,11 +193,18 @@ const Alien = ({
   onInteract,
   playerRef,
   isCompleted,
+  isGameActive,
 }) => {
   const alienRef = useRef();
   const [showInteractionHint, setShowInteractionHint] = useState(false);
 
   const checkDistance = () => {
+    // Ne pas vérifier la distance si un jeu est actif ou si le défi est déjà complété
+    if (isGameActive || isCompleted) {
+      setShowInteractionHint(false);
+      return false;
+    }
+
     if (playerRef.current && alienRef.current) {
       try {
         // Créer des vecteurs pour obtenir les positions mondiales
@@ -246,11 +263,12 @@ const Alien = ({
     }, 100);
 
     return () => clearInterval(interval);
-  }, [playerRef]);
+  }, [playerRef, isGameActive, isCompleted]);
 
   // Quand le joueur clique et est proche de l'alien
   const handleInteraction = () => {
-    if (checkDistance()) {
+    // Ne pas permettre l'interaction si le défi est déjà complété
+    if (!isCompleted && checkDistance()) {
       onInteract(name);
     }
   };
@@ -262,8 +280,8 @@ const Alien = ({
         <Gltf
           castShadow
           receiveShadow
-          scale={0.5}
-          position={[0, 0, 0]}
+          scale={1}
+          position={[0, -1.6, 0]}
           visible={true}
           src={NasdaceModel}
         />
@@ -281,7 +299,8 @@ const Alien = ({
         </mesh>
       </group>
 
-      {showInteractionHint && (
+      {/* Afficher un message différent pour les défis complétés */}
+      {showInteractionHint && !isGameActive && (
         <Html position={[position[0], position[1] + 3, position[2]]} center>
           <div
             className="interaction-hint"
@@ -295,36 +314,12 @@ const Alien = ({
             }}
           >
             {isCompleted
-              ? `${name} (Défi complété)`
+              ? `${name} (Défi déjà complété)`
               : `Cliquez pour parler à ${name}`}
           </div>
         </Html>
       )}
     </>
-  );
-};
-
-// Composant pour la boîte de dialogue
-const DialogueBox = ({ alienName, onClose, onSelect, isCompleted }) => {
-  return (
-    <div style={styles.dialogueBox}>
-      <h3 style={styles.dialogueTitle}>{alienName} vous parle</h3>
-      <p style={styles.dialogueText}>
-        {isCompleted
-          ? "Excellent travail ! Vous avez déjà réussi mon défi."
-          : "Bonjour voyageur ! Voulez-vous participer à un défi ?"}
-      </p>
-      <div style={styles.buttonContainer}>
-        {!isCompleted && (
-          <button style={styles.button} onClick={() => onSelect(alienName)}>
-            Oui
-          </button>
-        )}
-        <button style={styles.button} onClick={onClose}>
-          {isCompleted ? "Merci" : "Non"}
-        </button>
-      </div>
-    </div>
   );
 };
 
@@ -346,6 +341,23 @@ const SpaceshipInterior = ({ playerData }) => {
     "Blaster Pro": false,
     "Captain Nasdace": false,
   });
+
+  // Déterminer si un jeu est actif pour cacher les éléments d'interface
+  const isGameActive = activeGame !== null;
+
+  // Fonction pour obtenir le bon dialogue selon l'alien
+  const getCurrentDialogue = () => {
+    switch (currentAlien) {
+      case "Quiz Master":
+        return quizDialogue;
+      case "Blaster Pro":
+        return blasterDialogue;
+      case "Captain Nasdace":
+        return spaceshipDialogue;
+      default:
+        return [];
+    }
+  };
 
   const keyboardMap = [
     { name: "forward", keys: ["ArrowUp", "KeyW"] },
@@ -426,12 +438,23 @@ const SpaceshipInterior = ({ playerData }) => {
 
       // Attendre quelques secondes avant de naviguer
       const timer = setTimeout(() => {
-        navigate("/dev/rythm-scene", { state: { playerData } });
+        navigate("/dev/rythm-game", { state: { playerData } });
       }, 3000); // 3 secondes avant de naviguer
 
       return () => clearTimeout(timer);
     }
   }, [gameCompletions, navigate, playerData]);
+
+  // Déterminer si le dialogue devrait être affiché avec état de complétion
+  const getDialogueForAlien = () => {
+    if (!currentAlien) return null;
+
+    // Si le défi est déjà complété, utilisez un dialogue différent ou modifiez le dialogue existant
+    const isCompleted = gameCompletions[currentAlien];
+
+    // Retourner le dialogue approprié pour l'alien avec état de complétion
+    return getCurrentDialogue();
+  };
 
   return (
     <>
@@ -465,10 +488,14 @@ const SpaceshipInterior = ({ playerData }) => {
               <Gltf receiveShadow scale={15} position={[0, 2, 0]} src={doda} />
             </RigidBody>
 
-            {/* Panneau d'avertissement près d'une zone glissante */}
-            <WarningSign position={[-2, -3.5, 6]} rotation={[0, 9, 0]} />
+            {/* Panneau d'avertissement près d'une zone glissante - caché pendant les jeux */}
+            <WarningSign
+              position={[-2, -3.5, 6]}
+              rotation={[0, 9, 0]}
+              isGameActive={isGameActive}
+            />
 
-            {/* Les trois aliens avec correction de visibilité */}
+            {/* Les trois aliens avec prise en compte de l'état du jeu */}
             <Alien
               position={[-5, -4, 0]}
               color="blue"
@@ -476,6 +503,7 @@ const SpaceshipInterior = ({ playerData }) => {
               onInteract={handleAlienInteraction}
               playerRef={playerRef}
               isCompleted={gameCompletions["Quiz Master"]}
+              isGameActive={isGameActive}
             />
             <Alien
               position={[0, -4, 4]}
@@ -484,6 +512,7 @@ const SpaceshipInterior = ({ playerData }) => {
               onInteract={handleAlienInteraction}
               playerRef={playerRef}
               isCompleted={gameCompletions["Blaster Pro"]}
+              isGameActive={isGameActive}
             />
             <Alien
               position={[4, -4, 0]}
@@ -492,23 +521,26 @@ const SpaceshipInterior = ({ playerData }) => {
               onInteract={handleAlienInteraction}
               playerRef={playerRef}
               isCompleted={gameCompletions["Captain Nasdace"]}
+              isGameActive={isGameActive}
             />
           </Physics>
         </Canvas>
 
-        {/* ATH (Affichage Tête Haute) */}
+        {/* ATH (Affichage Tête Haute) - toujours visible */}
         <div style={styles.athContainer}>
           <ATH showChrono={false} fuel={fuel} />
         </div>
 
-        {/* Boîte de dialogue */}
-        {showDialogue && (
-          <DialogueBox
-            alienName={currentAlien}
-            onClose={handleCloseDialogue}
-            onSelect={handleGameSelect}
-            isCompleted={currentAlien ? gameCompletions[currentAlien] : false}
-          />
+        {/* Nouveau composant Dialogues - visible uniquement si un dialogue est actif */}
+        {showDialogue && currentAlien && !isGameActive && (
+          <div style={styles.dialogueContainer}>
+            <Dialogues
+              dialogFile={getDialogueForAlien()}
+              userName={playerData?.name || "Joueur"}
+              onComplete={() => handleGameSelect(currentAlien)}
+              autoSkip={true}
+            />
+          </div>
         )}
 
         {/* Jeux */}
@@ -552,50 +584,13 @@ const SpaceshipInterior = ({ playerData }) => {
 };
 
 const styles = {
-  dialogueBox: {
+  dialogueContainer: {
     position: "absolute",
-    top: "50%",
+    bottom: "10%",
     left: "50%",
-    transform: "translate(-50%, -50%)",
-    background:
-      "linear-gradient(135deg, rgba(15, 25, 65, 0.9) 0%, rgba(30, 40, 90, 0.9) 100%)",
-    padding: "25px 30px",
-    borderRadius: "15px",
-    color: "#e6f7ff",
-    fontSize: "18px",
-    fontFamily: "'Rajdhani', 'Orbitron', sans-serif",
     zIndex: 20,
-    border: "2px solid rgba(100, 180, 255, 0.6)",
-    boxShadow:
-      "0 0 30px rgba(80, 160, 255, 0.4), inset 0 0 15px rgba(80, 160, 255, 0.2)",
-    textAlign: "center",
-    minWidth: "300px",
-  },
-  dialogueTitle: {
-    margin: "0 0 15px 0",
-    fontWeight: "bold",
-    fontSize: "24px",
-    textShadow: "0 0 10px rgba(100, 180, 255, 0.7)",
-  },
-  dialogueText: {
-    margin: "10px 0",
-    fontSize: "16px",
-  },
-  buttonContainer: {
-    display: "flex",
-    justifyContent: "space-around",
-    marginTop: "20px",
-  },
-  button: {
-    padding: "10px 20px",
-    background: "rgba(80, 120, 200, 0.7)",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    cursor: "pointer",
-    fontSize: "16px",
-    fontFamily: "'Rajdhani', sans-serif",
-    transition: "all 0.3s ease",
+    width: "100%",
+    pointerEvents: "auto",
   },
   athContainer: {
     position: "absolute",
