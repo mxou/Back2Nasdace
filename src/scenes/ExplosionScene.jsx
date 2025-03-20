@@ -7,6 +7,7 @@ import ExplosionHandler from "../3Dhandlers/ExplosionHandler";
 import { Stars } from "@react-three/drei";
 import GameOver from "../components/GameOver.jsx/GameOver";
 import { useNavigate } from "react-router-dom";
+import explosionFile from "/src/assets/audio/explosion.mp3";
 
 export default function ExplosionScene(playerData) {
   const shipRef = useRef();
@@ -15,6 +16,8 @@ export default function ExplosionScene(playerData) {
   const [removeObjects, setRemoveObjects] = useState(false);
 
   const navigate = useNavigate();
+
+  const explosionSound = new Audio(explosionFile);
 
   useEffect(() => {
     if (!playerData) {
@@ -36,6 +39,8 @@ export default function ExplosionScene(playerData) {
   useEffect(() => {
     const extiming = setTimeout(() => {
       setExplosionTriggered(true);
+      explosionSound.currentTime = 1;
+      explosionSound.play();
       setTimeout(() => {
         setRemoveObjects(true); // Supprime Ship et NasdaceCity après 2 secondes
       }, 500);
