@@ -13,6 +13,7 @@ import hitSoundFile from "/src/assets/audio/hit.wav";
 import missSoundFile from "/src/assets/audio/miss.wav";
 import GameFailed from "/src/assets/dialogues/dialogIaFailed";
 import GameSuccess from "/src/assets/dialogues/dialogIaSuccess";
+import altaleFile from "/src/assets/audio/altale.mp3";
 
 export default function RythmGameScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
@@ -26,17 +27,19 @@ export default function RythmGameScene({ playerData }) {
 
   const hitSound = new Audio(hitSoundFile);
   const missSound = new Audio(missSoundFile);
+  const altale = new Audio(altaleFile);
 
   hitSound.volume = 0.3;
   missSound.volume = 0.3;
+  altale.volume = 0.05;
 
   const navigate = useNavigate();
 
-  const handleNavigation = () => {
-    if (onGameFinished.action) {
-      onGameFinished.action(); // Exécute la navigation
+  useEffect(() => {
+    if (!playerData) {
+      navigate("/");
     }
-  };
+  });
 
   const GameFinished = (gameStatus) => {
     setGameStart(false);
@@ -88,6 +91,7 @@ export default function RythmGameScene({ playerData }) {
           hitSound={hitSound}
           missSound={missSound}
           onComplete={GameFinished}
+          music={altale}
         />
       ) : null}
       <Canvas shadows camera={{ position: [10, 10, 20], fov: 45 }}>

@@ -5,6 +5,7 @@ import { div } from "framer-motion/client";
 const RhythmGame = ({
   hasScored = false,
   setHasScored,
+  music,
   hitSound,
   missSound,
   onComplete,
@@ -17,7 +18,7 @@ const RhythmGame = ({
   const [misses, setMisses] = useState(0);
   const [hits, setHits] = useState({ perfect: 0, good: 0, ok: 0 });
   const [scrollSpeed, setScrollSpeed] = useState(2);
-  const [approachRate, setApproachRate] = useState(1.5);
+  const [approachRate, setApproachRate] = useState(1.3);
   const [isPlaying, setIsPlaying] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [lastHit, setLastHit] = useState(null);
@@ -218,6 +219,8 @@ const RhythmGame = ({
     setTimeLeft(gameTime);
     lastNoteTimeRef.current = 0;
     noteIdRef.current = 0;
+    music.currentTime = 3;
+    music.play();
   };
   const endGame = () => {
     setIsPlaying(false);
@@ -453,8 +456,10 @@ const RhythmGame = ({
             onClick={() => {
               if (calculateGrade() === "D" || calculateGrade() === "F") {
                 onComplete(false);
+                music.pause();
               } else {
                 onComplete(true);
+                music.pause();
               }
             }}
             className="continue-button"
@@ -465,6 +470,7 @@ const RhythmGame = ({
             onClick={() => {
               setGameOver(false);
               setHasScored(true);
+              music.pause();
             }}
             className="replay-button"
           >

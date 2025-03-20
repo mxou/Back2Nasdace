@@ -12,6 +12,7 @@ const ShipSus = React.forwardRef(
       colors,
       gravity = 0,
       isMoving = false, // Contrôle du mouvement passé par le parent
+      isAtterrissaging = false,
       onCollisionEnter,
       idleSpace = false, // Nouvelle propriété qui contrôle le mouvement continu
     },
@@ -33,6 +34,17 @@ const ShipSus = React.forwardRef(
         if (translation) {
           // Mouvement vertical sinusoïdal
           setYOffset(Math.sin(Date.now() * 0.002) * 0.5); // Vitesse et amplitude du mouvement vertical
+        }
+      }
+
+      if (shipRef.current && isAtterrissaging) {
+        const translation = shipRef.current.translation();
+        if (translation && translation.y >= -90) {
+          shipRef.current.setTranslation({
+            x: translation.x + 0,
+            y: translation.y - 0.1,
+            z: translation.z - 0,
+          });
         }
       }
 
