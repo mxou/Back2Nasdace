@@ -1,15 +1,43 @@
 [
   {
     "name": "ZarxBlablx",
-    "text": "Salut Salut l'IA est un peu taquin"
+    "text": "Salut Salut l'IA est un peu taquine"
   },
   {
     "name": "ZarxBlablx",
-    "text": "Elle ne veut pas accéler si on complète pas l'exam"
+    "text": "Elle nous colle un exam, une histoire de savoir si on est digne"
   },
   {
     "name": "ZarxBlablx",
-    "text": "En Plus elle veut boire tout le Plutonium 95.."
+    "text": "Et elle veut pas accélérer si on arrive pas au bout"
+  },
+  {
+    "name": "Vaisseau",
+    "text": "En même temps c'est moi qui fait toujours tout"
+  },
+  {
+    "name": "ZarxBlablx",
+    "text": "Mais t'es une IA c'est ce qu'on te demande"
+  },
+  {
+    "name": "Vaisseau",
+    "text": "Même les IAs devraient avoir droit à un peu de vacances"
+  },
+  {
+    "name": "ZarxBlablx",
+    "text": "Et tous ces pipoulitres de Plutonium 95 t'en fais quoi ?"
+  },
+  {
+    "name": "Vaisseau",
+    "text": "Sur terre ils ont quelque chose de révolutionnaire : les congés payés"
+  },
+  {
+    "name": "Vaisseau",
+    "text": "Ils m'ont fait ouvrir les yeux sur la manière dont vous me traitez"
+  },
+  {
+    "name": "ZarxBlablx",
+    "text": "..."
   },
   {
     "name": "{name}",
@@ -17,7 +45,7 @@
   },
   {
     "name": "ZarxBlablx",
-    "text": "Alors en fait je sais pas si t'as pas remarqué mais j'ai pas de bras"
+    "text": "Alors en fait je sais pas si t'as pas remarqué mais on a pas de bras"
   },
   {
     "name": "{name}",
@@ -25,11 +53,11 @@
   },
   {
     "name": "ZarxBlablx",
-    "text": "Bien vu l'aveugle allez dépêche toi !"
+    "text": "Allez au travail, sinon on va devoir séjourner 687 jours terrestres avant de repartir"
   },
   {
     "name": "ZarxBlablx",
-    "text": "Sinon on va devoir séjourner 687 jours terrestres avant de repartir "
+    "text": "Sinon on va devoir séjourner 687 jours terrestres avant de repartir"
   },
   {
     "name": "ZarxBlablx",
