@@ -1,10 +1,10 @@
+// App.jsx
 import { useState, useEffect } from "react";
 import {
-  createBrowserRouter,
-  RouterProvider,
-  Outlet,
+  BrowserRouter as Router,
+  Routes,
+  Route,
   Navigate,
-  useOutletContext,
 } from "react-router-dom";
 import "./App.css";
 import PlayerForm from "/src/components/PlayerForm";
@@ -16,23 +16,10 @@ import EndingScene from "/src/scenes/EndingScene";
 import ExplosionScene from "/src/scenes/ExplosionScene";
 import RythmGameScene from "/src/scenes/RythmGameScene";
 import Takeoff from "./Takeoff";
-import ATH from "./components/ATH";
-
-function Root({ fuel, setFuel }) {
-  return (
-    <>
-      <ATH fuel={fuel} showChrono={false} />
-      <main>
-        <Outlet context={{ fuel, setFuel }} />
-      </main>
-    </>
-  );
-}
 
 function App() {
   const [playerData, setPlayerData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [fuel, setFuel] = useState(100);
 
   useEffect(() => {
     const storedPlayer = localStorage.getItem("playerData");
@@ -42,51 +29,70 @@ function App() {
       const timer = setTimeout(() => setLoading(false), 1000);
       return () => clearTimeout(timer);
     } else {
-      setLoading(false);
+      setLoading(false); // Pas de délai si aucun joueur n'est trouvé
     }
   }, []);
 
   const handlePlayerSubmit = (data, colors) => {
-    const completePlayerData = { ...data, ...colors };
+    // Fusionner les données du joueur et les couleurs pour maintenir la compatibilité
+    const completePlayerData = {
+      ...data,
+      ...colors, // Inclure les couleurs dans playerData
+    };
+
     localStorage.setItem("playerData", JSON.stringify(completePlayerData));
     setPlayerData(completePlayerData);
+    console.log(playerData);
   };
 
   if (loading) return <Loader />;
+  return (
+    <Router>
+      <Routes>
+        {/* Route vers le formulaire de joueur */}
+        <Route
+          path="/"
+          element={
+            playerData ? (
+              <GameScene playerData={playerData} />
+            ) : (
+              <PlayerForm onSubmit={handlePlayerSubmit} />
+            )
+          }
+        />
 
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      element: playerData ? (
-        <GameScene playerData={playerData} />
-      ) : (
-        <PlayerForm onSubmit={handlePlayerSubmit} />
-      ),
-    },
-    {
-      path: "*",
-      element: <Navigate to="/" replace />,
-    },
-    {
-      element: <Root fuel={fuel} setFuel={setFuel} />, // Passer fuel et setFuel en props
-      children: [
-        { path: "/takeoff", element: <Takeoff playerData={playerData} /> },
-        { path: "/ending", element: <EndingScene playerData={playerData} /> },
-        { path: "/interior", element: <MiddleScene playerData={playerData} /> },
-        { path: "/game-over", element: <GameOver playerData={playerData} /> },
-        {
-          path: "/explosion",
-          element: <ExplosionScene playerData={playerData} />,
-        },
-        {
-          path: "/rythm-game",
-          element: <RythmGameScene playerData={playerData} />,
-        },
-      ],
-    },
-  ]);
+        {/* Exemple de route vers Takeoff */}
+        <Route path="/Takeoff" element={<Takeoff playerData={playerData} />} />
 
-  return <RouterProvider router={router} />;
+        {/* Votre route de développement */}
+        <Route
+          path="/ending"
+          element={<EndingScene playerData={playerData} />}
+        />
+        <Route
+          path="/interior"
+          element={<MiddleScene playerData={playerData} />}
+        />
+        <Route
+          path="/game-over"
+          element={<GameOver playerData={playerData} />}
+        />
+
+        <Route
+          path="/explosion"
+          element={<ExplosionScene playerData={playerData} />}
+        />
+
+        <Route
+          path="/rythm-game"
+          element={<RythmGameScene playerData={playerData} />}
+        />
+
+        {/* Redirection si route inconnue */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
