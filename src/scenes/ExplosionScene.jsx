@@ -9,7 +9,7 @@ import GameOver from "../components/GameOver.jsx/GameOver";
 import { useNavigate } from "react-router-dom";
 import explosionFile from "/src/assets/audio/explosion.mp3";
 
-export default function ExplosionScene(playerData) {
+export default function ExplosionScene({ playerData }) {
   const shipRef = useRef();
   const cityRef = useRef();
   const [explosionTriggered, setExplosionTriggered] = useState(false);
