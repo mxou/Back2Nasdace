@@ -32,7 +32,6 @@ const styles = {
     textAlign: "left",
     fontFamily: "Arial, sans-serif",
     userSelect: "none",
-    zIndex: 1000,
   },
   fuelContainer: {
     height: "10px",
