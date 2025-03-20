@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import SpaceshipInterior from "../components/SpaceShipInterior";
 
-export default function MiddleScene(playerData) {
+export default function MiddleScene({ playerData }) {
   const [fuel, setFuel] = useState(100);
   const playerRef = useRef();
   const [showIntro, setShowIntro] = useState(true);
