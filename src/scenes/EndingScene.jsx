@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 import GameOver from "../components/GameOver.jsx/GameOver";
 import { useLocation } from "react-router-dom";
 
-export default function EndingScene({ playerData }) {
+export default function EndingScene({ playerData, spaceRef }) {
   const [showDialog, setShowDialog] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const location = useLocation();
@@ -48,7 +48,7 @@ export default function EndingScene({ playerData }) {
   };
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div style={{ width: "100vw", height: "100vh", backgroundColor: "black" }}>
       <ATH showChrono={false} fuel={fuel} />
       {showDialog && (
         <Dialogues
@@ -65,7 +65,7 @@ export default function EndingScene({ playerData }) {
           }}
         />
       )}
-      <Canvas>
+      <Canvas gl={{ clearColor: "black" }}>
         <CameraController />
         {/* Fond étoilé */}
         <Stars radius={100} depth={500} count={5000} factor={4} />

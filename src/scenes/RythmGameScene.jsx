@@ -109,7 +109,7 @@ export default function RythmGameScene({ playerData }) {
   }, []);
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
+    <div style={{ width: "100vw", height: "100vh", backgroundColor: "black" }}>
       <ATH showChrono={false} fuel={fuel} />
       {showDialog && (
         <Dialogues
@@ -135,7 +135,11 @@ export default function RythmGameScene({ playerData }) {
           music={altale}
         />
       )}
-      <Canvas shadows camera={{ position: [10, 10, 20], fov: 45 }}>
+      <Canvas
+        gl={{ clearColor: "black" }}
+        shadows
+        camera={{ position: [10, 10, 20], fov: 45 }}
+      >
         <Stars radius={100} depth={500} count={5000} factor={4} />
         <directionalLight intensity={1.5} castShadow position={[5, 10, 5]} />
         <ambientLight intensity={0.4} />

@@ -59,14 +59,14 @@ export default function ExplosionScene({ playerData }) {
         <GameOver
           reason={"Vous n'avez pas réussi à satisfaire le vaisseau."}
           onRestart={() => {
-            navigate("/dev/rythm-game");
+            navigate("/rythm-game");
           }}
           onMainMenu={() => {
             navigate("/");
           }}
         />
       )}
-      <Canvas>
+      <Canvas style={{ background: "black" }} gl={{ clearColor: "black" }}>
         <CameraController />
         <Stars radius={100} depth={500} count={5000} factor={4} />
         <directionalLight intensity={1.5} castShadow position={[5, 10, 5]} />
