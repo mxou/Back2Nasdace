@@ -34,7 +34,9 @@ export default function GameScene({ playerData }) {
   const [sceneChanged, setSceneChanged] = useState(false);
   const navigate = useNavigate();
   const wrongAnswerSound = new Audio(wrongAnswerSoundFile);
+  wrongAnswerSound.volume = 0.1;
   const goodAnswerSound = new Audio(goodAnswerSoundFile);
+  goodAnswerSound.volume = 0.1;
 
   const keyboardMap = [
     { name: "forward", keys: ["ArrowUp", "KeyW"] },

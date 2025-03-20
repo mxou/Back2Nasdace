@@ -87,7 +87,7 @@ export default function NewScene({ playerData }) {
       </Canvas>
       {showPopup && (
         <Popup
-          message={`Totu le monde est bien installé ? Bon il manque Klogsblurge, ${playerData.name} occupe toi du control pannel, c'est simple, amorce l'injection du Plutonium, active les propulseurs et appuie sur le gros bouton rouge`}
+          message={`${playerData.name} occupe toi du control pannel nous on peut pas, on a pas de bras, c'est simple, active tout PUIS appuie sur le gros bouton rouge`}
         />
       )}
       {showControlPannel && <ControlPannel takeoff={handleTakeoff} />}
