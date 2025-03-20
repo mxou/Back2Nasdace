@@ -265,7 +265,6 @@ const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
   const [debugMode, setDebugMode] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
   const [gameCompleted, setGameCompleted] = useState(false);
-  console.log(fuel);
 
   // Gestion du chronomètre
   useEffect(() => {
@@ -326,7 +325,6 @@ const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
       // Réduction du carburant
       if (typeof setter === "function") {
         setter((prev) => {
-          console.log(prev);
           const newFuel = Math.max(0, prev - 10);
           console.log("Collision! Nouveau fuel:", newFuel);
           return newFuel;
