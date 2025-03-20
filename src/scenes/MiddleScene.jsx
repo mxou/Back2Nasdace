@@ -1,15 +1,19 @@
 import React, { useState, useRef, useEffect } from "react";
 import SpaceshipInterior from "../components/SpaceShipInterior";
+import Dialogues from "../components/Dialogues/Dialogues";
+import dialogInterior from "/src/assets/dialogues/interior";
 
 export default function MiddleScene({ playerData }) {
   const [fuel, setFuel] = useState(100);
   const playerRef = useRef();
   const [showIntro, setShowIntro] = useState(true);
+  const [showDialogue, setShowDialogue] = useState(false);
 
   // Effet pour masquer l'intro après 3 secondes
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowIntro(false);
+      setShowDialogue(true);
     }, 3000);
 
     return () => clearTimeout(timer);
@@ -24,6 +28,13 @@ export default function MiddleScene({ playerData }) {
         overflow: "hidden",
       }}
     >
+      {showDialogue && (
+        <Dialogues
+          dialogFile={dialogInterior}
+          onComplete={() => setShowDialogue(false)}
+          userName={playerData.name}
+        />
+      )}
       {/* Affichage de l'intérieur du vaisseau avec les aliens */}
       <SpaceshipInterior playerRef={playerRef} playerData={playerData} />
 
@@ -59,6 +70,7 @@ const styles = {
       "0 0 30px rgba(80, 160, 255, 0.4), inset 0 0 15px rgba(80, 160, 255, 0.2)",
     textAlign: "center",
     minWidth: "300px",
+    userSelect: "none",
     animation:
       "fadeIn 0.5s ease-in-out, fadeOut 0.5s ease-in-out 2.5s forwards",
   },

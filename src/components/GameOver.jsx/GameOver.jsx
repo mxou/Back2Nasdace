@@ -121,15 +121,17 @@ export default function GameOver({ reason, onRestart, onMainMenu }) {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <motion.button
-              className="retry-button"
-              onClick={onRestart}
-              variants={buttonVariants}
-              whileHover="hover"
-              whileTap="tap"
-            >
-              RETRY
-            </motion.button>
+            {onRestart && (
+              <motion.button
+                className="retry-button"
+                onClick={onRestart}
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+              >
+                RETRY
+              </motion.button>
+            )}
 
             <motion.button
               className="menu-button"

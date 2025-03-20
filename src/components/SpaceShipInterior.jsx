@@ -172,6 +172,7 @@ const WarningSign = ({ position, rotation = [0, 0, 0], isGameActive }) => {
             fontFamily: "Arial",
             whiteSpace: "normal",
             transform: "translateX(-100%)",
+            userSelect: "none",
           }}
         >
           ATTENTION!
@@ -311,6 +312,7 @@ const Alien = ({
               borderRadius: "5px",
               fontFamily: "'Rajdhani', sans-serif",
               fontSize: "14px",
+              userSelect: "none",
             }}
           >
             {isCompleted

@@ -10,9 +10,11 @@ import dialogEnding from "../assets/dialogues/ending.json";
 import NasdaceCity from "../components3D/NasdaceCity";
 import { userData } from "three/tsl";
 import { useNavigate } from "react-router-dom";
+import GameOver from "../components/GameOver.jsx/GameOver";
 
 export default function EndingScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
 
   const navigate = useNavigate();
 
@@ -28,7 +30,10 @@ export default function EndingScene({ playerData }) {
     }, 5000);
   }, []);
 
-  const handleDialogEnd = () => {};
+  const handleDialogEnd = () => {
+    setGameOver(true);
+    console.log("pq ça marche apos");
+  };
 
   const CameraController = () => {
     const { camera } = useThree();
@@ -46,8 +51,16 @@ export default function EndingScene({ playerData }) {
       {showDialog && (
         <Dialogues
           dialogFile={dialogEnding}
-          onEnd={handleDialogEnd}
+          onComplete={() => setGameOver(true)}
           userName={playerData.name}
+        />
+      )}
+      {gameOver && (
+        <GameOver
+          reason={"Et non, il n'y a jamais eu de Nasdace City sur Mars..."}
+          onMainMenu={() => {
+            navigate("/");
+          }}
         />
       )}
       <Canvas>

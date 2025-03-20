@@ -1,1 +1,51 @@
-[{ "name": "Grogksblux", "text": "Jsp comment on finit ça moi" }]
+[
+  { "name": "{name}", "text": "Mais c'est flingué comme atterissage ça." },
+  {
+    "name": "Vaisseau",
+    "text": "T'avais qu'à danser en rythme."
+  },
+  {
+    "name": "{name}",
+    "text": "Et c'est vide ici, c'est où Nasdace City ?"
+  },
+  {
+    "name": "Grogksblux",
+    "text": "Bah ici pourquoi ?"
+  },
+  {
+    "name": "{name}",
+    "text": "La partie Nasdace pourquoi pas, mais il est où le city ?"
+  },
+  {
+    "name": "Zarxblablx",
+    "text": "tqt"
+  },
+  {
+    "name": "{name}",
+    "text": "???"
+  },
+  {
+    "name": "{name}",
+    "text": "Mais je vais faire quoi moi ?"
+  },
+  {
+    "name": "Zarxblablx",
+    "text": "Bah pas rentrer déjà lol"
+  },
+  {
+    "name": "Zglubugl",
+    "text": "Oh non le prix du Plutonium 95 a encore augmenté !"
+  },
+  {
+    "name": "{name}",
+    "text": "Donc je suis bloqué là si j'ai bien compris ?"
+  },
+  {
+    "name": "Grogksblux",
+    "text": "C'est pas si mal Nasdace City tu sais..."
+  },
+  {
+    "name": "{name}",
+    "text": "..."
+  }
+]

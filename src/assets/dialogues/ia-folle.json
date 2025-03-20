@@ -1,5 +1,6 @@
 [
-  { "name": "Grogksblux", "text": "C'est bon on a réussi !" },
+  { "name": "Grogksblux", "text": "C'est bon on y est presque !" },
+  { "name": "{name}", "text": "Et beh c'est que ça passe vite 258 jours." },
   {
     "name": "Zglubugl",
     "text": "Tu t'es super bien débrouillé {name} et il nous reste assez de carburant pour atterrir."

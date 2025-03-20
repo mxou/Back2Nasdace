@@ -1,5 +1,9 @@
 [
   {
+    "name": "{name}",
+    "text": "C'était du Taylor Swift ça ?"
+  },
+  {
     "name": "Vaisseau",
     "text": "Bon vous vous êtes bien débrouillés."
   },
@@ -21,7 +25,7 @@
   },
   {
     "name": "{name}",
-    "text": "Nan il a dead ça, Taylor Swift c'est vraiment pas..."
+    "text": "Nan il a dead ça, Taylor Swift c'est vraiment pas-"
   },
   {
     "name": "Grogksblux",
@@ -53,7 +57,7 @@
   },
   {
     "name": "Grogksblux",
-    "text": "Nan pas cette fois, c'est juste les lunes de Mars."
+    "text": "C'est les satellites de Mars on t'a dis."
   },
   {
     "name": "Grogksblux",
