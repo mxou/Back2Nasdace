@@ -19,6 +19,7 @@ import { useLocation } from "react-router-dom";
 export default function RythmGameScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
   const [gameStart, setGameStart] = useState(false);
+  const [playSpace, setPlaySpace] = useState(true);
   const [lastDialog, setLastDialog] = useState(false);
   const location = useLocation();
   const { fuel } = location.state || {};
@@ -36,13 +37,13 @@ export default function RythmGameScene({ playerData }) {
 
   hitSound.volume = 0.3;
   missSound.volume = 0.3;
-  altale.volume = 0.05;
+  altale.volume = 0.1;
 
   // Référence pour space (musique de fond)
   const spaceRef = useRef(new Audio(spaceTheme));
 
   useEffect(() => {
-    spaceRef.current.volume = 0.05;
+    spaceRef.current.volume = 0.1;
     spaceRef.current.loop = true; // Pour qu'elle tourne en boucle
 
     const playMusic = async () => {
@@ -54,8 +55,12 @@ export default function RythmGameScene({ playerData }) {
       }
     };
 
-    if (!gameStart) playMusic();
-  }, [gameStart]);
+    if (playSpace) {
+      playMusic();
+    } else {
+      spaceRef.current.pause();
+    }
+  }, [playSpace]);
 
   // Fonction qui autorise la lecture de `space` après une interaction utilisateur
   const enableAudio = () => {
@@ -69,21 +74,28 @@ export default function RythmGameScene({ playerData }) {
   }, []);
 
   const handlegameStart = () => {
-    spaceRef.current.pause();
+    setPlaySpace(false);
     setGameStart(true);
   };
 
   const GameFinished = (gameStatus) => {
     setGameStart(false);
+    setPlaySpace(true);
     if (gameStatus) {
       setOnGameFinished({
         file: GameSuccess,
-        action: () => navigate("/ending", { state: { fuel } }),
+        action: () => {
+          navigate("/ending", { state: { fuel } });
+          setPlaySpace(false);
+        },
       });
     } else {
       setOnGameFinished({
         file: GameFailed,
-        action: () => navigate("/explosion ", { state: { fuel } }),
+        action: () => {
+          navigate("/explosion ", { state: { fuel } });
+          setPlaySpace(false);
+        },
       });
     }
     setLastDialog(true);
