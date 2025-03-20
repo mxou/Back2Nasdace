@@ -5,7 +5,7 @@ import { KeyboardControls, Html, useTexture } from "@react-three/drei";
 import Controller from "ecctrl";
 import { Gltf } from "@react-three/drei";
 import * as THREE from "three";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutlet, useOutletContext } from "react-router-dom";
 import Exam from "./Exam";
 import Blaster from "./Blaster";
 import SpaceshipGame from "./SpaceshipGame";
@@ -332,8 +332,8 @@ const SpaceshipInterior = ({ playerData }) => {
   const [showDialogue, setShowDialogue] = useState(false);
   const [currentAlien, setCurrentAlien] = useState(null);
   const [activeGame, setActiveGame] = useState(null);
-  const [fuel, setFuel] = useState(100);
   const [showCompletionMessage, setShowCompletionMessage] = useState(false);
+  const { fuel, setFuel } = useOutletContext();
   // Position de départ/respawn du joueur
   const spawnPosition = [0, -3, 0];
 
