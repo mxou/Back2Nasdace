@@ -29,7 +29,7 @@ export default function ExplosionScene(playerData) {
       setTimeout(() => {
         setRemoveObjects(true); // Supprime Ship et NasdaceCity après 2 secondes
       }, 500);
-    }, 1700);
+    }, 1500);
     return () => clearInterval(extiming);
   }, []);
 
@@ -47,7 +47,11 @@ export default function ExplosionScene(playerData) {
 
       <Physics>
         {!removeObjects ? (
-          <NasdaceCity ref={cityRef} position={[0, -15, 0]} scale={[1, 1, 1]} />
+          <NasdaceCity
+            ref={cityRef}
+            position={[0, -20, 0]}
+            scale={[0.1, 0.1, 0.1]}
+          />
         ) : null}
 
         {!explosionTriggered ? (
