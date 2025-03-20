@@ -339,9 +339,9 @@ const SpaceshipInterior = ({ playerData }) => {
 
   // État pour suivre les défis complétés
   const [gameCompletions, setGameCompletions] = useState({
-    "Quiz Master": false,
-    "Blaster Pro": false,
-    "Captain Nasdace": false,
+    ZarxBlablx: false,
+    Grogksblux: false,
+    Zglubugl: false,
   });
 
   // Déterminer si un jeu est actif pour cacher les éléments d'interface
@@ -350,11 +350,11 @@ const SpaceshipInterior = ({ playerData }) => {
   // Fonction pour obtenir le bon dialogue selon l'alien
   const getCurrentDialogue = () => {
     switch (currentAlien) {
-      case "Quiz Master":
+      case "ZarxBlablx":
         return quizDialogue;
-      case "Blaster Pro":
+      case "Grogksblux":
         return blasterDialogue;
-      case "Captain Nasdace":
+      case "Zglubugl":
         return spaceshipDialogue;
       default:
         return [];
@@ -380,13 +380,13 @@ const SpaceshipInterior = ({ playerData }) => {
 
     // Chaque alien lance un jeu différent
     switch (alienName) {
-      case "Quiz Master":
+      case "ZarxBlablx":
         setActiveGame("quiz");
         break;
-      case "Blaster Pro":
+      case "Grogksblux":
         setActiveGame("blaster");
         break;
-      case "Captain Nasdace":
+      case "Zglubugl":
         setActiveGame("spaceship");
         break;
       default:
@@ -440,7 +440,7 @@ const SpaceshipInterior = ({ playerData }) => {
 
       // Attendre quelques secondes avant de naviguer
       const timer = setTimeout(() => {
-        navigate("/rythm-game", { state: { playerData } });
+        navigate("/rythm-game", { state: { playerData, fuel } });
       }, 3000); // 3 secondes avant de naviguer
 
       return () => clearTimeout(timer);
@@ -501,28 +501,28 @@ const SpaceshipInterior = ({ playerData }) => {
             <Alien
               position={[-5, -4, 0]}
               color="blue"
-              name="Quiz Master"
+              name="ZarxBlablx"
               onInteract={handleAlienInteraction}
               playerRef={playerRef}
-              isCompleted={gameCompletions["Quiz Master"]}
+              isCompleted={gameCompletions["ZarxBlablx"]}
               isGameActive={isGameActive}
             />
             <Alien
               position={[0, -4, 4]}
               color="red"
-              name="Blaster Pro"
+              name="Grogksblux"
               onInteract={handleAlienInteraction}
               playerRef={playerRef}
-              isCompleted={gameCompletions["Blaster Pro"]}
+              isCompleted={gameCompletions["Grogksblux"]}
               isGameActive={isGameActive}
             />
             <Alien
               position={[4, -4, 0]}
               color="green"
-              name="Captain Nasdace"
+              name="Zglubugl"
               onInteract={handleAlienInteraction}
               playerRef={playerRef}
-              isCompleted={gameCompletions["Captain Nasdace"]}
+              isCompleted={gameCompletions["Zglubugl"]}
               isGameActive={isGameActive}
             />
           </Physics>

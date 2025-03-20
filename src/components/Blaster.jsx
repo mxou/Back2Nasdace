@@ -3,20 +3,12 @@ import { useNavigate } from "react-router-dom";
 import victorySound from "./../assets/audio/success.mp3";
 import defeatSound from "./../assets/audio/fail.mp3";
 
-const Blaster = ({
-  onGameOver,
-  onScoreUpdate,
-  setter,
-  fuel,
-  onClose,
-  onComplete,
-}) => {
+const Blaster = ({ onGameOver, setter, fuel, onClose, onComplete }) => {
   const [threats, setThreats] = useState([]);
-  const [score, setScore] = useState(0);
   const [virusTarget, setVirusTarget] = useState(null);
   const [isGameActive, setIsGameActive] = useState(true);
   const [result, setResult] = useState("");
-  const [countdown, setCountdown] = useState(8);
+  const [countdown, setCountdown] = useState(12);
   const [laser, setLaser] = useState(null);
   const [containerDimensions, setContainerDimensions] = useState({
     width: 0,
@@ -102,7 +94,7 @@ const Blaster = ({
   useEffect(() => {
     if (fuel <= 0) {
       onGameOver?.();
-      navigate("/GameOver");
+      navigate("/game-over");
     }
   }, [fuel, onGameOver, navigate]);
 
@@ -233,7 +225,7 @@ const Blaster = ({
     setThreats(newThreats);
 
     if (!isGameActive) {
-      setCountdown(8); // Chrono fixe à 8 secondes
+      setCountdown(12); // Chrono fixe à 8 secondes
       setIsGameActive(true);
       setResult("");
     }
@@ -276,7 +268,7 @@ const Blaster = ({
       }, 100);
     }
 
-    setCountdown(8); // Toujours 8 secondes
+    setCountdown(12); // Toujours 12 secondes
     setIsGameActive(true);
     setResult("");
   };
@@ -344,11 +336,6 @@ const Blaster = ({
     fireLaser(threat.x, threat.y, threat.size);
 
     if (threat.isVirus) {
-      // Calcul de points basé sur le niveau
-      const levelPoints = 10 * level * (level + 1); // Plus de points pour les niveaux plus élevés
-      setScore((prev) => prev + levelPoints);
-      onScoreUpdate?.(score + levelPoints);
-
       // Ajouter du carburant comme bonus
       setter((prev) => Math.min(prev + 5, 100)); // Limiter à 100
 
@@ -372,7 +359,7 @@ const Blaster = ({
         setTimeout(() => startNewGame(true), 1500); // Augmenter le niveau
       }
     } else {
-      setResult("Cible non-hostile ! Pénalité !");
+      setResult("Cible non-hostile ! -10 Plutonium 95 !");
       setter((prev) => Math.max(0, prev - 10));
       if (fuel <= 10) {
         onGameOver?.();
@@ -428,9 +415,6 @@ const Blaster = ({
       <div style={styles.scanLines}></div>
 
       <div style={styles.hud}>
-        <div style={styles.hudItem}>
-          SCORE: <span style={styles.hudValue}>{score}</span>
-        </div>
         <div style={styles.hudItem}>
           SÉCURITÉ: <span style={styles.hudValue}>{securityLevel}/8</span>
         </div>
@@ -522,6 +506,7 @@ const styles = {
     color: "#00ffff",
     fontFamily: "'Courier New', monospace",
   },
+
   scanLines: {
     position: "absolute",
     top: 0,
