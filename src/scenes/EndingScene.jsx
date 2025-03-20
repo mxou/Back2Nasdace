@@ -11,11 +11,13 @@ import NasdaceCity from "../components3D/NasdaceCity";
 import { userData } from "three/tsl";
 import { useNavigate } from "react-router-dom";
 import GameOver from "../components/GameOver.jsx/GameOver";
+import { useLocation } from "react-router-dom";
 
 export default function EndingScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
   const [gameOver, setGameOver] = useState(false);
-
+  const location = useLocation();
+  const { fuel } = location.state || {};
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function EndingScene({ playerData }) {
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-      <ATH showChrono={false} />
+      <ATH showChrono={false} fuel={fuel} />
       {showDialog && (
         <Dialogues
           dialogFile={dialogEnding}

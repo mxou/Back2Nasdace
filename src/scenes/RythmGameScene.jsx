@@ -14,11 +14,14 @@ import GameFailed from "/src/assets/dialogues/dialogIaFailed";
 import GameSuccess from "/src/assets/dialogues/dialogIaSuccess";
 import altaleFile from "/src/assets/audio/altale.mp3";
 import spaceTheme from "/src/assets/audio/Space.mp3";
+import { useLocation } from "react-router-dom";
 
 export default function RythmGameScene({ playerData }) {
   const [showDialog, setShowDialog] = useState(false);
   const [gameStart, setGameStart] = useState(false);
   const [lastDialog, setLastDialog] = useState(false);
+  const location = useLocation();
+  const { fuel } = location.state || {};
   const [onGameFinished, setOnGameFinished] = useState({
     file: null,
     action: null,
@@ -75,12 +78,12 @@ export default function RythmGameScene({ playerData }) {
     if (gameStatus) {
       setOnGameFinished({
         file: GameSuccess,
-        action: () => navigate("/ending"),
+        action: () => navigate("/ending", { state: { fuel } }),
       });
     } else {
       setOnGameFinished({
         file: GameFailed,
-        action: () => navigate("/explosion"),
+        action: () => navigate("/explosion ", { state: { fuel } }),
       });
     }
     setLastDialog(true);
@@ -95,7 +98,7 @@ export default function RythmGameScene({ playerData }) {
 
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-      <ATH showChrono={false} />
+      <ATH showChrono={false} fuel={fuel} />
       {showDialog && (
         <Dialogues
           dialogFile={dialogIa}

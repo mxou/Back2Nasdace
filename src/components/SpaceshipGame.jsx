@@ -8,6 +8,8 @@ import Ship from "../components3D/ShipPlayable";
 import galaxyImage from "/public/images/space.jpg";
 import asteroid from "/src/assets/modeles/asteroid_1.glb";
 import asteroidHit from "/public/audio/rock.mp3";
+import ATH from "./ATH";
+
 // Préchargement du modèle d'astéroïde
 useGLTF.preload(asteroid);
 
@@ -59,7 +61,7 @@ const AsteroidModel = ({ scale = 1 }) => {
 };
 
 // Composant pour les astéroïdes avec la physique
-const Asteroid = ({ position, speed, onCollision, debugMode }) => {
+const Asteroid = ({ position, speed, onCollision }) => {
   const asteroidRef = useRef();
   const initialPosition = useRef(position);
   const scale = useRef(0.2 + Math.random() * 0.4);
@@ -128,18 +130,12 @@ const Asteroid = ({ position, speed, onCollision, debugMode }) => {
       name="asteroid"
     >
       <AsteroidModel scale={scale.current} />
-      {debugMode && (
-        <mesh>
-          <sphereGeometry args={[1.2 * scale.current, 16, 16]} />
-          <meshBasicMaterial wireframe color="red" transparent opacity={0.5} />
-        </mesh>
-      )}
     </RigidBody>
   );
 };
 
 // Composant pour le vaisseau et son contrôle
-const GameScene = ({ keysPressed, onCollision, debug, playerData }) => {
+const GameScene = ({ keysPressed, onCollision, playerData }) => {
   const shipRef = useRef(null);
   const shipModelRef = useRef(null);
 
@@ -224,17 +220,6 @@ const GameScene = ({ keysPressed, onCollision, debug, playerData }) => {
               colorGlass: playerData?.glassColor || "#0000ff",
             }}
           />
-          {debug && (
-            <mesh rotation={[Math.PI / 2, 0, Math.PI / 2]}>
-              <capsuleGeometry args={[0.5, 2.5, 1, 8]} />
-              <meshBasicMaterial
-                wireframe
-                color="yellow"
-                transparent
-                opacity={0.5}
-              />
-            </mesh>
-          )}
         </RigidBody>
 
         {/* Astéroïdes */}
@@ -247,7 +232,6 @@ const GameScene = ({ keysPressed, onCollision, debug, playerData }) => {
               getShipInfo: getShipInfo,
               triggerEffect: onCollision,
             }}
-            debugMode={debug}
           />
         ))}
       </Physics>
@@ -262,7 +246,6 @@ const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
   const containerRef = useRef(null);
   const lastCollisionTime = useRef(0);
   const [hitEffect, setHitEffect] = useState(false);
-  const [debugMode, setDebugMode] = useState(false);
   const [timeLeft, setTimeLeft] = useState(30);
   const [gameCompleted, setGameCompleted] = useState(false);
 
@@ -289,16 +272,13 @@ const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
 
   useEffect(() => {
     if (fuel <= 0) {
-      navigate("/gameover");
+      navigate("/game-over");
     }
   }, [fuel, navigate]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
       keysPressed.current[e.key] = true;
-      if (e.key === "d") {
-        setDebugMode((prev) => !prev);
-      }
     };
 
     const handleKeyUp = (e) => {
@@ -357,7 +337,7 @@ const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
     if (typeof onComplete === "function") {
       onComplete();
     } else {
-      navigate("/");
+      navigate("/game-over");
     }
   };
 
@@ -440,26 +420,11 @@ const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
           <GameScene
             keysPressed={keysPressed}
             onCollision={handleAsteroidCollision}
-            debug={debugMode}
           />
         </Suspense>
       </Canvas>
 
-      {/* Affichage du carburant */}
-      <div
-        style={{
-          position: "absolute",
-          top: 10,
-          right: 10,
-          color: "white",
-          backgroundColor: "rgba(0,0,0,0.5)",
-          padding: "5px 10px",
-          borderRadius: "5px",
-          fontFamily: "monospace",
-        }}
-      >
-        Fuel: {fuel}
-      </div>
+      <ATH showChrono={false} fuel={fuel} />
 
       {/* Affichage du chronomètre */}
       <div
@@ -482,45 +447,6 @@ const SpaceshipGame = ({ setter, fuel, onComplete, playerData }) => {
       >
         Temps: {timeLeft}s
       </div>
-
-      {/* Bouton de test pour vérifier que le setter fonctionne */}
-      <button
-        style={{
-          position: "absolute",
-          bottom: 10,
-          left: 10,
-          padding: "5px 10px",
-          zIndex: 100,
-        }}
-        onClick={() => {
-          if (typeof setter === "function") {
-            setter((prev) => Math.max(0, prev - 10));
-            console.log("Test button clicked, reducing fuel");
-          } else {
-            console.error("Le setter n'est pas une fonction valide");
-          }
-        }}
-      >
-        Test -10 fuel
-      </button>
-
-      {debugMode && (
-        <div
-          style={{
-            position: "absolute",
-            top: 10,
-            left: 10,
-            color: "white",
-            backgroundColor: "rgba(0,0,0,0.5)",
-            padding: "5px",
-            fontFamily: "monospace",
-          }}
-        >
-          Debug Mode: ON (Press 'D' to toggle)
-          <br />
-          Yellow: Ship Hitbox | Red: Asteroid Hitbox
-        </div>
-      )}
     </div>
   );
 };
