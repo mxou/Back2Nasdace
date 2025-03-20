@@ -336,9 +336,6 @@ const Blaster = ({ onGameOver, setter, fuel, onClose, onComplete }) => {
     fireLaser(threat.x, threat.y, threat.size);
 
     if (threat.isVirus) {
-      // Ajouter du carburant comme bonus
-      setter((prev) => Math.min(prev + 5, 100)); // Limiter à 100
-
       // Message de victoire avec niveau
       setResult(`Niveau de sécurité ${securityLevel} sécurisé !`);
       victoryAudio.play();

@@ -13,6 +13,7 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
   const [answeredCorrectly, setAnsweredCorrectly] = useState([]);
   const [failedQuestions, setFailedQuestions] = useState([]);
   const [gameCompleted, setGameCompleted] = useState(false);
+  const [askedQuestions, setAskedQuestions] = useState([]); // Tracker pour les questions déjà posées
   const victoryAudio = new Audio(victorySound);
   const defeatAudio = new Audio(defeatSound);
 
@@ -21,7 +22,7 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
       onGameOver?.();
       navigate("/game-over");
     }
-  }, [fuel, onGameOver]);
+  }, [fuel, onGameOver, navigate]);
 
   const questions = [
     {
@@ -137,11 +138,7 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
 
   useEffect(() => {
     // Vérifier si toutes les questions ont été répondues correctement
-    if (
-      answeredCorrectly.length === questions.length &&
-      failedQuestions.length === 0 &&
-      !gameCompleted
-    ) {
+    if (answeredCorrectly.length === questions.length && !gameCompleted) {
       setGameCompleted(true);
       setResult("🏆 Félicitations ! Exam complété !");
 
@@ -150,37 +147,76 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
         onComplete?.();
       }, 2000);
     }
-  }, [answeredCorrectly, failedQuestions, gameCompleted, onComplete]);
+  }, [answeredCorrectly, gameCompleted, onComplete, questions.length]);
 
   const selectNewQuestion = () => {
+    // Nettoyer les failedQuestions pour ne pas inclure les questions déjà répondues correctement
+    const updatedFailedQuestions = failedQuestions.filter(
+      (q) => !answeredCorrectly.some((correct) => correct.id === q.id)
+    );
+
+    // Mettre à jour le state avec la liste nettoyée
+    if (updatedFailedQuestions.length !== failedQuestions.length) {
+      setFailedQuestions(updatedFailedQuestions);
+    }
+
     // Priorité aux questions échouées
-    if (failedQuestions.length > 0) {
+    if (updatedFailedQuestions.length > 0) {
       const randomFailedIndex = Math.floor(
-        Math.random() * failedQuestions.length
+        Math.random() * updatedFailedQuestions.length
       );
-      const nextFailedQuestion = failedQuestions[randomFailedIndex];
+      const nextFailedQuestion = updatedFailedQuestions[randomFailedIndex];
       setCurrentQuestion(nextFailedQuestion);
       // Enlever cette question de la liste des questions échouées
-      setFailedQuestions(
-        failedQuestions.filter((_, index) => index !== randomFailedIndex)
+      setFailedQuestions((prev) =>
+        prev.filter((q) => q.id !== nextFailedQuestion.id)
       );
+      // Marquer comme posée
+      if (!askedQuestions.includes(nextFailedQuestion.id)) {
+        setAskedQuestions((prev) => [...prev, nextFailedQuestion.id]);
+      }
       return;
     }
 
     // Choisir une nouvelle question parmi celles non répondues correctement
-    const unansweredQuestions = questions.filter(
-      (q) => !answeredCorrectly.some((answered) => answered.id === q.id)
+    const remainingQuestions = questions.filter(
+      (q) =>
+        !answeredCorrectly.some((answered) => answered.id === q.id) &&
+        !askedQuestions.includes(q.id)
     );
 
-    if (unansweredQuestions.length === 0) {
-      // Toutes les questions ont été répondues correctement
-      setResult("🏆 Félicitations ! Exam complété !");
-      setGameCompleted(true);
+    // Si toutes les questions restantes ont déjà été posées, mais pas répondues correctement
+    // alors on peut réutiliser les questions non répondues
+    if (remainingQuestions.length === 0) {
+      const unansweredQuestions = questions.filter(
+        (q) => !answeredCorrectly.some((answered) => answered.id === q.id)
+      );
+
+      if (unansweredQuestions.length === 0) {
+        // Toutes les questions ont été répondues correctement
+        setResult("🏆 Félicitations ! Exam complété !");
+        setGameCompleted(true);
+        return;
+      }
+
+      const randomIndex = Math.floor(
+        Math.random() * unansweredQuestions.length
+      );
+      const nextQuestion = unansweredQuestions[randomIndex];
+      setCurrentQuestion(nextQuestion);
+
+      // Réinitialiser les questions posées si on a fait le tour
+      setAskedQuestions([nextQuestion.id]);
       return;
     }
 
-    const randomIndex = Math.floor(Math.random() * unansweredQuestions.length);
-    setCurrentQuestion(unansweredQuestions[randomIndex]);
+    // Sinon on prend une question non encore posée
+    const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
+    const nextQuestion = remainingQuestions[randomIndex];
+    setCurrentQuestion(nextQuestion);
+
+    // Marquer comme posée
+    setAskedQuestions((prev) => [...prev, nextQuestion.id]);
   };
 
   const handleTimeout = () => {
@@ -192,12 +228,16 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
     setter((prev) => prev - 10);
     defeatAudio.play();
 
-    // Ajouter la question actuelle aux questions échouées si elle n'y est pas déjà
-    // et si elle n'a pas été correctement répondue auparavant
+    // Vérifier si la question actuelle est déjà dans answeredCorrectly
+    const alreadyAnsweredCorrectly = answeredCorrectly.some(
+      (q) => q.id === currentQuestion.id
+    );
+
+    // Ajouter la question actuelle aux questions échouées seulement si pas déjà répondue correctement
     if (
       currentQuestion &&
-      !failedQuestions.some((q) => q.id === currentQuestion.id) &&
-      !answeredCorrectly.some((q) => q.id === currentQuestion.id)
+      !alreadyAnsweredCorrectly &&
+      !failedQuestions.some((q) => q.id === currentQuestion.id)
     ) {
       setFailedQuestions((prev) => [...prev, currentQuestion]);
     }
@@ -209,6 +249,21 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
   };
 
   const nextQuestion = () => {
+    // Vérifier si la question actuelle a été correctement répondue
+    if (currentQuestion && result.includes("Victoire")) {
+      // Ajouter à answeredCorrectly si pas déjà présente
+      if (!answeredCorrectly.some((q) => q.id === currentQuestion.id)) {
+        setAnsweredCorrectly((prev) => [...prev, currentQuestion]);
+
+        // Retirer de failedQuestions si présente
+        if (failedQuestions.some((q) => q.id === currentQuestion.id)) {
+          setFailedQuestions((prev) =>
+            prev.filter((q) => q.id !== currentQuestion.id)
+          );
+        }
+      }
+    }
+
     selectNewQuestion();
     setCountdown(8);
     setIsGameActive(true);
@@ -219,25 +274,33 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
   const handleAnswer = (selectedIndex) => {
     if (!isGameActive) return;
 
+    setClickedIndex(selectedIndex);
     const isCorrect = selectedIndex === currentQuestion.correct;
     setResult(isCorrect ? "✅ Victoire !" : "❌ Perdu !");
     setIsGameActive(false);
-    setClickedIndex(selectedIndex);
 
     if (isCorrect) {
-      // Marquer cette question comme correctement répondue
+      // Ajouter aux questions répondues correctement
       if (!answeredCorrectly.some((q) => q.id === currentQuestion.id)) {
         setAnsweredCorrectly((prev) => [...prev, currentQuestion]);
+
+        // Retirer des questions échouées si présente
+        if (failedQuestions.some((q) => q.id === currentQuestion.id)) {
+          setFailedQuestions((prev) =>
+            prev.filter((q) => q.id !== currentQuestion.id)
+          );
+        }
       }
       victoryAudio.play();
     } else {
-      // Ajouter à la liste des questions échouées si pas déjà présente
-      // et si elle n'a pas été correctement répondue auparavant
-      if (
-        !failedQuestions.some((q) => q.id === currentQuestion.id) &&
-        !answeredCorrectly.some((q) => q.id === currentQuestion.id)
-      ) {
-        setFailedQuestions((prev) => [...prev, currentQuestion]);
+      // Ajouter aux questions échouées seulement si pas déjà répondue correctement
+      if (!answeredCorrectly.some((q) => q.id === currentQuestion.id)) {
+        setFailedQuestions((prev) => {
+          if (!prev.some((q) => q.id === currentQuestion.id)) {
+            return [...prev, currentQuestion];
+          }
+          return prev;
+        });
       }
 
       setter((prev) => prev - 10);
@@ -254,6 +317,19 @@ const Exam = ({ onGameOver, onClose, onComplete, setter, fuel }) => {
   };
 
   if (!currentQuestion) return null;
+
+  // Fonction pour le debugging
+  const getStatusInfo = () => {
+    return {
+      currentQuestionId: currentQuestion?.id,
+      answeredCorrectlyIds: answeredCorrectly.map((q) => q.id),
+      failedQuestionsIds: failedQuestions.map((q) => q.id),
+      askedQuestionsIds: askedQuestions,
+    };
+  };
+
+  // Afficher les informations de débogage dans la console
+  console.log("Status:", getStatusInfo());
 
   return (
     <div style={styles.container}>
